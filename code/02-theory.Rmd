@@ -1,0 +1,482 @@
+---
+title: "Servants, Syndicates, and Saviors: How Polarization and Prestige Impact the Political Behavior of the Military (Prospectus)"
+author: "Peter M. Erickson"
+date: |
+  `r format(Sys.time(), '%B %d, %Y')`
+abstract: |
+  
+  _This dissertation explores variation in the political behavior of the US military. I advance a theory in which the political behavior of the US military is impacted by two distinct factors: the level of domestic political polarization within a society, and the degree of prestige the military institution commands. I argue that these two factors greatly shape the constraining influence of three central norms of civil-military relations: civilian control of the military, the non-partisanship of the military institution, and the degree to which the military fills an active role in domestic politics. As the constraining influence of these norms varies, distinct political behaviors conducted by or involving the military also change. To support my theoretical argument, I conduct a mixed-methods empirical strategy focusing on military behavior within the United States across time. This dissertation advances the scholarly understanding of US civil-military relations, and provides a unique perspective about how domestic structure influences the ability of the military to act professionally._  
+  
+geometry: margin = 1.15in              # margin widths
+fontsize: 12pt                         # text size
+bibliography: dissertation.bib # bibliography file
+biblio-style: authoryear               # citation style
+urlcolor: blue                         # links to external URLs
+citecolor: black                       # links to bibliography
+linkcolor: magenta                     # internal figures, footnotes, etc.
+indent: true                          # paragraph format
+                                       # true for indented paragraphs
+                                       
+header-includes:
+    - \usepackage{setspace}
+    - \usepackage{multirow}
+    - \usepackage{indentfirst}
+   
+    
+output: 
+  bookdown::pdf_document2:
+    keep_tex: true
+    latex_engine: pdflatex
+    number_sections: false
+    toc: false
+    fig_caption: true
+    citation_package: biblatex
+    includes: 
+      in_header: 
+        - latex-preamble.tex
+  bookdown::htmldocument2: default
+  bookdown::word_document2:
+      toc: false
+---
+
+\doublespacing 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo=FALSE,
+  include=FALSE,
+  message=FALSE,
+  error=FALSE,
+  fig.height=3,
+  fig.width=4,
+  out.width="90%")
+```
+
+```{r, include = FALSE, echo = FALSE}
+library("here")       # file paths
+library("tidyverse")  # workhorse package
+library("tidylog")
+library("kableExtra")
+library("knitr")
+library("ggdag")
+library("dagitty")
+library("gridExtra")
+library("broom")
+library("dplyr")
+library("reshape2")
+library("pacman")
+library("ggrepel")
+```
+
+\newpage
+
+# Initial Theory
+
+In this third part of the prospectus, I develop an initial theoretical framework for how the domestic levels of political polarization and military prestige impact the political behavior of the military. A graphical representation of this theory is shown in Figure 2, below. From left to right, the model suggests that the independent variables of political polarization and military prestige shape an intervening variable, the beliefs and attitudes of the military regarding their normative role in politics. These beliefs and attitudes subsequently influence the distinct political behaviors of the the military in important ways. I will walk the reader through the theory in two steps. 
+
+```{r figure two, include=FALSE, echo=FALSE}
+problem_dag <- dagify(
+    PB ~ RB,
+    RB ~ MP + PP,
+    coords = tribble(
+      ~ name,      ~ x,    ~ y,
+      "PB", 1,.5,
+      "RB", .7, .5,
+      "PP", .3, .7,
+      "MP", .3, .3,
+    ))
+    
+
+problem_dag %>% 
+  ggplot(aes(x=x, y=y, xend=xend, yend=yend))+
+  geom_dag_edges()+
+  geom_dag_point()+
+  geom_dag_text_repel(aes(label=name), show.legend=FALSE)+
+  theme_dag()
+```
+
+```{r include=TRUE, echo=FALSE, fig.height=5, fig.width=7}
+
+problem_dag %>% tidy_dagitty() %>% 
+  dag_label(labels=c("PB"="DV\n Political\n Behaviors",
+                     "RB"="Int Var\n Role Beliefs\n and Attitudes\n re: Civ-Mil\n Norms", 
+                     "MP"="IV\n Military\ Prestige", 
+                     "PP"="IV\n Political\n Polarization"
+                      )) %>% 
+  ggplot(aes(x=x, y=y, xend=xend, yend=yend))+
+  geom_dag_edges()+
+  geom_dag_point()+
+  geom_dag_text()+ 
+  geom_dag_label_repel(aes(label=label, fill=label), col="white", show.legend=FALSE)+ theme_dag(plot.title=element_text(hjust=.5)) + labs(title="Figure 2: Determinants of Political Behavior by the Military")
+  
+```
+
+First, I will explain how the independent variables of polarization and prestige impact and influence the beliefs and attitudes of military actors regarding the inviolability of three foundational norms described in the previous section: civilian control of the military, non-partisanship of the military institution, and military expertise. In this first section, building off of the American politics literature and military history, I trace the rise of political polarization and military prestige in the contemporary US context, as well as describe the presence of war as a scope condition. This step concludes with the development of a basic "2 x 2" table in which I assign an overall level of risk that military actors pose to the foundational norms of civil-military relations as political polarization and military prestige vary. In determining these overall levels of risk, I focus on four factors: whether military actors are likely to be unified or divided in their ideological beliefs; whether the military can leverage either public opinion or their positional influence in government in challenging norms of civil-military relations; what is the main source of corporate motivation among military actors under these conditions, and which of the three foundational civil-military norms are most likely to be challenged as a result of the varying levels of polarization and prestige.  
+
+Second, I then project how these overall levels of risk to the foundational norms of civil-military relations under varying conditions of polarization and prestige translate into observable characteristics or attributes of military actors engaging in forms of political behavior. These observable characteristics build off of the typologies Finer and Brooks previously develop, but the goal is to determine how the presence (or absence) of the independent variables of political polarization and military prestige ultimately influence which military actors (who), commit which forms of political behavior (what), for what purpose (why), with what frequency (when), and with what other actors from across government or society ("where" are these behaviors targeted, i.e. Congress, the Media, interest groups, etc.). At the conclusion of this step, I present a total of eleven hypotheses to be tested, analyzed, and explored throughout the course of the dissertation. 
+
+## Political Polarization
+
+Within the American Politics literature, there is broad recognition that political polarization levels in contemporary America are higher now than at any point since the end of the American Civil War [@hare_polarization_2014; @jeffrey_b_lewis_voteview_2020]. Figure 3, below, shows American polarization levels as measured using roll-call voting data from the US House and Senate since the later part of the 19th Century. As Figure 3 demonstrates, American polarization levels were high at the end of the American Civil War, and remained high before gradually decreasing early in the 20th century. Polarization reached it's nadir in the period before World War Two, and remained at relatively low levels until approximately the 1970s. Since that time, however, polarization in both chambers of the US Congress has increased dramatically.  
+
+```{r figure three, include=FALSE, echo=FALSE}
+nom_dat <- read_csv("https://voteview.com/static/data/out/members/HSall_members.csv")
+
+south <- c(40:49,51,53)
+polar_dat <- nom_dat %>% 
+    filter(congress>45 & 
+           chamber != "President") %>%
+    mutate( 
+      year = 2*(congress-1) + 1789,
+    ) %>%
+    group_by(chamber,congress,year) %>% 
+    summarize(
+      party.mean.diff.d1 = mean(nominate_dim1[party_code==200],na.rm=T) - 
+                           mean(nominate_dim1[party_code==100],na.rm=T),
+      prop.moderate.d1 = mean(abs(nominate_dim1)<0.25,na.rm=T),
+      prop.moderate.dem.d1 = mean(abs(nominate_dim1[party_code==100])<0.25,na.rm=T),
+      prop.moderate.rep.d1 = mean(abs(nominate_dim1[party_code==200])<0.25,na.rm=T),
+      overlap = (sum(nominate_dim1[party_code==200] <
+                       max(nominate_dim1[party_code==100],na.rm=T),na.rm=T)  +
+                 sum(nominate_dim1[party_code==100] >
+                       min(nominate_dim1[party_code==200],na.rm=T),na.rm=T))/
+                 (sum(!is.na(nominate_dim1[party_code==100]))+
+                  sum(!is.na(nominate_dim1[party_code==200]))),
+      chamber.mean.d1 = mean(nominate_dim1,na.rm=T),
+      chamber.mean.d2 = mean(nominate_dim2,na.rm=T),
+      dem.mean.d1 = mean(nominate_dim1[party_code==100],na.rm=T),
+      dem.mean.d2 = mean(nominate_dim2[party_code==100],na.rm=T),
+      rep.mean.d1 = mean(nominate_dim1[party_code==200],na.rm=T),
+      rep.mean.d2 = mean(nominate_dim2[party_code==200],na.rm=T),
+      north.rep.mean.d1 = mean(nominate_dim1[party_code==200 & 
+                                             !(state_icpsr %in% south)],na.rm=T),    
+      north.rep.mean.d2 = mean(nominate_dim2[party_code==200 & 
+                                             !(state_icpsr %in% south)],na.rm=T),    
+      south.rep.mean.d1 = mean(nominate_dim1[party_code==200 & 
+                                              (state_icpsr %in% south)],na.rm=T),    
+      south.rep.mean.d2 = mean(nominate_dim2[party_code==200 & 
+                                             (state_icpsr %in% south)],na.rm=T),    
+      north.dem.mean.d1 = mean(nominate_dim1[party_code==100 & 
+                                              !(state_icpsr %in% south)],na.rm=T),    
+      north.dem.mean.d2 = mean(nominate_dim2[party_code==100 & 
+                                              !(state_icpsr %in% south)],na.rm=T),    
+      south.dem.mean.d1 = mean(nominate_dim1[party_code==100 & 
+                                              (state_icpsr %in% south)],na.rm=T),    
+      south.dem.mean.d2 = mean(nominate_dim2[party_code==100 & 
+                                              (state_icpsr %in% south)],na.rm=T),    
+    ) 
+
+head(polar_dat)
+write_csv(polar_dat,path="voteview_polarization_data.csv")
+
+```
+
+
+```{r include=FALSE, echo=FALSE}
+# Here are up to date versions of the famous party means over time plots for each chamber:
+polar_dat_long <- polar_dat %>% gather(score,value,-chamber,-year,-congress)
+labels <- c("dem.mean.d1"="DEM",
+            "rep.mean.d1"="REP",
+            "north.dem.mean.d1"="N. DEM",
+            "south.dem.mean.d1"="S. DEM")
+
+polarized_plot <- function(chamb) {
+  pdatl <- polar_dat_long %>% 
+                filter(chamber==chamb,
+                       score %in% c("dem.mean.d1","rep.mean.d1",
+                                    "north.dem.mean.d1","south.dem.mean.d1")) %>%
+                mutate(party=labels[score]) %>%
+                ungroup()
+  
+  gg <- ggplot(data=pdatl,
+               aes(x=year,y=value,group=party,col=party)) +
+               scale_x_continuous(expand = c(0.15, 0), 
+                                 breaks=seq(1880, max(pdatl$year), by=8)) +
+               geom_line() + geom_point(size=0.7) + 
+               xlab("Year") + ylab("Liberal-Conservative") + 
+               geom_text_repel(data=pdatl %>%
+                    filter(year == min(year)),
+                  aes(label = party, color = party),
+                  size = 3,
+                  nudge_x = -8,
+                  point.padding = 0.1,
+                  segment.color = NA,
+                  show.legend = FALSE) +
+              theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+              scale_color_manual(values=c("REP"="#c70828","DEM"="#1372ad",
+                                         "N. DEM"="#6194F4",
+                                         "S. DEM"="#81c4e4"),guide="none") +
+              theme_bw()
+  gg
+}
+```
+
+```{r include= FALSE, echo=FALSE}
+# House Polarization Plot
+gg1 <- polarized_plot("House")
+ggsave("voteview_house_party_means.png", plot=gg1, device="png", 
+       width=7, height=4, dpi=300)
+ggsave("voteview_house_party_means.pdf", plot=gg1, device="pdf", 
+       width=7, height=4)
+gg1
+```
+
+
+```{r include = FALSE, echo=FALSE}
+# Senate Plot
+gg2 <- polarized_plot("Senate")
+ggsave("voteview_senate_party_means.png", plot=gg2, device="png", 
+       width=7, height=4, dpi=300)
+ggsave("voteview_senate_party_means.pdf", plot=gg2, device="pdf", 
+       width=7, height=4)
+gg2
+
+```
+
+```{r include=TRUE, echo=FALSE, fig.align='center'}
+# liberal-conserative polarization by chamber
+gg3 <- ggplot(polar_dat_long %>% 
+              filter(score == "party.mean.diff.d1"),
+              aes(x=year,y=value,group=chamber,col=chamber)) +
+              scale_x_continuous(expand = c(0.10, 0), breaks=seq(1880,max(polar_dat_long$year),by=8)) +
+              geom_line() + geom_point(size=0.5) + 
+              xlab("Year") + ylab("Distance between party means") + 
+              geom_text_repel(data=polar_dat_long %>%
+                    ungroup() %>%
+                    filter(year == min(year) & score=="party.mean.diff.d1"),
+                  aes(label = chamber, color = chamber),
+                  size = 3,
+                  nudge_x = -10,
+                  point.padding = 0.1,
+                  segment.color = NA,
+                  show.legend = FALSE) +
+              theme(axis.text.x = element_text(angle = 60, hjust = 1), plot.title=element_text(hjust=.5), plot.subtitle=element_text(hjust=.5)) + scale_color_manual(values=c("House"="#c70828","Senate"="#1372ad"), guide="none") +
+               labs(title="Figure 3: Liberal-Conservative Partisan\nPolarization by Chamber", subtitle="1880-present", caption="Data Available from Lewis et. al. (2020) at Voteview.com")
+
+
+gg3
+
+```
+
+Polarization is a difficult concept to precisely define. Generally speaking, polarization refers to the movement of political thoughts and attitudes away from the political center and towards more ideological extremes. While scholars are not unified in explaining the causes of polarization, which range from a growing divide over matters pertaining to race and religion [@abramowitz_great_2018], the size and role of government [@sides_two_2015], disagreements over specific policy issues [@mann_its_2012], and competing visions of personal and national identity [@sides_identity_2018], they are united in their assessment that contemporary levels of political polarization pose significant problems for the health of American democracy. More than this, scholars have noted that the impacts of political polarization reach far beyond the realm of domestic politics. A polarized domestic environment makes it more difficult to determine what threats America faces, what lessons America should learn from its foreign policy failures, and what role in the world America should fill [@schultz_perils_2017; @myrick_external_2020]. 
+
+For the purposes of the theory advanced here, it is important to understand at least three of the features that are associated with the contemporary polarized domestic environment. These are provided in no particular order, as each of these features are related and provide insight into the overall phenomenon of polarization. The first feature is that polarization in the US goes far beyond mere ideological differences between political elites. Instead, the polarized domestic political environment is marked by increasing levels of disdain among regular citizens for those who identify with the opposite side of the political spectrum. This phenomenon is known in the American politics literature as "affective polarization" [@iyengar_affect_2012; @iyengar_origins_2019] or "negative partisanship" [@abramowitz_great_2018]. 
+
+Moreover, these feelings of dislike that citizens have towards others that identify with a different political party have not risen in a vacuum, but likely reflect trends in which an increasing number of issues have become part of partisan battlegrounds with little if any prospect for resolution. Moreover, the scope of the issues that comprise these battlegrounds continues to grow. Scholars of American politics describe this dynamic of increasing political warfare as "conflict extension," a second feature of contemporary political polarization in the US [@layman_party_2002]. Scholars note that in an environment marked by conflict extension, there is little to any prospect of meaningful cooperation across partisan aisles [@layman_activists_2010]. 
+
+A third feature of contemporary political polarization is the belief among partisans that many of the issues at stake today are fundamental and essential to both their individual and national identity [@sides_identity_2018]. As the rise of American "identity politics" illustrates, the normative roles of race, gender, religion, and immigration invoke very strong commitments among those on either side of the political spectrum [@white_values_2002; @mann_its_2012; @sides_identity_2018]. There is an overall belief that the issues at stake in polarizing political environments are not peripheral interests, but rather fundamental and core concerns. It is little wonder then, that both candidates for US President in 2020 claimed, to one degree or another, that the very "soul of the nation" was at stake [@dias_biden_2020]. 
+
+When these conditions are present, I argue that all three of the foundational civil-military norms face a heightened level of risk. Not only do these conditions increase the potential for civilian leaders "politicizing the military," a dynamic that scholars rightly warn about [@barno_increasingly_2019; @karlin_case_2020], but the dynamics that exist during polarizing political times also increase the likelihood that the military politicizes itself.   
+
+Why would this be the case? To begin with, the dynamic of "conflict extension" previously described may decrease the available politically-neutral space upon which the military as an institution can stand [@layman_party_2002]. In other words, a normatively non-partisan actor such as the military will likely find it increasingly difficult to stay out of politics during polarizing times even though it genuinely wants to. However, the dynamic of "conflict extension" can also reflect a more insidious development in that it could describe a condition in which certain military actors strongly believe in a certain issue or set of issues that are raised to the political forefront. These military actors, in turn, may deliberately challenge civilian authority or take a clear partisan side on these issues or set of issues, which could threaten norms of civilian control and/or non-partisanship of the military institution. 
+
+Reflecting the dynamics of "affective polarization," these military actors may believe it is more important to advance the causes they care deeply about than it is to fulfill their responsibility qua military professionals who remain subservient to civilian control and who uphold the non-partisan ethic. Indeed, recent experimental research has shown that a significant majority of Americans believe it is more important to advance candidates with whom they share a partisan or ideological affiliation, even if these same candidates violate democratic norms [@graham_democracy_2020]. Other research has shown that citizens find those military elites credible conditional on these elites sharing similar ideological and partisan convictions [@robinson_michael_danger_2018]. 
+
+Finally, polarization could threaten the norm of military expertise and in at least two ways. First, polarization could lead to political gridlock and a prevailing perception among some military leaders that elected civilian leaders are unable to implement an effective governing agenda. These certain military actors, out of a sense of frustration with civilian leaders' inability to overcome political gridlock, may seek a larger role for the military to fulfill. Such a dynamic is similar to the "role belief" of "conditional separation" identified in Fitch's typology, in which military actors view the emergence of a national crisis as the vehicle for entry into roles that normatively belong to civilian leaders [@fitch_armed_1998,68]. A second and more subtle way that polarization can threaten the norm of expertise is if certain military actors, in accord with the strong beliefs they hold regarding a number of polarizing political issues, strongly believe that the military should play a greater role in helping to solve or alleviate a particular issue that prevails. The differences between these two possible ways of polarization threatening the norm of military expertise are subtle but important. In the first, certain military leaders seek to "take over" the roles of civilian leaders, either by weighing in on political topics that have little if anything to deal with the military, or by offering unsolicited advice to civilian leaders. The primary motivation of these military actors for doing so is frustration with civilian leadership. In the second way, certain military actors do not necessarily want to "take over" the role of civilian leaders, but they want the military to play a greater role in supporting the ideological causes with which they identify. Taking on these greater roles involves the military fulfilling duties that are outside of the scope of traditional military expertise. 
+
+In summary, the dynamics of polarization - "conflict extension" [@layman_party_2002], "affective polarization" [@iyengar_affect_2012; @iyengar_origins_2019], and the belief that core values or issues are at stake [@white_values_2002; @mann_its_2012; @sides_identity_2018] -  create multiple mechanisms and ways through which military actors can threaten norms of civil-military relations. Not only does the loss of politically neutral space make it increasingly difficult for military actors to stay out of politics, but polarization may actually be associated with certain military actors desiring to support causes which they strongly identify with and believe in. Depending on the specific political issue or set of issues at stake during polarizing times, certain military actors may believe that the morally and ethically right thing to do is to support these issues, even if doing so threatens norms of civilian control and non-partisanship [@graham_democracy_2020]. Further, if military actors believe that the military should be used to solve crises that are politically controversial, or if these military leaders believe they should offer solutions to solving political problems, these military actors can also threaten norms military expertise. 
+
+## The Military's Prestige 
+
+The second independent variable I explore in the theory is the military's overall level of prestige. In defining the military's prestige, I am not referring to any single indicator but rather a conglomerate of factors including the military's relative level of influence within the government, it's standing and relationship with society, and the overall level of public credibility and trust that the military possesses relative to other institutions, such as Congress and the Presidency. It is important to emphasize here that public credibility and trust in the military, while an important if not the seminal part of the variable of military prestige, does not fully capture the concept of prestige, mainly because I do not think it goes far enough conceptually. By including bureaucratic influence in a concept of prestige, I am accounting for the power that the military holds as a bureaucratic actor within the government relative to other actors.  I acknowledge up front that many of these sub-component parts of military prestige are difficult to measure. As Richard Betts has stated, "influence...is one of the most important and most elusive concepts in the study of politics. In decisions on use of force it is impossible to detect objectively whose influence is greatest; it can only be inferred because only the President - and maybe not even he - really knows what convinces him or changes his mind" [@betts_soldiers_1977, 5].
+
+A similar concept to that of prestige in the international relations literature is the concept of reputation. In this literature, the concept of reputation almost always refers to the reputation of either a state or head of state [@lupton_reexamining_2018; @renshon_leader_2018]. Additionally, the substance of one's reputation in the international relations literature generally refers to their level of resolve, a concept that is highly connected to theories of deterrence [@powell_nuclear_2003].Two points are worth briefly highlighting in carrying over portions of the concept of reputation into a working definition of military prestige. The first is that similar to the international relations literature, the prestige of the military has both an institutional or corporate component as well as an individual component. Not only is it possible for the military writ large to possess a level of prestige; it is also possible for individual military elites to also have a level of prestige attached to them. The most glaring instance of this is when individual military elites, such as high ranking generals and admirals, become familiar household names: Grant, Pershing, Eisenhower, MacArthur, and Petraeus are all examples who, in each's respective times, commanded incredible prestige as a result of the public's perception of each's contributions to ongoing wartime efforts. The second point to make concerns the substance of the military's prestige. I argue that unlike the literature on reputation which generally focuses on the single factor of an individual's or state's level of resolve, there is no single substantive factor that captures the prestige of the military. How the military is perceived to perform during war, to what extent the military is a powerful actor within the governmental bureaucracy, to what extent the public perceives the military behaving and acting ethically, and to what extent the military upholds foundational norms of civil-military relations are all important aspects of the military's prestige. In very general terms, we would expect the military's prestige to be high during or after achieving victory in times of war (post World War Two, post Gulf War), or when the military is perceived by the public to have filled a significant role in responding to a devastating natural disaster (after Hurricane Katrina), and to be low when the military is perceived to have either lost a war (post Vietnam) or to have been plagued by troubling scandals (the Navy and the Marine Corps, specifically, after the 1991 "Tailhook" Scandal). 
+
+With a general understanding of what military prestige is and what it refers to, the next task is to briefly summarize the growth in the military's prestige in the post World War Two era. Two main drivers of the military's prestige after World War Two have been, I argue, the growing institutional influence of the military within the national security apparatus, and the military's growing exclusiveness between itself and American society. Each of these trends have slowly developed. After summarizing these trends, I then discuss how high levels of military prestige can affect the foundational civil-military norms of civilian control, non-partisanship, and military expertise. 
+
+After World War Two, the government instituted several institutional and legislative changes in order to integrate American national security efforts. The first of these legislative reforms was the National Security Act of 1947, which was signed by President Harry Truman and which sought to unify the defense and intelligence establishments. In doing so, this legislation created new institutions, including the National Security Council (NSC), the Central Intelligence Agency (CIA), and the US Air Force [@noauthor_national_1947]. Formally, the National Security Act also merged the Departments of War and Navy into what would be first called the "National Military Establishment," which was essentially a precursor to what became in 1949 the Department of Defense [@locher_has_2001]. For the next several decades, the reforms wrought by the National Security Act helped the defense and intelligence communities prevail in a number of conflicts, including the Cold War, and to ultimately ensure the security of the United States. So influential was the National Security Act that fifty years after its signing, President Bill Clinton stated that as a result of the institutions created by the National Security Act and the people who had served in them, a generation had "helped to secure the peace and prosperity that America enjoys...the success of their efforts and of the historic legislation enacted half a century ago is reflected in an outstanding record of achievement: nuclear war averted, the Cold War won, and the nations of the world turning to democracy and free markets" [@clinton_weekly_1997].
+
+Like most institutional reforms, however, the National Security Act of 1947 could not nor foresee all of the difficulties that the future would bring. A second set of major institutional defense reforms was undertaken in the mid-1980s. Known as the Goldwater-Nichols Act, and named after Senator Barry Goldwater and Congressman William "Bill" Nichols, several incidents made clear that the military lacked the requisite capabilities to plan and operate in tactical environments which required military personnel from across the various services [@kitfield_prodigal_1997].^[This included the the failed Iranian hostage rescue mission in 1980. For an excellent account of this event and the demand for "joint" services afterwards, see @kitfield_prodigal_1997.] Especially as military technologies and equipment grew increasingly complex and sophisticated, the Goldwater-Nichols legislation sought to ensure that national defense interests were identified and prioritized over and above the parochial interests of the individual military services [@locher_has_2001]. Among the most significant of the changes wrought by the Goldwater-Nichols Act was codification of the Chairman of the Joint Chiefs of Staff as the President's principal military adviser, a change which in essence meant that all advice from the respective individual service chiefs of the Army, Navy, Air Force, and Marine Corps would flow through one single point of contact: the Chairman of the Joint Chiefs [@locher_has_2001; @wills_effect_2016]. Additionally, the Goldwater-Nichols Act created several regional combatant commanders who would report directly to the Secretary of Defense, thus bypassing the military service chiefs [@locher_has_2001; @wills_effect_2016]. 
+
+The National Security Act of 1947 and the Goldwater-Nichols Act of 1986 had the collective impact of significantly strengthening the military relative to other civilian institutions. Indeed, one scholar claims that the institutional changes wrought by these pieces of legislation had the practical effect of causing the military and the Pentagon to replace the State Department as the government's "organizational center of gravity for U.S. national security and foreign policy" [@schmidt_silent_2019]. Without question, in the decades since World War Two, the institutional influence of the US military has grown considerably. 
+
+Yet a second driver of the military's growing prestige in the post World War Two years is the growing perception of the military as an exclusive institution that is too separate from American society. While the military is rightly recognized as unique among institutions, there is growing concern that too much of American society can no longer relate to those who wear the uniform. Within the scholarly literature, this topic is often referred to as the _gap_ between society and the military, and numerous debates exist concerning the _gaps's_ causes, size, and potential solutions. At first glance, one might think that a _gap_ between society and the military might diminish, rather than enhance, the military's prestige. Depending on the circumstances, such as the late years of the Vietnam War, this could be true. However, the contemporary concern among most scholars of civil-military relations who study the _gap_ have determined the opposite to be true: the separation of the military from American society has resulted in the military being elevated to positions of prominence that have numerous deleterious impacts. 
+
+Since the nation's founding, Americans have generally been suspicious of large numbers of standing military forces, tracing back to suspicions held by American colonists over the establishment of British military garrisons [@weigley_american_2001]. The early founders even held significant differences of opinion over how large America's military forces should be, and whether these forces should be comprised of volunteers (favored by Thomas Jefferson) or a standing military (favored by Alexander Hamilton). In the end, the founders chose a concept that established a moderately-sized standing Army that could be augmented, as required, by state militias comprised of "citizen soldiers" during times of war [@weigley_american_2001]. Further, America has relied on this "citizen soldier" concept for most of its history. It was predominantly not until the the 20th century when the government faced wartime demands that required instituting mandatory military service, especially during World War Two and later, Vietnam [@rostker_i_2006].  
+
+However, the Vietnam War changed the way Americans and military leaders viewed the Armed Forces, as a result of developments abroad and at home. The war proved to be tremendously unpopular on the domestic front as the length of the war increased, and Americans came to view the existing draft system as inequitable, both from racial and economic perspectives [@rostker_i_2006]. Additionally, the growing population of the United States, combined with severe disciplinary issues that plagued the military at the time, led many Americans as well as military leaders to believe that an all-volunteer force was at least a viable alternative to the draft [@rostker_i_2006]. Finally, in 1973, the United States abandoned the draft and instituted the All-Volunteer Force (AVF), the result of recommendations made by the Gates Commission, which had been established by President Richard Nixon [@rostker_i_2006]. 
+
+It is difficult to find a scholar or pundit who does not laud the tactical proficiency of the AVF. Indeed, there is near-universal acceptance of the tremendous war-fighting skill levels reached by the AVF since its inception. And yet, multiple scholars assert that in the years since Vietnam, when the military draft ended, there have been noteworthy gaps that have developed between the military and American society. 
+
+Nonetheless, there are at least three specific gaps that have been identified by scholars of civil-military relations: a geographical gap, a partisan gap, and a generational gap. Regarding the geographical gap, Golby and Liebert note that a disproportionate number of those serving in the military hail from rural and southern states, and that a large proportion of military recruitment stations, Reserve Officer Training Corps (ROTC) programs, and military installations are located in the southern United States [@liebert_midlife_2017]. The partisan gap is a little more complicated. Although the military officer corps does in fact disproportionately identify with the Republican Party versus the Democratic Party [@golby_duty_2011; @liebert_midlife_2017], studies have also shown that differences between the military and civilians become smaller if not altogether diminished after conditioning on partisan affiliation [@golby_duty_2011]. Finally, studies have shown that a third gap exists between the military and younger Americans, a gap that has grown as fewer Americans have a firsthand connection to someone either serving or who has served in the military [@colford_young_2016].  
+
+To the extent that these gaps should and actually do matter is a matter of some debate. Critics of the AVF allege that when gaps between society and the military become too large, it is too easy to send the military to war, as there are little if any corresponding burdens society must bear [@bacevich_breach_2014; @fallows_tragedy_2014]. These critics also allege that the logical consequence of gross unfamiliarity between American society and its military is fighting of wars of choice, which ultimately result in indecisive outcomes and an altogether feckless foreign policy [@bacevich_breach_2014]. Finally, these critics argue that dynamics have unfortunately borne themselves out in the post-9/11 era as the military has endured repeated deployments to Iraq and Afghanistan [@bacevich_breach_2014]. Pointing out that President George W. Bush lowered taxes and encouraged Americans to travel and take vacations even as the American military was invading Afghanistan and Iraq, Bacevich for instance goes so far as to say that "the state now owns war, with the country consigned to observer status" [@bacevich_breach_2014, 44]. The journalist James Fallows, in an influential article, further describes the consequences of a military-societal gap grown too large. He alleges that Americans in the post-9/11 era have developed a "reverent but disengaged attitude toward the military - we love the Troops, but we'd rather not think about them." [@fallows_tragedy_2014].
+
+For better or for worse, Americans indicate that they greatly respect their military. For instance, according to Gallup public opinion polls, 72 percent of Americans indicated that they trust the military a "great deal" or "quite a lot" - the most of any institution, to include Congress (13%), the Presidency (39%), the police (48%), the Supreme Court (40%), and the church/organized religion (42%) [@noauthor_confidence_2020]. Moreover, trends in trust of various American institutions over time reveal that whereas trust in the military has generally increased over the past 45 years, trust in the other institutions have generally declined or remained the same.
+
+The norms of civilian control of the military, and to a lesser degree, the norm of military expertise, are the most likely to be impacted by the growth in the military's institutional and societal prestige. There are at least two ways in which high military prestige can lead to the threatening of these foundational civil-military norms.
+
+A first possible way in which high military prestige can threaten civilian control of the military is if military leaders willingly assert themselves too brazenly in the civil-military dialogue process. When interacting with civilian leaders on any number of issues, military actors may adopt an attitude such that they believe their military service entitles them to be heard in a certain deferential manner [@beehner_matter_2020]. A similar dynamic occurs if civilian leaders fail to sufficiently assert themselves into the policy process when interacting with military actors who are incredibly popular. Karlin and Friend, for instance, note a dynamic of "military worship" in which military service is somehow viewed as better, more relevant, or more appropriate than other types of civilian service which ultimately harms civilian control of the military and other democratic norms [@friend_military_2018]. As a result, military actors may insist on solving problems in the manner that they want the job done, and not in a way that aligns with the desire of civilian leaders. Or, in the case of "military worship," civilians will not hold the military accountable to the degree that they should be [@friend_military_2018]. 
+
+Even if "military worship," does not occur, the fact that the military commands more resources may make it more difficult for civilians, in some cases, to assert themselves. Over the past several decades, for instance, the budget of the State Department has remained relatively constant when measured in real dollars, whereas the Defense Department's Budget has exploded [@matisek_crisis_2018]. Over the same time period, the military has taken on an expansive set of missions and responsibilities that are far outside the traditional scope of conventional combat operations [@brooks_how_2016]. Thus, even if military leaders do not willingly seek to assert themselves over civilians because they believe that their opinions are somehow "better" than that of civilians, their position of influence makes them, by default, very powerful actors capable of subverting civilian control with relative ease. Additionally, trends in the military accumulating responsibility for tasks that are outside the scope of traditional combat operations might lead to the military advocating for assuming responsibility for additional roles and tasks, which likely bring with it increased budgetary power and institutional influence, developments which could further threaten the norm of military expertise. 
+
+These concerns are amplified, moreover, when civilian leaders are literally not present in the room and at the table when civil-military dialogue occurs. Indeed, during the Trump administration, numerous civilian positions (more than 1/3rd) in the Pentagon went unfilled, prompting concern from Congress and other lawmakers that the first half of the civilian-military dialogue process was notably absent [@seligman_civilian_2020]. While the vacancy of these positions was not a result of high levels of military prestige, a major concern was the insufficient civilian oversight of a very powerful military establishment. 
+
+A second, and equally powerful way in which high levels of military prestige can threaten the norm of civilian control of the military is if military actors hijack the public credibility they possess in order to subvert civilian leaders. There are a number ways in which this can occur, and to varying degrees. Leaking information or making public statements on purpose, in one way or another, brings the American public squarely into the fold of any actual or perceived disagreement between civilian officials and military leaders. Engaging in this type of behavior is likely a very deliberate decision by military leaders, because one of the reasons that the military likely enjoys a high degree of public prestige is precisely because they do not routinely engage in this sort of behavior. However, depending on the circumstances, the military may conclude that the particular situation warrants making a public appeal that relies on the high credibility the military enjoys.
+
+In summary, when militaries possess a high degree of prestige, military actors are increasingly willing to challenge norms of civilian control. Military leaders may believe that their experience entitles them to fill a certain role in the policy process, or to provide advice that deserves to be listened to over other types of advice. Similarly, civilians may fail to push back or challenge military actors when the military enjoys a powerful degree of prestige and influence. Moreover, as the government continues to rely on the military to solve problems at the exclusion of other governmental agencies and institutions, the scope of the military's duties and responsibilities grow. Thus, when military prestige is high, the military may increasingly believe that it has the solution to how to solve a particular problem, and may seek a further expansion of its roles and responsibilities. This could further threaten the norm of military expertise. 
+
+# Role Beliefs and Political Behaviors of the Military
+
+Although most scholars accept the foundational norms of civilian control, non-partisanship, and military expertise, there is widespread debate about where the line should be drawn in practice between appropriate political expression and inappropriate partisan activity by the military [@owens_military_2015; @golby_beyond_2015; @brooks_paradoxes_2020]. Indeed, establishing conceptual boundaries around the political behavior of the military is a difficult task because, as Mackubin Thomas Owens points out, civil-military relations in the United States can be viewed as a "bargain" [@owens_us_2011] between the American people, the military, and the government that has to account for constantly-changing "political, social, technological, or geopolitical changes" [@owens_is_2016]. Therefore, rendering a normative evaluation of political behavior by the military has to account for the specific context in which these behaviors take place.
+
+In this section, I will summarize three frameworks for understanding why, under what circumstances, and how the military might intervene in politics. The first addresses the concept of military "role beliefs" [@fitch_armed_1998], while the second and third address political behaviors of the military. The concepts of "role beliefs" and political behaviors are similar, but not the same. "Role beliefs" refer to the normative conceptions and attitudes that military actors adopt regarding their role in politics [@fitch_armed_1998], while political behaviors comprise the distinct, observable acts committed by the military in the realm of politics. These concepts are linked in that the conception a military actor adopts regarding his or her role in politics affects _how_ a particular military actor behaves politically. 
+
+## Role Beliefs
+
+J. Samuel Fitch introduced the concept of military "role beliefs" in his book, _The Armed Forces and Democracy in Latin America._ Through rich interview data conducted in the 1990s, Fitch traces how military leaders in Argentina and Ecuador adopted one of five distinct "role beliefs," referring to the perceptions and attitudes held by these officers regarding their normative role in politics, and importantly, their roles as military officers with respect to democracy as a political system [@fitch_armed_1998, 61]. These "role beliefs" vary in several dimensions, most notable of which are the degree of subordination and assertiveness militaries should espouse relative to civilian authority, especially in times of crises, and the duties and responsibilities militaries should fulfill within the government. 
+
+The first type of role belief Fitch identifies is "democratic professionalism," and involves both "a subjective commitment to democracy as the preferred political system," and a "belief in a professional ethic that differentiates and separates military and political affairs" [@fitch_armed_1998, 66]. This type of "role belief", I would point out, is closely aligned with the normative standards of _military professionalism_ raised by Huntington. A second type of "role belief" Fitch identifies is "classical professionalism," which differs from "democratic professionalism" in that while it "argues for the subordination of the military...to the constitutionally designated civilian authorities", it does not espouse a "normative commitment to a democratic regime" [@fitch_armed_1998, 66-67]. Where a clear departure from American Huntingtonian norms emerges is beginning with a third type of "role belief" that Fitch identifies. When militaries conceive of themselves as a "power factor," they adopt a belief that their defense role within society entitles them to actively participate in "the national project" [@fitch_armed_1998, 67]. Though the boundaries of participation are ambiguous, this third belief suggests that military officers should and do seek to fulfill their "rightful place" within the regime [@fitch_armed_1998, 68]. 
+
+Continuing a trend of increasing assertiveness of the military institution, Fitch identifies that a fourth type of "role belief" is one of "conditional separation" in which the military stays out of politics "in normal circumstances" but not necessarily if and when crises exist [@fitch_armed_1998, 68]. This type of role belief warrants the military to "safeguard the highest interests of the nation" during times of crisis, "even if that entails overthrowing the incumbent government and assuming power temporarily" [@fitch_armed_1998, 68]. A final possible role belief militaries can adopt is a "tutelary" model in which the civilian government grants the military both a "high degree of autonomy" and the ability to become a regular and "institutional voice in policy matters" [@fitch_armed_1998, 68-69]. Military actors who espouse this role belief deem the military the final "guardian of national security," and thus, that the military has "the right" to participate in a wide variety of policy debates that impact the state [@fitch_armed_1998, 69]. Fitch argues that in the Latin American context, the particular role beliefs militaries adopt are a function of three primary factors: the lessons militaries draw from previous domestic intervention in politics, a wide-ranging assessment of current domestic indicators (the economy, the effectiveness of institutions, etc.), and the prevailing international context [@fitch_armed_1998].  
+
+## Political Behaviors of the Military
+
+Two other frameworks are helpful in rounding out a discussion regarding how the attitudes and beliefs that militaries adopt regarding their role in politics impact the specific political behaviors that militaries engage in. The first of these frameworks, that espoused by the British political scientist S.E. Finer in 1962, argues that military intervention in politics is ultimately a function of militaries possessing both the "opportunity" and "motive" to do so [@finer_man_1962]. Regarding possible motives that could spur political behavior by the military, Finer argues that soldiers might adopt a specific form of "manifest destiny," or a worldview in which the military acts as "saviors" of the country [@finer_man_1962, 29]. Finer adds that such a motive can arise as a result of the confluence of the military's unique mission, sense of power, and claim of being "outside party politics" [@finer_man_1962, 29]. 
+
+A second motive that could cause the military to intervene in politics is what Finer calls the military's "unique identification with the national interest" [@finer_man_1962, 30]. When this motive is present, Finer argues that militaries see themselves as the "custodians" of the "national interest" [@finer_man_1962, 30]. Finer adds that militaries assuming the role of custodian can take different forms, including a "duty to arbitrate or veto...to exercise it when some convulsion or decision of the civil authorities seems to them [the military] to threaten what they think are the permanent interests of the nation" [@finer_man_1962, 31]. Finally, Finer argues that militaries intervene in politics because of their own bureaucratic interests. These can include, Finer says, any of a wide-ranging set of "sectional interests," including those based on social class, regional affiliation, personal career motivations, or organizational interests [@finer_man_1962, 34-53]. 
+
+Like Fitch, Finer introduces a typology of political interventionism by the military in which he describes four possible levels ranging from the least harmful (and therefore, appropriate) to the most damaging (and therefore, inappropriate). Militaries intervene politically at the lowest level when they "influence," which involves  making appeals "to reason or emotion" in an attempt to persuade the civilian government to adopt a certain course of action [@finer_man_1962, 77]. Finer adds that political intervention by the military at this level is not problematic and entirely "consistent with the supremacy of the civil power" [@finer_man_1962, 77]. Militaries can also intervene politically by "pressuring" or "blackmailing" civilian leaders in an effort to "convince the civil power by threat of some sanction" [@finer_man_1962, 77]. Finer adds that militaries intervening in this way are not normatively wrong in every circumstance, but certain forms of behavior, such as threatening to stage a coup, are clearly wrong from a normative perspective [@finer_man_1962, 77]. A third level of intervention is that of "displacement," and refers to the "removal" of government officials by the military as a result of "violence or the threat of violence" [@finer_man_1962, 77]. The fourth level, that of "supplantment," occurs when the military "sweeps away the civilian regime and establishes the military in its place" [@finer_man_1962, 78]. 
+
+In describing the ways in which militaries can intervene politically, Finer is providing one of the early critiques of Huntington. Finer specifically takes issue with Huntington's concept of _military professionalism_, or the idea that the military's professional nature ensures that military actors will act in a way that does not threaten norms of civil-military relations. Finer actually points out that while the concept of military professionalism should focus the military on itself by developing the skills and expertise it need to fight and win wars, and thus, away from politics, the danger of the concept of military professionalism is that it can also be abused, particularly by military leaders who adopt the view that they serve the larger concept of "the state" rather than a particular civilian government [@finer_man_1962, 22-23]. Pointing to numerous military leaders who intervened inappropriately in politics, including von Seeckt and Gröner under the German Weimar Republic and MacArthur under President Truman in the United States, Finer argues that the reason these leaders intervened was precisely because of how they conceptualized their duties and responsibilities as professional officers [@finer_man_1962]. Finer's point is that the principle of civilian control, and not military professionalism, ought to serve as the only bulwark to keep the military out of politics. 
+
+A third typology of political behavior by the military focuses on the US context in particular, which helps because some of the broad political behaviors that Finer discusses, such as coups, have not yet (thankfully) occurred in an advanced democracy such as the United States. In an edited volume, Risa Brooks outlines and discusses five specific political behaviors that the American military engages in. These five behaviors are shown in Table 1, above. 
+
+\singlespace
+
+```{r table1, echo=FALSE, include=TRUE, error=FALSE, message=FALSE}
+
+text_tbl1 <- tribble(~"Tactic", ~"Nature of Activity", ~"Audience", ~"Examples",
+  "Public Appeal", "Public, value-laden commentary", "Mass public",  "Colin Powell's 1992 statements on intervention in Bosnia", "Grandstanding", "Threat or actual resignation in protest of policy", "Mass public, Congress, executive branch", "Hypothetical; if Eric Shinseki had resigned in 2003",
+  "Politicking",  "Retired officer endorsements; organizing vote drives", "Mass public", "Crowe's endorsement of Clinton in 1992; Frank's endorsement of Bush in 2004", 
+  "Alliance Building",  "Military leaders form ties with civilian interest groups", "Congress", "Air Force and Lockheed Martin over procurement of F-22 raptor",
+  "Shoulder Tapping", "Military leaders setting an agenda by bringing issues to attention of politicians and engaging in lobbying-like activities on behalf of those issues", "Congress", "Military Mobilization of key members of Congress over gays in the military in early 1990s")
+ 
+
+text_tbl1 %>% kable(booktabs=T, caption="Political Activities of the Military") %>%
+  kable_styling(full_width = F, font_size=8, latex_options="striped" ) %>% 
+  column_spec(1, width="10em") %>% 
+  column_spec(2, width="15em") %>% 
+  column_spec(3, width="10em") %>% 
+  column_spec(4, width="15em") %>% 
+  add_footnote(label = "The above table is reproduced from Brooks, Risa (2009), 'Political Activities of the Military' in\n American Civil-Military Relations: The Soldier and the State in a New Era, Eds. Suzanne Nielsen and Don Snider.")
+
+```
+
+\doublespace
+
+Brooks' typology is useful for several reasons. First, her typology illustrates that there are myriad ways in which the norms of civil-military relations can be threatened by different types of political behavior. It is not merely the cataclysmic collisions that occur between the President and wartime Commander that threaten civil-military relations. To be sure, the instances of Lincoln clashing with McClellan, Truman with MacArthur, and Obama with McChrystal are important, but we should consider the other means that are available to the military for creating or raising the costs political leaders face when thinking about civil-military relations. Second, unlike the typologies set forth by Fitch and Finer, Brooks does not rank order certain political behaviors as more harmful than others. She instead suggests that each type of behavior has the potential to threaten norms of healthy civil-military relations depending on the prevailing domestic political context [@brooks_militaries_2009, 215]. This is helpful because it should cause military actors to think through the differing ramifications their political behaviors may have depending on the context in which these behaviors occur. Finally, Brooks' typology draws attention to the fact that it is the public nature of various forms of political behavior that causes certain types of costs for political actors. Along these lines, Brooks points out that during times in which the military is highly respected, the military possesses a considerable "latent political influence" in that it can _choose_ when to engage in political behaviors [@brooks_militaries_2009, 231].  
+
+Brooks also recognizes that despite the pitfalls of the military engaging in certain forms of political behavior, there are potentially positive repercussions that can occur as a result of the military acting politically. For instance, Brooks notes that when militaries engage in public forms of commentary, the revelation of information and opinions by military leaders can help citizens better understand and process information that is often complex and disconnected from everyday life [@brooks_militaries_2009, 225-231; see also @schultz_democratic_1999]. Further, when militaries alert Congress to potentially destructive decisions an executive may be considering, the military may be helping the nation avoid negative consequences [@brooks_militaries_2009, 225-231]. Brooks ultimately concludes that military actors must weigh the potential benefits of behaving politically against the costs and risks of doing so. Her personal conclusion, and one I share, is that from the perspective of maintaining healthy civil-military relations in the long run, military officers should error on the side of accepting short-term risks (for example, a citizenry remaining less informed) by not engaging in forms of political behavior that diminish civil-military norms [@brooks_militaries_2009, 236-238]. 
+
+
+# When Polarization and Prestige Collide
+
+Given the impacts of political polarization and the prestige of the military on the beliefs and attitudes of military actors, it is possible to now assess the overall level of risk that military actors pose to the foundational norms of civil-military relations in environments where political polarization and military prestige vary. Borrowing the language Finer uses, I argue that high polarization levels serve as the "motive" for military officers to intervene in politics, and thus, to engage in political behavior, while high levels of military prestige provide the "opportunity" to do so [@finer_man_1962]. These levels of risk, and a brief description of these environments, are displayed in Table 2, above. 
+
+\singlespace
+
+```{r table2, echo=FALSE, include=TRUE, error=FALSE, message=FALSE}
+
+text_tbl2 <- tribble(~"Environment", ~"Low Polarization", ~"High Polarization",
+  "Low Prestige", "Low Overall Risk. Military actors are united ideologically. Military actors are unable to harness/mobilize public opinion. The military acts as a unified institution and adopts a belief that its members are servants of the Republic. The norm at greatest risk is civilian control.", 
+  "Moderate Overall Risk. Military actors may be divided ideologically, but are unable to harness public opinion or bureaucratic power in pursuit of ideological causes. The military acts mostly as a unified institution and adopts a belief that its members are servants of the Republic. The norms at greatest risk are civilian control and non-partisanship.",  
+  "High Prestige", "Moderate Overall Risk. Military actors are united ideologically. The military can harness their influence in government and public opinion, but are likely to do so only when their prestige is threatened. The military acts as a unified institution and adopts a belief that while they are servants of the Republic, they also can and should advocate for specific positions related to military prestige. The norm at greatest risk is civilian control.", 
+  "High Overall Risk. Military actors are divided ideologically and can harness both public opinion and bureaucratic power. Some military actors believe that the pursuit of ideological causes outweighs adherence to foundational civil-military norms. The military is less likely to act as a unified institution, but certain individual military actors emerge as saviors or guardians of the national interest. All foundational civil-military norms are at risk." 
+  )
+ 
+
+  kable(text_tbl2, booktabs=T, caption="Overall Risk Level to Norms of Civil-Military Relations and Role Beliefs of Military Actors As Political Polarization and Military Prestige Vary") %>%
+  kable_styling(full_width = F, font_size=8, latex_options="striped") %>% 
+  column_spec(1, width="10em") %>% 
+  column_spec(2:3, width="20em") 
+```
+\doublespace
+The overall risk level posed by military actors to foundational norms of civil-military relations is low when polarization and prestige are both at relatively low levels. Under these conditions, military actors possess neither a motive nor opportunity to intervene in politics [@finer_man_1962]. When polarization is low, there is little if any ideological substance for military actors to engage in political behaviors that threaten norms of civil-military relations. Moreover, because the level of military prestige is also low under these conditions, the military has little institutional influence to leverage, and it lacks the ability to harness widespread public opinion. Therefore, the military is able to act as a unified institution. This is not to suggest that there is in fact no risk at all to civil-military norms under these conditions. Rather, conflict between civilians and military actors is likely to occur in a manner that is less visible to the public, and over substance areas that are directly related to the military's traditional duties and responsibilities, such as maintaining military readiness, and fighting and winning during combat. The norm of civil-military relations at greatest risk under these conditions is civilian control of the military. 
+
+Moving to the top right of the table, when polarization is high but military is prestige is low, the overall risk level stemming from military actors to foundational civil-military norms is moderate. Stemming from conditions of high polarization, military actors may in fact possess a "motive" to intervene in politics, but lack the "opportunity" to do so as a result of low institutional prestige [@finer_man_1962]. Under these conditions, military actors may be divided ideologically. Some military actors may desire to advance ideological causes while others believe it is more important that the military remain apolitical and non-partisan at all costs. As a result of low levels in military's prestige, however, military actors who wish to advance the causes with which they strongly identify are unable to harness public opinion or institutional influence in support of these causes. For these reasons, the military will be mostly capable of acting as a unified institution. The norms at greatest risk under these conditions are civilian control and non-partisanship of the military.  
+
+The bottom left of the table depicts a world in which domestic polarization levels are low, but military prestige is high. Under these conditions, the military possesses an opportunity to intervene in politics, but lacks the motive to do so outside of protecting its high degree of prestige. Thus, the overall risk level to civil-military norms is moderate [@finer_man_1962]. When these conditions exist, there are few partisan or ideological issues that serve to divide military actors, and thus, military actors are relatively unified. Because military actors enjoy a high level of prestige, they are willing to challenge norms of civilian control and are more assertive in their overall behavior. However, the substance of these challenges to civilian control are less likely to involve ideological concerns than they are debates about traditional military topics or matters, such as military readiness and the use of force abroad. The civil-military norm at greatest risk in this environment is civilian control of the military. 
+
+The bottom right of the table reflects the conditions of high polarization and high military prestige. Under these conditions, the overall risk to norms of civil-military relations posed by military actors is high. Military actors have both a motive and an opportunity to intervene in politics [@finer_man_1962]. Under these conditions, the military institution faces a collective action problem and therefore, cannot act as a unified institution. Some military actors may deem it more important to support ideological causes than it is to uphold the foundational norms of civil-military relations. Due to the high level of polarization that exists in society, other military actors who wish to uphold norms of civilian control and non-partisanship at all costs will find it increasingly difficult to do so. Furthermore, because the military's prestige is also high under this set of conditions, some military actors are likely to behave in a way that harnesses the military's high level of influence in order to support or advance the causes which they support. In some cases, the actors who desire to advance the ideological causes with which they identify may seek an expanded role for the military, or themselves fill a role that is traditionally the purview of civilian leaders. Some actors believe that the military's role, above all else, is to remain subservient to civilian control and outside the realm of partisan politics. Other military actors, however, believe that their normative role as members of a prestigious institution compels them to support specific causes, even if the causes with which these actors identify are heavily conditioned by their partisan affiliation.  
+
+## How Prestige and Polarization Impact Political Behaviors by Military Actors
+
+Having now identified an overall level of risk to the norms of civilian control of the military, non-partisanship of the military institution, and military expertise under varying conditions of domestic political polarization and military prestige, it is now possible to develop a set of predictions and observable indicators about specific political behaviors that military actors may commit when these conditions prevail. Based on the theory laid out in this prospectus thus far, the goal is to make predictions that are as granular as possible without extending past what the theoretical groundwork allows. I build off of the specific political activities highlighted by Brooks but now project how the combined influence of polarization and prestige impact several of these activities [@brooks_militaries_2009]. 
+
+The first type of political behavior, or "tactic," that military actors can commit is a "public appeal" [@brooks_militaries_2009]. In this category, I include writing op-eds, giving interviews, and even leaking information. In environments where polarization and prestige are both low, we would expect military actors to make few public appeals. If military actors do make public appeals under these conditions, the topical substance of these appeals will likely center less on ideological issues, but rather directly on topics that are related to traditional matters of military expertise, such as military deployments, readiness, weapons systems, etc. Under conditions of low prestige and high polarization, military actors would still likely conduct a limited number of public appeals, but the few they do make might occasionally address a topic outside of the traditional realm of military expertise, or overtly criticize a civilian leader for ideological differences. The overall number and frequency of public appeals under conditions of low military prestige, however, is likely to be low relative to conditions of high military prestige. 
+
+Under conditions of high prestige and low polarization, the military will appeal to the public more often than they would under conditions of low military prestige. However, in terms of content, we expect that unified military actors will limit the topical content of their public appeals to issues or concerns that are directly related to traditional matters of military expertise. Under conditions of high polarization and high military prestige, however, military actors (who are no longer unified ideologically) might frequently make public appeals. The content of these public appeals, will include a higher frequency and overall level of appeals that stray outside of topics that are directly related to traditional matters of military expertise. Some of the public appeals made by military actors will adopt an increasingly partisan tone, and some will criticize civilian leaders in topical areas that stray further from the topical expertise of military actors. 
+
+The second type of political behavior is "grandstanding" [@brooks_militaries_2009], which refers to the resignation (or threat of resignation) of a military actor. In political environments of both low polarization and military prestige, there would exist little if any ideological basis for military actors to resign, and so, any instances of resignation would likely be for disagreeing with civilians on distinctly military issues or topics. But owing to low levels of military prestige, there would be relatively little public impact if a military actor were to resign. Thus, we would expect few instances of resignation, and the few instances that may occur to be based not on partisan ideological differences, but on concerns regarding traditional military topics. When polarization is high but military prestige is still low, there is still little if any public impact to be gained by a military actor for resigning. However, the likelihood increases that the basis for a military actor's resignation includes ideological differences with civilian leaders.  
+
+Under conditions of high prestige and low polarization, military actors now possess the ability to leverage public opinion to impose political costs on civilian leaders through resignation. Thus, there is a reasonable expectation to see more resignation or threats of resignation under these conditions. However, there is little if any reason to expect an ideological basis for the resignation of a military actor. Rather, instances of resignation are likely to involve disagreement over traditional military topics. These expectations change in environments marked by both high polarization and high military prestige. Under these conditions, there is an expectation that an increased number of officers may threaten to or actually resign relative to conditions of low military prestige, and also an expectation that the basis for the resignation of these military actors will include ideological issues that are beyond the traditional realm of military expertise. 
+
+The third type of political behavior Brooks identifies is "politicking," which refers to the act of retired military officers making official endorsements of partisan political candidates [@brooks_militaries_2009]. I include in this category behaviors such as military officers speaking at political conventions, or campaigning on behalf of a political candidate. Under conditions of low military prestige and low polarization, the expectation is that few officers participate in this type of behavior. There exists little if any demand from civilian political candidates for the endorsement of active or retired military officers because military actors do not possess a high level of prestige. There is also under these conditions little if any ideological motivation to propel an officer to support a partisan candidate for office over another candidate. Under conditions of high polarization and low military prestige, some officers might actually want to put their support behind a candidate with whom they share similar ideological or partisan convictions, but a candidate for office still has little incentive to gain from the public in obtaining a military actor's endorsement. Under both of these conditions, the expectation is that there are few instances of military actor endorsement of political candidates. 
+
+Under conditions of low polarization and high military prestige, expectations are different. Because of the high prestige of the military institution, political candidates will seek the endorsement of military actors. Although some (perhaps even most) military actors will avoid making an endorsement of a political candidate so as to not jeopardize the norm of non-partisanship of the military institution, other actors will agree to endorse. However, because the level of political polarization is low, visible endorsements may be lopsided. There is a greater likelihood under conditions of low polarization relative to high polarization that military actors (who are relatively ideologically united) will coalesce around a candidate whom they view as supportive of the military, i.e. a candidate who will increase military spending, take care of the troops, etc. Endorsements made by military actors will focus on what a particular candidate will do for the military. In environments marked by high military prestige and high political polarization, several differences are likely to emerge. I expect the endorsement of political candidates by military actors not to be lopsided, but more evenly spread. Moreover, under these conditions, military actors are more likely to base their endorsements not on narrow conceptions of what a political candidate will do for the military, but rather on shared ideological convictions between the military actor and the political candidate. Under these conditions, the question of which candidate is better for the military thus takes on an entirely different meaning than it does under conditions of high military prestige and low polarization. Endorsements by military actors under these conditions are likely to involve content that focuses less on why the candidate whom a military actor is endorsing is better for the military institution, and more on why the candidate is better for America. In making endorsements under these conditions, military actors will thus likely discuss topics that fall outside of the actor's traditional military expertise, and are likely to attack or criticize the other political candidate on partisan ideological grounds. 
+
+In her typology, Brooks identifies two additional types of political behaviors, each of which has to deal with how the military engages Congress.  The first is that of "alliance building," in which "military leaders form ties with interest groups" in an effort to lobby Congress, and the second is "shoulder tapping," which refers to "military leaders setting an agenda by bringing issues to the attention of politicians and engaging in lobbying-like activities on behalf of those issues" [@brooks_militaries_2009, 219]. I combine these behaviors under a more general description of the military engaging Congress as a third party. When political polarization and military prestige are low, the military is likely to engage in this sort of behavior to obtain funding or weapons systems that will enable the military to win on the battlefield in order to improve its overall level of prestige. Because military prestige is low, there is less reason to expect that members of Congress will listen to the military than if the level of military prestige is high. When political polarization is high and prestige is low, some military actors may engage in lobbying efforts to advance causes other than the military's ability to fight and win on the battlefield, but these efforts will likely be limited and occur out of the public eye.
+
+When military prestige is high but political polarization is low, military actors are likely to lobby Congress for matters that the military insists are directly related to their combat mission, such as readiness. Moreover, such lobbying efforts are likely to be successful because members of Congress do not want to be viewed by their constituents as failing to support the military. Additionally, military actors will likely focus their lobbying efforts on pro-military, influential members of Congress who can subsequently put pressure on other members of Congress to support the items for which the military is lobbying. When polarization and military prestige are high, some military actors may engage in efforts to advance ideological causes not directly related to the military's combat mission. These efforts may result in visible connections between members of the military and members of Congress that that fall outside of the political center.  
+
+These political behaviors, key indicators, and observable descriptions are displayed in Table 3, below, along with corresponding historical periods of the United States in which general conditions of polarization and military prestige prevailed. 
+
+```{r table3, echo=FALSE, include=TRUE, error=FALSE, message=FALSE}
+
+text_tbl3 <- tribble(~" Political Behavior", ~"Key Indicators", ~"Low Polarization, Low Prestige", ~"High Polarization, Low Prestige", ~"Low Polarization, High Prestige", ~"High Polarization, High Prestige",
+  "Public Appeals and Leaks", "What topics do the public appeals address? Do they address matters of military expertise? Do they criticize civilian leaders or take partisan sides? What is the frequency/number of public appeals made?", "Topics directly relate to military expertise. Criticism of civilians or taking partisan sides is rare. The level and frequency of public appeals is low. Leaks are uncommon.", "Topics mostly address matters of military expertise. Public criticism of civilians or taking partisan sides is uncommon. The level and frequency of public appeals is low. Leaks are possible but infrequent.", "Topics directly relate to matters of military expertise. Criticism of civilians is possible, but related to military affairs. Taking ideological partisan sides unlikely. Level and frequency of public appeals is high. Leaks possible.", "Topics include matters of military expertise and ideological concerns that are tangential to military affairs. Criticism of civilians and taking partisan sides more frequent. Level and frequency of public appeals is high. Leaks likely.",
+  "Resignation", "What is the reason or basis of resignation (threat of resignation)? How often do they occur, and at what level of military leadership?", "Reasons for resignation are directly related to traditional military expertise. Resignations are rare and occur at the pinnacle of military leadership.", "Some resignations or threats to resign may occur for ideological differences tangentially related to military expertise. Resignations are rare, but may occur at subordinate levels of military leadership.", "Reasons for resignation are directly related to matters of military expertise. Resignations or threats to resign are possible and impose real costs to civilian leaders, and occur at the pinnacle of military leadership.","Reasons for resignation may include ideological differences between military and civilian leaders or matters directly related to military expertise. Resignation or threats of resignation may occur at subordinate levels of military command.",
+  "Political Candidate Endorsement", "Do endorsements occur at all? Are endorsements one-sided, or evenly distributed? Is the basis of the military actor's endorsement that the candidate is 'pro-military,' or is the basis ideological?", "Few endorsements made, as little demand among civilian actors exists for military actor endorsement.", "Few endorsements made, as little demand among civilians exists for military actor endorsement.", "Endorsements exist, but are lopsided. Military actors endorse the candidate whom they think is better for the military.", "Endorsements exist, and are evenly spread. Military actors endorse the candidate whom they align with ideologically and whom they believe will be better for America.",
+  "Militaries Use Congress as a 3rd Party", "For what purpose does the military lobby Congress (related directly to military expertise)? Do members of Congress face pressure from constituents to support the military? Is the lobbying effort of the military effective?", "Lobbying efforts by the military are directly related to traditional military expertise. Members of Congress are not significantly pressured to support. Efforts are somewhat effective.", "Lobby efforts are mostly related to traditional military expertise, with some deviation. Members of Congress are not significantly pressured to support. Efforts are somewhat effective.", "Lobby efforts are directly related to traditional military expertise. Members of Congress feel pressure to support the military. Efforts are very effective.", "Lobby efforts are mostly related to traditional military expertise, with some deviation. Efforts are very effective, and members of Congress feel pressure to support the military.",
+  "Historical Eras", "","Post Vietnam; Pre World War Two", "Gilded Age (1875) Through Pre-World War One", "Post World War Two; Post Gulf War", "Reconstruction after the Civil War; 2010-Present Day"
+  )
+
+
+  kable(text_tbl3, booktabs=T, caption="Expectation of Political Behaviors by Military Actors as Political Polarization and Military Prestige Vary") %>%
+  kable_styling(full_width = F, font_size=8, latex_options="striped") %>% 
+  column_spec(1, width="6em") %>% 
+  column_spec(2:4, width="13em") %>% 
+  column_spec(5, width="15em") %>%
+  column_spec(6, width="17em") %>%
+    landscape()
+  
+```
+
+At a minimum, eleven hypotheses can be uncovered from the predictions posited in Table 3. These are: 
+
+_H1: When political polarization is high, the military (or certain military figures) will increasingly criticize civilian leadership (indicating a drop in the principle of civilian control)._
+
+_H2: When political polarization is low, the military (or certain military figures) will publicly weigh in on traditional national security debates (and not on domestic political concerns or issues outside of relevant military expertise)._
+
+_H3: During periods of high prestige and credibility, the frequency of military involvement in quasi-political activities (such as writing op-eds) will increase relative to periods of low prestige and credibility._
+
+_H4: When both political polarization and high prestige are present, the military will be increasingly vocal and at higher frequency about certain domestic ideological or partisan causes than when these factors are not present._
+
+_H5: During periods of active ground combat, military elites will likely comment on the war, but with less frequency on other domestic issues._
+
+_H6: Resignations (or threats of) by military actors increase as the prestige of the military rises_. 
+
+_H7: The basis of resignation (or threat of) becomes increasingly ideological as polarization increases_.  
+_H8: Endorsements by military actors become more evenly distributed as polarization increases_. 
+
+_H9: The number and level of endorsements made by military actors increases as military prestige increases_.  
+
+_H10: The effectiveness of military lobbying efforts with Congress increases as military prestige rises._
+
+_H11: The ideological purpose of military lobbying efforts with Congress will widen as polarization increases. When polarization is low, the purpose of military lobbying efforts will center on matters of traditional military expertise._
+
+Before laying out the plan of the dissertation, a few scope conditions are required to help focus the dissertation. The first involves which military actors this dissertation plans to focus on. I will focus my attention in the dissertation on _military elites_, whom I take to mean those active _and_ retired career military officers who serve in influential and visible command and staff positions. The term _military elite_ has a strong scholarly basis, though previous scholars have defined it differently and in rather loose terms. Huntington and Janowitz saw military elites as the entire officer active duty officer corps, a group that for the purposes of this study, is both too broad and yet also not broad enough [@huntington_soldier_1957; @janowitz_professional_1960]. 
+
+The entire active duty officer corps includes junior officers who are, I argue, still in the process of adopting and learning professional norms, and importantly, what adherence to these norms looks like in practice. The political behavior of junior lieutenants and captains, while potentially interesting and certainly worth scholarly exploration, is not likely to impose costs on political leaders that are high and which result in political leaders adjusting course. However, active duty officers in the rank of roughly Lieutenant Colonel and higher, who have served close to a full-length career of twenty years or more, have learned and know the normative standards of civilian control, non-partisanship, and military expertise such that deviation from these standards can and should be considered as qualitatively different from junior officers who do the same. 
+
+In the same vein, I argue that _military elites_ must include retired military officers, and particularly those who have achieved the rank of general or admiral. Commonly referred to as flag officers (referring to the literal flag accompanying these officers while on active duty, which bears the number of stars of their rank), these officers play a substantial role in representing the military institution to America. Today, they increasingly dialogue with the media, and as other scholars have noted, many if not most Americans cannot distinguish the behavior of retired military officers from those on active duty, which has generated concern that the American public perceives retired military officers as speaking on behalf of the military [@golby_military_2012; @golby_jim_americas_2020]. Therefore, in line with dozens of works of previous scholarship, the term _military elite_ refers to both active _and_ retired career military officers, and especially to those who have achieved the rank of general or admiral. 
+
+The second and final scope condition involves the time horizon of the study. Here, I think there are two potential options, both of which have relative strengths and weaknesses. The primary option is to focus entirely on the post-World War Two period. Limiting the study to this time still allows the researcher to observe variation in both of the key independent variables. In addition, the military institution has more or less existed during this time period as a profession. While the threat environment has changed drastically since World War Two, the United States has more or less remained the world's prominent power in this time period. 
+ 
+\pagebreak
+\newpage
+
+
+
+

@@ -1,0 +1,222 @@
+---
+title: "Servants, Syndicates, and Saviors: How Polarization and Prestige Impact the Political Behavior of the Military (Prospectus)"
+author: "Peter M. Erickson"
+date: |
+  `r format(Sys.time(), '%B %d, %Y')`
+abstract: |
+  
+  _This dissertation explores variation in the political behavior of the US military. I advance a theory in which the political behavior of the US military is impacted by two distinct factors: the level of domestic political polarization within a society, and the degree of prestige the military institution commands. I argue that these two factors greatly shape the constraining influence of three central norms of civil-military relations: civilian control of the military, the non-partisanship of the military institution, and the degree to which the military fills an active role in domestic politics. As the constraining influence of these norms varies, distinct political behaviors conducted by or involving the military also change. To support my theoretical argument, I conduct a mixed-methods empirical strategy focusing on military behavior within the United States across time. This dissertation advances the scholarly understanding of US civil-military relations, and provides a unique perspective about how domestic structure influences the ability of the military to act professionally._  
+  
+geometry: margin = 1.15in              # margin widths
+fontsize: 12pt                         # text size
+bibliography: dissertation.bib         # bibliography file
+biblio-style: authoryear               # citation style
+urlcolor: blue                         # links to external URLs
+citecolor: black                       # links to bibliography
+linkcolor: magenta                     # internal figures, footnotes, etc.
+indent: true                          # paragraph format
+                                       # true for indented paragraphs
+                                       
+header-includes:
+    - \usepackage{setspace}
+    - \usepackage{multirow}
+    - \usepackage{indentfirst}
+   
+    
+output: 
+  bookdown::pdf_document2:
+    keep_tex: true
+    latex_engine: pdflatex
+    number_sections: false
+    toc: false
+    fig_caption: true
+    citation_package: biblatex
+    includes: 
+      in_header: 
+        - latex-preamble.tex
+  bookdown::htmldocument2: default
+  bookdown::word_document2:
+      toc: false
+---
+
+\doublespacing 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo=FALSE,
+  include=FALSE,
+  message=FALSE,
+  error=FALSE,
+  fig.height=3,
+  fig.width=4,
+  out.width="90%")
+```
+
+```{r, include = FALSE, echo = FALSE}
+library("here")       # file paths
+library("tidyverse")  # workhorse package
+library("tidylog")
+library("kableExtra")
+library("knitr")
+library("ggdag")
+library("dagitty")
+library("gridExtra")
+library("broom")
+library("dplyr")
+library("reshape2")
+library("pacman")
+library("ggrepel")
+```
+
+\newpage
+
+# Introduction and Research Question
+
+Scholars, civilians, diplomats, and military leaders regularly discuss why and how militaries intervene in politics. These discussions often invoke the theoretical question of whether military actors _should_ intervene in politics, and for what purpose. Especially in the United States context, but certainly not exclusively, the political activity of the military is a subject that has undergone intense scrutiny in recent years. 
+
+In the United States, increasing political polarization has thrust the contemporary military institution into the political spotlight on numerous occasions. From a now-retired Army Lieutenant Colonel testifying against President Donald Trump during impeachment proceedings before Congress, to a Navy Captain's removal for leaking a letter to the press in which he castigated the chain of command's response to the onset of the COVID-19 pandemic, to a remarkable panoply of retired military officers blasting President Donald Trump for threatening to use active duty forces to dispel protesters in cities across America during the summer of 2020, instances in recent years abound which illustrate the domestic challenges militaries face during polarized political periods. While numerous scholarly works describe important facets of the political behavior of the military, few if any have systematically set out to explore the impact of structural domestic factors on distinct forms of political behaviors either conducted by or involving the military. This dissertation seeks to fill this important gap.
+
+The central argument made in this dissertation is that the domestic political behavior of the US military is a function of two main factors: the level of polarization in a society, and the overall level of prestige of the military institution. Building upon a general "motives" and "opportunity" framework to describe military intervention in politics first advanced by Finer (1962) and later by Taylor (2003), I argue that in the American context, the relative levels of polarization and prestige, across time, are the variables that have provided the same functions for political involvement by the US military [@finer_man_1962; @taylor_politics_2003]. Moreover, the presence or absence of these two factors strongly influence _how_ militaries and military actors intervene in the political space. Further, this dissertation sheds light on what is, I argue, an under-appreciated task: the changing difficulty that military leaders face in harnessing, managing, and orchestrating the domestic behavior of the military as an institution. Far from being the hierarchical and monolithic actor most people think that it is, even the US military, at times, can be divided regarding its normative role in politics.
+
+Examining the patterns of political behavior by the military is an important undertaking. In a normative sense, it is important because despite the normative tradition of militaries staying above or outside of partisan politics, the reality is that professional military actors can and often do create political costs that civilian leaders have to contend with. These costs include constraining the choices of civilian leaders, leveraging public opinion against elected officials, and otherwise stultifying the ability of elected officials to implement their intended foreign _and_ domestic policy choices. On the other hand, there are also potential benefits to some instances of political behavior by military actors. As Risa Brooks has argued, military actors possess tremendous informational and expertise advantages compared to the public, and thus, hearing from military actors can increase the public's awareness of an issue, improve public debate over the nation's defense policies, and spur civilian leaders to think through alternate courses of action [@brooks_militaries_2009, 233-236]. 
+Exploring military behavior in politics is also an important empirical undertaking. If there are patterns of military behavior that can be detected over time, and if it is possible to better understand the variables that drive these patterns, scholars, civilian leaders, and military officers will have a better appreciation for the difficulties that particular domestic structures have on the ability to maintain norms of civil-military relations. More importantly, having an increased awareness for these challenges might also cause actors - whether they be from the military, within government, or from elsewhere within American public - to reconsider following through on a particular course of action in the short term that might harm civil-military and democratic norms in the long run. While this particular hope may be wishful thinking, deriving and testing a theory that explains military intervention in politics in the United States nonetheless helps us explore a pivotal issue, and one that is likely to remain relevant well into the future.
+
+This introductory chapter of the dissertation proceeds in three main parts. First, this introduction introduces the general field of civil-military relations. In doing so, emphasis is placed on identifying and expositing what I assert are three central norms of American civil-military relations: the principle of civilian control of the military, non-partisanship of the military institution, and what I call the _non-interference_ of the military in the space and roles of partisan political actors. Second, this introduction describes where the intended dissertation topic fits within the scholarly literature as well as the gap it intends to fill. The third and final part of this introductory chapter describes the methodology and the plan of the dissertation.   
+
+# The Field of Civil-Military Relations
+
+Truly one of the interdisciplinary topics of scholarly research, civil-military relations spans the fields of political science, history, and sociology. Questions involving the set of relationships that exist and should exist between militaries and governments, the relationships between militaries and societies, strategic and military effectiveness, the occurrence of coups, and a host of other pivotal topics comprise the study of civil-military relations. Within the field of political science in particular, numerous scholars of civil-military relations frequently study the relationship between prominent state officials and military leaders. Indeed, this "leadership at the state's apex" is responsible for making and implementing numerous weighty decisions that impact national security, including whether to go to war, how to form and implement effective strategy, how to prepare for the next conflict, and how large the military and its budget should be [@brooks_risa_integrating_2019, 380]. 
+
+In the most basic sense, the study of civil-military relations examines the question of how to ensure that a military is strong enough to defeat threats to the state without threatening the state itself. Peter Feaver refers to this central question of civil-military relations as the "problematique," and notes that this dilemma is both "vexing" and a great "paradox" in that the military must be "strong enough to prevail in war," yet submissive to authority such that it cannot and will not "destroy or prey on the society it is intended to protect" [@feaver_civil-military_1996; @feaver_civil-military_1999, 214]. With this understanding in mind, it is clear that civil-military relations are fraught with a natural tension that, while perhaps capable of attenuation, is never entirely absent.
+
+A number of scholars have offered solutions for solving the "problematique" Feaver describes, but none has been more lasting or consequential than the late Samuel Huntington, whose 1957 work, _The Soldier and the State: The Theory and Politics of Civil-Military Relations_, often serves as the point of departure for a number of debates within the field of civil-military relations. Huntington's theory has endured important and substantive critiques over the years [for example, see @janowitz_professional_1960; @finer_man_1962; @cohen_supreme_2003; @feaver_armed_2003; @brooks_paradoxes_2020]. Nonetheless, it is essential to understand Huntington's conception of effective civil-military relations, and what lies at the heart of it - a theory of civilian control of the military that maximizes what Huntington called "military professionalism" [@huntington_soldier_1957]. 
+
+In the section to follow, I will briefly summarize Huntington's argument and logic, as well as summarize several prominent critiques made by other scholars of Huntington. The purpose of summarizing both Huntington and his critics is to argue that in spite of the important differences between them, Huntington and his critics share common ground regarding the prominence of three central norms that exist to normatively govern both civilian and military behavior.  These norms, which I articulate and describe in the section to follow, include the principles of civilian control of the military, the non-partisanship of the military institution, and what I will term the "non-interference" of the military into realms of politics that are the _perogative_ of duly-elected and appointed civilian leaders. While these principles are related to each other, each is distinct and holds different normative implications for both civilian and military behavior.   
+
+## Huntington, His Critics, and Fundamental Norms of Civil-Military Relations
+
+In _The Soldier and the State_, the problem that Huntington is trying to solve is how can liberal democracies such as the United States balance the simultaneous demands of military security and the ideology of political liberalism. Writing after the Korean War, Huntington argues that American security requirements constitute a "functional imperative" that required the US to maintain a strong military capable of defeating the external threats of the Cold War [@huntington_soldier_1957, 1-3]. At the same time, Huntington argues that the liberal character of American society generated a "societal imperative" such that the pursuit of American security requirements could not cause America to deviate from its liberal political ideology in fundamental ways, including abandoning the principle of civilian control of the military [@huntington_soldier_1957, 1-3]. In essence, Huntington aims to solve how to render the military strong enough to prevail during the Cold War, but sufficiently subservient and obedient to civilian power. 
+
+Huntington argues that this challenge is made more acute by the fact that the military officer corps is different from the rest of America in several important ways. He claims that those who serve in the military hold to a distinct "mind" and "ethic" that views conflict as part of a "universal pattern throughout nature," and thus, that "the military view of man is...decidedly pessimistic" [@huntington_soldier_1957, 62-63]. On the other hand, Huntington describes American liberal ideology as stressing "individualism," and claims that liberalism "either denies the existence of power, minimizes its importance, or castigates it as inherently evil" [@huntington_soldier_1957, 90]. Huntington adds that this juxtaposition between the unique character and ethic of militaries and the attributes of political liberalism in America explains why America has been suspicious of standing military forces since its founding [@huntington_soldier_1957, 143-151]. However, the Cold War poses a unique problem in terms of the security requirements facing America. Standing, sizable military forces are a must. 
+
+The solution Huntington offers is for America to adopt a system of civil-military relations which Huntington terms "objective control" of the military [@huntington_soldier_1957, 83]. Under such an arrangement, civilian leaders grant the military a high degree of professional autonomy, which allows the military to develop and hone its professional expertise, which further causes military leaders to stay out of partisan politics. Figure 1, below, graphically represents the overall problem and solution Huntington attempts to solve.^[As Feaver points out in a 1996 article, Huntington did not use modern political science language such as dependent variable and independent variable when developing this concept. I constructed this puzzle using Feaver's 1996 recapitulation of Huntington.] 
+
+```{r figure one, include=FALSE, echo=FALSE}
+huntington_dag <- dagify(
+    MSCS ~ CC,
+    CC ~ FI + SI,
+    SI~I + S,
+    coords = tribble(
+      ~ name,      ~ x,    ~ y,
+      "MSCS", 1, .5,
+      "CC", .7, .5,
+      "FI", .5, .6,
+      "SI", .5, .4,
+      "I", .3, .3,
+      "S",.7, .3,
+    ))
+    
+huntington_dag %>% 
+  ggplot(aes(x=x, y=y, xend=xend, yend=yend))+
+  geom_dag_edges()+
+  geom_dag_point()+
+  geom_dag_text_repel(aes(label=name), show.legend=FALSE)+
+  theme_dag()
+```
+
+```{r include=TRUE, echo=FALSE, fig.height=5, fig.width=7}
+
+huntington_dag %>% tidy_dagitty() %>% 
+  dag_label(labels=c("MSCS"="Military Security and\n Civilian Supremacy", 
+                     "CC"="Patterns of\n Civilian Control\n 'Objective Control'", 
+                     "FI"="Functional\n Imperative", 
+                     "SI"="Societal\n Imperative",
+                     "I"="Liberal Ideology",
+                     "S"="Constitutional Structure")) %>% 
+  ggplot(aes(x=x, y=y, xend=xend, yend=yend))+
+  geom_dag_edges()+
+  geom_dag_point()+
+  geom_dag_text()+ 
+  geom_dag_label_repel(aes(label=label, fill=label), col="white", show.legend=FALSE)+ theme_dag(plot.title=element_text(hjust=.5), plot.subtitle=element_text(hjust=.5)) + labs(title="Figure 1: Samuel Huntington's Theory Of Civilian Control of the Military", subtitle="As Explained in The Soldier and The State, 1957")
+  
+```
+
+The reason that such an arrangement would work, claimed Huntington, was because of the rise of the military as a profession - a development that occurred during the 19th and 20th centuries. Unlike the military that had existed at America's founding, which had been comprised of citizen-soldiers armed with very basic weapons, the military by the end of World War Two employed sophisticated weapons systems such as battleships, fighter jets, and nuclear weapons such that the officer corps was a body truly skilled in, in Harold Lasswell's terms, the "management of violence" [Lasswell in @huntington_soldier_1957, 11]. These developments in war, and the rise of a professional military, were developments America's founding fathers simply could not predict. ^[It should be noted, however, that determining a precise date for when the US military became a "profession" is a matter of some debate. Huntington makes the point in his book that he sees the rise of the military profession as dating back to as early as 1808, when the Prussian government issued a decree pointing to the content of material that officers in its Army were expected to study. But he does not provide a definitive date for the beginning of the US military as a profession. My reading of Huntington is that he infers the "professionalization" of the US military to have begun in the post-US Civil War period.]
+
+Huntington argued that as a profession, the military's foremost desire is to develop and foster its own professional attributes and characteristics. These attributes included the development of a special body of knowledge and expertise, as well as the establishment of a degree of corporateness, which refers to the way that other professions, such as law and medicine, formalize and govern the standards by which members of the profession are certified [@huntington_soldier_1957, 11-18]. Huntington argued that allowing the military to develop a high degree of professional autonomy would cause the military to stay out of politics, thus preserving civilian control of the military. Simultaneously, the further advancement of the military profession would ensure that the military developed the skills required to ensure American supremacy during the Cold War.
+
+Huntington's concept of "objective civilian control" of the military has generated a number of important and meaningful critiques over the years. The major theme of these critiques is that a stark separation between military and political spheres, which Huntington advocated for, is unwise, impractical, and damaging to US security. Citing Clausewitz's famous dictum that war is a "mere continuation of policy by other means", these critics of Huntington point out that the military cannot truly conduct military operations in a vacuum, so to speak, absent from political influence [@clausewitz_war_1976, 69, 605]. Further, critics of Huntington argue that by virtue of their superior position within democratic governments, rightfully elected civilian officials must ultimately shoulder the responsibility for what militaries do and fail to do, and thus, should not abdicate these crucial responsibilities to the military [@cohen_supreme_2003]. Peter Feaver has parsimoniously captured the essence of this critique of Huntington by noting that the principle of civilian supremacy over the military means that civilian preferences should prevail even if they are wrong [@feaver_armed_2003]. 
+
+Other recent critiques of Huntington have further developed the possible domestic and international consequences that can arise if military officers strictly adopt his concept of professionalism. For instance, critics warn that adoption of a strict Huntingtonian concept of professionalism can lead to military officers failing to recognize the inherent political nature of their roles, which can subsequently lead to military officers unknowingly engaging in political behaviors under the guise of acting in an apolitical manner [@brooks_paradoxes_2020; see also @janowitz_professional_1960; @feaver_civil-military_1996]. Other critics warn that a serious consequence of military officers adhering to a strict separation between military and civilian spheres in wartime is the failure to develop, implement, and achieve sound objectives and strategy, which leads to disastrous effects on overall US national security policy [@rapp_william_civil-military_2015].   
+
+In spite of these insightful concerns and critiques of Huntington, which are important, I argue that Huntington and his critics nonetheless share important common ground concerning the appropriate behavior of civilians and the military in politics. Indeed, Huntington and his critics agree on the prominence of at least three central and aspirational norms that normatively govern how militaries and civilian leaders should relate in the political space. Furthermore, although the precise definitions and boundaries of these norms may in fact be disputed, these three central norms constitute a _baseline_ set of principles that can and should inform an understanding of whether civilian and military actors are behaving appropriately with respect to civil-military relations.
+
+The first is a norm of civilian control of the military. A norm of civilian control simply refers to the democratic principle that elected civilian leaders should control the military instrument. While Huntington certainly did not invent the norm of civilian control, and while there have been episodic challenges to the norm of civilian control throughout American history, the overarching purpose of Huntington's theory of civil-military relations is to ensure both America's security _and_ civilian control of the military.  
+
+The second norm of civil-military relations that both Huntington and his critics support is a norm of non-partisanship by the military institution. To be clear, Huntington and his critics differ on _how_ this principle can and should be achieved. Whereas Huntington believed that the non-partisanship of the military institution logically followed as a consequence of enabling the military to maximize its own set of professional attributes and skills, which required a stark separation of political and military spheres, his critics rightly point out the potential consequences of pursuing such an approach.  Nonetheless, Huntington and his critics share the aspirational goal and concern for the military operating as a non-partisan actor. 
+
+A third and final norm that Huntington and his critics share is what I am terming the _non-interference_ of the military into the realm of politics. This norm differs from the first two because it is not explicitly stated, but rather implicitly implied in the arguments that both Huntington and his critics make. A norm of _non-interference_ simply means that from the perspective of military actors, there are some areas of politics which should be "off limits" to military actors. In general terms, these areas involve policy arenas that are unrelated or at best tangentially-related to the world of military and defense policy. While military officers may in fact be inherently political actors [@brooks_paradoxes_2020] who must be aware of the political implications of their behavior, a norm of _non-interference_ by the military means that the military does not have a say in every aspect of state policy. This norm is qualitatively distinct from that of civilian control and non-partisanship of the military.
+
+To be clear, the specific roles and missions assigned to the military by civilian leaders and the roles that the military fills in relation to broader American society change over time and are the product of circumstances, leaders, threats, and a host of other factors, leading one scholar to dub civil-military relations in general as a "bargain" that is constantly being "renegotiated" between the military, civilians, and the public [@owens_military_2015, 1]. Therefore, the precise boundaries established by a norm of _non-interference_ likely change to some degree as well. But the ultimate purpose of the US military, Huntington and his critics agree, is to defend the United States and thus, to win the nation's wars. The same cannot be said of all militaries in other parts of the world. While the boundaries of where the appropriate versus inappropriate role of the military begin and ends is a matter of intense debate, I assert that Huntington and his critics would nonetheless agree in principle of _non-interference_ by the military into civilian partisan politics and roles [@brooks_shaping_2008; @brooks_paradoxes_2020]. 
+
+In summary, Huntington's _The Soldier and the State_ has served for decades as a starting point for numerous debates involving civil-military relations. Despite the important critiques of Huntington's work, scholars of civil-military relations have generally agreed upon the importance of three foundational norms which influence the political behavior of both the military and civilian leaders. These norms include principles of civilian control of the military, non-partisanship of the military institution, and _non-interference_ of the military into state policy arenas. Furthermore, adherence to these three critical norms serve as the baseline for determining instances in which the military or civilian actors have deviated from appropriate and important behaviors required to sustain healthy and vibrant civil-military relations.     
+
+# The Gap in the Current Literature
+
+It is a central premise of this dissertation that deviation from one or more of the three central norms described above - norms which I have argued constitute a "baseline" of normative behavioral principles for both military and civilian leaders - will result in specific political behaviors committed either by military or civilians actors, or both. Thus, in order to explain varying political behaviors that involve the military, attention must be given to what might cause deviation from the three fundamental norms described above. This dissertation asserts that the levels of domestic political polarization and the level of military prestige are the main factors driving variation in certain types of political behaviors which involve the military. This occurs, moreover, because the levels of polarization and prestige alter the willingness of both civilian and military actors to abide by these fundamental norms. 
+
+Exploring the drivers of political behaviors that involve the US military fills an important and timely gap in the scholarly literature. Previous works have explored the topic of military intervention and involvement in politics, both in a general sense [@finer_man_1962] and in several comparative contexts, such as Russia [@taylor_politics_2003] and Latin America [@fitch_armed_1998], but as of yet, such a work does not exist for the United States. This is likely because, thankfully, the United States does not have a tradition of prolonged and extensive inappropriate intervention into politics. Other scholars have developed helpful typologies for understanding the types of political behaviors that the US military engages in, but these scholars have not attempted to explain variation in these types of behaviors [@brooks_militaries_2009]. Still other contemporary civil-military scholars have made tremendous contributions exploring the various impacts of polarization on the military, to include its impact on the public credibility of the military [@robinson_michael_danger_2018; @burbach_partisan_2019]. 
+
+While these are all important and scholarly contributions, they have not yet attempted to explain variation in political behaviors that involve the American military. Though the rise of political polarization in America has occurred for several decades, civil-military scholars have only somewhat recently given serious attention to the topic, particularly in the age of former President Donald Trump [@feaver_we_2016; @barno_how_2016; @golby_jim_americas_2020; @reid_retired_2020]. These works are important and mainly impressionistic, but do not analyze patterns in empirical behaviors that were either committed by or directly involve the military. Those that have analyzed military behaviors over time (such as military endorsements of political candidates) [@griffiths_not_2019] or military attitudes about certain behaviors (such as voting and social media use) [@dempsey_our_2010; @urben_party_2013; @urben_wearing_2014] have stopped short of developing and testing a holistic theoretical argument against multiple types of behaviors across periods of time.  
+
+Given the relatively unprecedented ideological division that now exists in the United States, the relatively high degree of trust that the American public places in the military institution [@noauthor_confidence_2020], and the fact that the US military is still engaged in inconclusive military operations more than two decades after 9/11, it is of vital importance that scholars understand how domestic structural changes impact the way civilian and military actors behave with respect to the military institution. This dissertation is one small step in this important endeavor. As such, this dissertation seeks to answer several important questions, including:
+
+* How do the levels of political polarization and military prestige shape the constraining influence that the fundamental norms of civil-military relations have on various types of political behaviors?
+* Does the empirical record validate the idea that levels in political polarization and military prestige alter the behaviors that military or civilian actors commit regarding the military?
+* What are possible counter-arguments? If political polarization and military prestige are not responsible for variation in the political behaviors involving the military, what is?
+* If the theory is correct, how does the presence or absence of high levels of polarization and/or military prestige impact the role of senior military leaders in orchestrating, leveraging, and harnessing the military institution as a political actor? What are the implications for civilian actors?
+
+# Methodology and Plan of the Dissertation
+
+The rest of this dissertation develops and then tests a theory for how the levels of polarization and military prestige alter certain political behavors that involve the military institution. Because the "suspected" independent variables of political polarization and military prestige change over time, and for the most part, rather slowly, the methods utilized in this dissertation involve both an empirical examination of distinct political behaviors as well as historical case studies across various periods in American history. For this reason, a variety of large-N, quantitative analyses and qualitative case studies are utilized to test the main theory. 
+
+Unfortunately, undertaking a full analysis of every form of political behavior involving the military throughout American history is simply not possible within the time or space confines of this dissertation. Attention on proving my theory is placed on the last 50 years, from approximately 1970 and after. The last five decades of American political history involve a mixture of domestic and international changes. Including President Richard Nixon, America is now on its 10th President since 1970, and a total of 27 Congresses, from the 91st - 117th, have met over the same period. In the international arena, the period includes portions of both the Cold and post-Cold War eras, and three major wars that have involved American forces and ended in different outcomes: Vietnam (strategic defeat), the Gulf War (strategic victory), and the wars in Iraq and Afghanistan (strategically inconclusive). There are therefore a number of potential confounding variables, both domestic and international in origin, that can be tested against.  
+
+# Plan of the Dissertation
+
+In this section of the prospectus, I will describe the overall plan for my dissertation. In short, I plan to implement a mixed-methods approach that incorporates quantitative and qualitative analysis over the course of what I have now planned to take seven chapters. 
+
+In broad terms, the goal of this dissertation is to show that polarization and prestige are the main factors responsible for variation in the political behavior of the military. The dissertation should strive to show, moreover, that the level and substance of polarization serves as the "motive" for the military to behave politically, and that the overall level of prestige of the military serves as the "opportunity" for the military's intervention in politics [@finer_man_1962]. 
+
+## Chapter 2 - Theory
+
+In the second chapter, this dissertation develops and derives a theory that explains variation in politicla behaviors that involve the military as a function of changing levels of political polarization and military prestige. In this chapter, I define what political polarization and military prestige are and lay out a typology of various types of political behaviors that military and civilian actors can commit that involve the military institution. Primary attention is placed explaining the various mechanisms through which the levels of polarization and military prestige fundamentally change the constraining influence of the three central norms of civil-military relations previously described: civilian control of the military, non-partisanship of the military institution, and non-interference of the military into various realms of politics. Chapter two concludes with the formulation of distinct hypotheses which are then tested throughout the remainder of the dissertation. 
+
+## Chapter 3 - Retired Military Officer Public Commentary
+
+In the third chapter, the dissertation conducts a quantitative analysis of one distinct form of political behavior that military actors commit - that of "public appeals" [@brooks_militaries_2009]. The data come from an original data set of nearly 400 opinion-editorials and letters to the editor authored by retired military officers and published in _The New York Times, The Washington Post, The Wall Street Journal, The Los Angeles Times, and The USA Today_ since roughly 1979. This roughly 40 year period began in an era of relatively low military prestige (following the end of the Vietnam War) and relatively low political polarization, yet ends in a period marked by high military prestige and high political polarization. After classifying the editorials by topic type, a series of regressions are run to determine what drives the probability that a publication authored by a retired military officer breaks fundamental norms of civil-military relations.
+
+## Chapter 4 - The Military in Elections
+
+In the fourth chapter, the dissertation examines a behavior committed by civilian leaders that directly involves the military institution - that of the use of the military in campaign advertisements and symbols. The intended data consists of television and radio advertisements from an assortment of Presidential and Congressional races since the 1972 Presidential election.    
+
+## Chapter 5 - The Military and Veterans in Congress
+
+In the fifth chapter, the dissertation explores variation in military relationships within Congress, and the impact that these relationships have on the active duty military's ability to stay on politically neutral territory. 
+
+## Chapter 6 - The Military During Reconstruction and Beyond
+
+Chapter six of the dissertation is a comprehensive case study of the political behaviors involving the military from American Reconstruction after the Civil War until approximately 1880. It is a period of time worthy of study in this dissertation because it involves a military that was not yet professionalized and political institutions that were not as fully developed as they are in the modern era, and therefore, enables a more robust testing of the theory.  
+
+## Chapter 7 - Implications and Conclusion
+
+This chapter will present the main implications and findings of the dissertation. 
+
+# Summary
+
+This dissertation seeks to explain variation in the political behaviors that civilian and military actors commit involving the military institution. Thankfully, these types of behaviors in the US context have not yet risen to the high level of behaviors that have occurred in other countries, such as coups or installing multiple active duty military officers over non-military areas of state policy. And yet, the rise of political polarization at a time when the military has remained relatively popular for the past several years offers plentiful reason for concern, even in the United States. The rest of this dissertation develops and then tests a theory that explain variation in political behaviors involving the military. Having developed an understanding of the three central norms of civil-military relationships: civilian control of the military, the non-partisanship of the military institution, and the non-interference of the military into various realms of state policy, it is now time to explain what might cause civilian and military actors to disregard these norms, and why this leads to civilian and military actors committing certain types of political behavior. 
+
+\pagebreak
+\singlespace
+
+
