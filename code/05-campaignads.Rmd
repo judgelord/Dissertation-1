@@ -1,0 +1,106 @@
+---
+title: "05-campaign_ads"
+author: "Pete Erickson"
+date: "2/15/2021"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r, include = FALSE, echo = FALSE}
+library("here")       # file paths
+library("tidyverse")  # workhorse package
+library("tidylog")
+library("kableExtra")
+library("knitr")
+library("ggdag")
+library("dagitty")
+library("gridExtra")
+library("broom")
+library("dplyr")
+library("reshape2")
+library("stargazer")
+library("rstatix")
+library("lme4")
+library("brglm")
+library("bucky")
+library("haven")
+```
+
+```{r data2016, include=FALSE, echo=FALSE, warning=FALSE}
+# Issue60-Military, 62-Veterans, 67-Afghanistan, 68-September 11th
+# Issue69-Terrorism, Issue70-Iraq, 73-ISIL or ISIS 
+
+# read in the data and then summarize it
+df <- read_dta(here("data", "wmp-pres-2016-v1.1.dta"))
+summary(df)
+
+# create a smaller df by filtering and then grouping by the ID of the advertisement (variable "creative")
+slimdf <- df %>% filter(issue60==1 | issue62==1) %>% group_by(issue60, issue62, creative) %>% count(creative) %>% view()
+
+```
+
+```{r data2012, include=FALSE, echo=FALSE, warning=FALSE}
+# Issue60-Military, 62-Veterans, 67-Afghanistan, 68-September 11th
+# Issue69-Terrorism, Issue70-Iraq
+# Note - Issue 73, ISIL/ISIS does not exist
+
+# read in the data and then summarize it
+df2012 <- read_dta(here("data", "wmp-pres-2012-v1.2_compress.dta"))
+summary(df2012)
+
+# create a smaller df by filtering and then grouping by the ID of the advertisement (variable "creative")
+slimdf2012 <- df2012 %>% filter(issue60==1 | issue62==1) %>% group_by(issue60, issue62, creative) %>% count(creative) %>% view()
+
+```
+
+```{r data2008, include=FALSE, echo=FALSE, warning=FALSE}
+# Issues in General are coded differently than WMP data from 2012 and 2016
+# defpolicy
+# DEF_NIRQ
+# FOR_NIRQ
+# vets
+
+# read in the data and then summarize it
+df2008 <- read_dta(here("data", "WiscAds2008_Presidential.dta"))
+summary(df2008)
+
+# create a smaller df by filtering and then grouping by the ID of the advertisement (variable "creative")
+slimdf2008 <- df2008 %>% filter(defpolicy==1 | DEF_NIRQ==1 | FOR_NIRQ==1 | vets==1) %>% group_by(defpolicy, DEF_NIRQ, FOR_NIRQ, vets, creative) %>% count(creative) %>% view()
+
+```
+
+
+```{r data2004, include=FALSE, echo=FALSE, warning=FALSE}
+# WiscAd Data; slight difference from 2008 data
+#EISSUE: if coded 52 - Veterans, 50 - Defense/Military
+
+# read in the data and then summarize it
+df2004 <- read_dta(here("data", "WiscAds_2004 Presidential.dta"))
+summary(df2004)
+
+# create a smaller df by filtering and then grouping by the ID of the advertisement (variable "creative")
+slimdf2004 <- df2004 %>% filter(EISSUE1 == 52 | EISSUE1 == 50 | EISSUE2 == 52 | EISSUE2 == 50 | EISSUE3 == 52 | EISSUE3 == 50 | EISSUE4 == 52 | EISSUE4 == 50) %>% group_by(EISSUE1, EISSUE2, EISSUE3, EISSUE4, creative) %>% count(creative) %>% view()
+
+```
+
+```{r data2000, include=FALSE, echo=FALSE, warning=FALSE}
+# WiscAd Data; slight difference from 2004 data
+# instead of creative, title of ad called "custitle"
+#q32-35 deal with campaign themes: 
+# 52 - Veterans
+# 50 - Defense
+# 59 - Other Defense/Foreign policy issues
+
+# read in the data and then summarize it
+df2000 <- read_dta(here("data", "Political Advertising in 2000.dta"))
+summary(df2000)
+
+# create a smaller df by filtering and then grouping by the ID of the advertisement (variable "creative")
+slimdf2000 <- df2000 %>% filter(q32 == 52 | q33 == 52 | q34 == 52 | q35 == 52 | q32 == 50 | q33 == 50 | q34 == 50 | q35 == 50 | q32 == 59 | q33 == 59 | q34 == 59 | q35 == 59) %>% group_by(q32, q33, q34, q35, custitle) %>% count(custitle) %>% view()
+
+```
