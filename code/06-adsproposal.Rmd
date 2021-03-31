@@ -1,0 +1,152 @@
+---
+title: "True Colors? The Military Institution and Campaign Advertisements"
+author: "Peter M. Erickson"
+date: |
+  `r format(Sys.time(), '%B %d, %Y')`
+abstract: |
+  
+  _This chapter explores how the military has featured during Presidential Campaign Advertisements. Using data from the Wisconsin Advertising Project and the Wesleyan Media Project consisting of Presidential Campaign advertisements used in the five Presidential Elections from 2000 -2016, I conduct a large-n study to explore variation in the ways that campaign advertisements have featured the military over time. From a theoretical standpoint, the chapter argues that the military's relatively high prestige, combined with polarization that has dramatically increased over the time interval examined, has led to civilian actors using the military in ways that expressly challenge a fundamental standard of American civil-military relations: the non-partisanship of the military institution. This chapter ultimately provides strong evidence that polarization and military prestige serve as important variables that alter the willingness of both military and civilian actors to challenge and in some cases, violate, principles of civil-military relations._  
+  
+geometry: margin = 1.15in              # margin widths
+fontsize: 12pt                         # text size
+bibliography: dissertation.bib         # bibliography file
+biblio-style: authoryear               # citation style
+urlcolor: blue                         # links to external URLs
+citecolor: black                       # links to bibliography
+linkcolor: magenta                     # internal figures, footnotes, etc.
+indent: true                          # paragraph format
+                                       # true for indented paragraphs
+                                       
+header-includes:
+    - \usepackage{setspace}
+    - \usepackage{multirow}
+    - \usepackage{indentfirst}
+   
+    
+output: 
+  bookdown::pdf_document2:
+    keep_tex: true
+    latex_engine: pdflatex
+    number_sections: false
+    toc: false
+    fig_caption: true
+    citation_package: biblatex
+    includes: 
+      in_header: 
+        - latex-preamble.tex
+  bookdown::htmldocument2: default
+  bookdown::word_document2:
+      toc: false
+---
+
+\doublespacing 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo=FALSE,
+  include=FALSE,
+  message=FALSE,
+  error=FALSE,
+  fig.height=3,
+  fig.width=4,
+  out.width="90%")
+```
+
+```{r, include = FALSE, echo = FALSE}
+library("here")       # file paths
+library("tidyverse")  # workhorse package
+library("tidylog")
+library("kableExtra")
+library("knitr")
+library("ggdag")
+library("dagitty")
+library("gridExtra")
+library("broom")
+library("dplyr")
+library("reshape2")
+library("pacman")
+library("ggrepel")
+```
+
+\newpage
+
+# Introduction
+
+On October 10, 2020, then candidate Joe Biden's Campaign Team aired an advertisement touting the former Vice President's national security credentials. The advertisement is narrated by a man named Jim, identified as an "Iraq War Veteran," who describes the role of the former Vice President in delivering Mine Resistant Ambush Protected (MRAP) vehicles to protect servicemen and women deployed to Iraq and Afghanistan. Within days, however, the advertisement was pulled by the Biden Campaign after a retired Army Lieutenant General, Sean McFarland, objected to the ad using images of him shaking hands with Biden while serving as the Commander of US forces in Iraq. McFarland's objection noted not only that he had not been asked by the Biden Campaign to appear in the advertisement, but that he felt it was normatively wrong for the military - especially active forces - to be used in campaign advertisements altogether, as doing so further jeopardized the military's non-partisan ethic. Indeed, MacFarland made the following statement after the advertisement aired: "A number of people have understandably inferred that my appearance constitutes an endorsement of the former Vice President. It does not. To be clear, I have not endorsed President Trump, either. I object to the use of ANY military personnel in uniform in political ads - full stop" [MacFarland quoted in @moore_biden_2020]. 
+
+This incident, which was hardly the lone example of the 2020 Presidential Election in which the candidates used the military in ways that defied norms of, or in some cases, broke regulations which govern, the non-partisan nature of the military.^[The campaign of President Trump, running for re-election, likewise used military symbols and imagery inappropriately, and perhaps on more than one occasion. For a salient example, see @seligman_top_2020 ] Yet it highlights both the stress that polarized politics places on the military and many (though perhaps not all) of its members as they seek to remain politically neutral, and the ways in which civilian candidates for office seek to harness the popularity of the military in their quest to win public office.  
+
+This chapter explores systematically the variation in how Presidential Candidates have used and featured the military in more than 500 campaign advertisements during five recent Presidential Elections, spanning from 2000 - 2016. The primary claim made in this chapter is that rising political polarization is mainly responsible for altering the willingness of civilian leaders to abide by the principle of non-partisanship of the military institution, and that this development is borne out in the data, which reflects the behavior of civilian candidates, interest groups, and other civilian entities. Combined with the previous chapter, which explored variation in opinion commentary authored by retired military officer, this chapter therefore provides strong evidence that political polarization and military prestige alter the ability of governing standards or principles to constrain the behavior of both civilians and military actors. 
+
+This chapter proceeds in three parts. First, I review the theory advanced previously in this dissertation regarding the impact of polarization and prestige on the ability of central principles of civil-military relations to constrain the behavior of both military and civilian actors. In doing so, I apply the theory directly to campaign advertisements, tying into the "issue ownership" literature within American politics. In this first part of the chapter, I also present my initial hypotheses. In the second part of the chapter, I present the data and outline the methodology used to test the hypotheses. Third, I raise and address potential confounding variables and alternate explanations. 
+
+This chapter also makes at least two distinct contributions to the scholarly literature on civil-military relations and American politics. First, this chapter provides clear evidence of variation over time in the way that candidates for office invoked or featured the military as an institution, which serves as another data point to advance scholarly understanding of how political behavior involving the military has deviated from the normative principles laid out previously in this dissertation. Second, the chapter further exposes the degree to which both sides of the civil-military relationship have been impacted by changes in the military's prestige and polarizing domestic politics. Ultimately, the chapter suggests that civilian actors, who have the final say in the content of campaign advertisements, must be more willing than they currently are to avoid using the military in ways that place the military's non-partisan ethic at risk. The failure to do so, even if it does not physically harm the United States, will likely lead to problematic civil-military relations in the long term.  
+
+# Governing Principles of Civil-Military Relations
+
+Throughout this dissertation so far, a key theme has been the importance of three governing principles of American civil-military relations. In the first chapter, these principles or standards were identified as the principles of civilian control of the military, the non-partisanship of the military institution, and the "non-interference" of the military into certain affairs of the state. Furthermore, in defining and explicating each of these standards, a task also undertaken in the first chapter, we learned that these standards are conceptualized less in dichotomous black and white terms, and more along a scale that varies incrementally. For example, whether the principle of civilian control of the military is healthy and vibrant in a given country or context is answered less in concrete terms with "yes" or "no," but rather along lines that examine the _relative_ power between military and non-military actors, and which actor has ultimate decision-making responsibility in the political system [@bruneau_civil-military_2019; @brooks_shaping_2008]. 
+
+In the previous chapter of this dissertation, which analyzed retired military officer commentary over time, the data showed strong evidence that increasing polarization and military prestige were associated with military retirees increasingly challenging all three of the fundamental principles of American civil-military relations. Indeed, as polarization and military prestige rose, the data showed that retired military officers were blatantly criticizing civilian officials more regularly, thus challenging the principle of civilian control. The data also showed that retired military officers were increasingly adopting partisan political positions or openly taking stances on partisan political issues, which challenge the non-partisan ethic of the military. Finally, the data from chapter three revealed that military officers were increasingly weighing in on policy matters that were increasingly distant from the military's core tasks, suggesting a challenge to the standard that the military not interfere in certain areas of state policy. 
+
+The previous chapter also focused exclusively on the actions and behavior of retired military officers. It is important, however, to likewise examine if and how the level of polarization and military prestige impacts the behaviors of the other actor in a state's civil-military relationship - and that of civilians. Said differently, we need to theoretically examine how and why varying levels of political polarization and military prestige would alter how civilian actors behave with respect to the three principles of American civil-military relations, a gap that this chapter sets out to fill.  
+
+## Nonpartisanship of the Military and Issue Ownership
+
+Like each of the three governing principles of civil-military relations, the principle of the non-partisanship of the military institution has unique meaning within the US context. Unlike the principles of civilian control of the military and the military's "non-interference" into certain realms of state policy, which includes topics such as what roles militaries fill within society, the principle of non-partisanship of the military has uniquely American meaning and implications, perhaps because of the US's two-party domestic political system.
+
+## Hypotheses
+
+The preceding theoretical predictions lead to three distinct hypotheses, which are listed below:
+
+H4: When military prestige is high, civilian leaders will increasingly attempt to leverage or harness the military (either as an institution, or individual military figures who possess outsized levels of prestige/popularity) for their own political purposes and advantages relative to when military prestige is low. 
+
+H5: When polarization is high, civilian leaders will employ the military (either as an institution, or individual military figures who possess outsized levels of prestige/popularity) to support (or denounce) policy initiatives that align with (or oppose) underlying ideologies associated with a polarizing issue or cause relative to when polarization is low. 
+
+H6: When polarization is high, civilian elites will attempt to use the military in a way to regain or close the gap with respect to the national security "issue ownership."
+
+# Methodology and the Data
+
+The Wisconsin Advertising Project (WiscAD) and Wesleyan Media Project (WMP) are two entities that have systematically tracked campaign advertising beginning in the 1996 Presidential Election.^[Unfortunately, the raw data used to code the 1996 election is no longer available to review; hence, this study begins in 2000. Additionally, raw data for the 2020 Election is not available at the time of this writing, but is projected to become available sometime in 2020.] Both WiscAD and WMP gather the television advertisements with the assistance of a commercial company, the Campaign Media Analysis Group (CMAG), which provides several pieces of information when releasing the data, such as the media market in which a particular advertisement aired, the estimated cost of running a particular advertisement, the time of day the advertisement was run, etc. 
+
+WiscAD and the WMP then gather additional information on the advertisements, which varies to some extent by election cycle, and otherwise remains markedly similar. These include the specific issues that an advertisement mentions or addresses, whether a candidate is featured during the advertisement, and whether a given advertisement takes on a negative tone, and more (see the chapter Appendix for a comparison, by year, of media market breakdowns). 
+
+The overall methodological goal of this chapter is to determine if and how there has been changes in the way that the military has featured during civilian candidate campaign advertisements. Specifically, I am interested in capturing changes to how the military has challenged or violated standards of non-partisanship of the military institution, and/or the "non-interference" of the military. Therefore, I am especially interested in seeing how civilian candidates use the military, to include its symbols and imagery, and how candidates tie their relationship with the military institution to other policy initiatives or areas. In broad terms, such an approach can be accomplished by viewing campaign advertisements over time that involve or addresses the military and classifying these advertisements for a host of binary and categorical variables, such as whether an advertisement features a military veteran, and whether a military veteran explicitly endorses a political candidate during the advertisement. 
+First, using data coded by the WiscAD and WMP, I determine which ads in each election cycle address or cover topics that are related to the military/defense or veterans, as these are the ads that need to be classified. WiscAD and the WMP, respectively, code for whether a given advertisement mentions or discusses certain issues, albeit in sligthly different ways. The number of advertisements per election cycle which address the military and/or veterans issues, per election cycle, are listed below in Table \@ref(tab:el_ads_numeric).
+
+```{r el_ads_numeric, include=TRUE, echo=FALSE}
+
+
+```
+
+After identifying which ads to code by year and the second and more critical step is to code each ad for several additional variables which capture the changes predicted by the hypotheses previously outlined. These variables include the following scheme:
+
+
+```{r el_ads_additional, include=TRUE, echo=FALSE}
+
+text_tbl_ads <- tribble(~"Variable Name", ~"Question", ~"Possible Values",
+  "Can_Vet", "Is the candidate a Veteran?", "1 - Yes; 0 - No",
+  "Can_Vet_Mention", "Does the ad explicityly state or portray the candidate as a Veteran?", "1 - Yes, 0 - No",
+  "Vet_Fam", "Does the ad feature a Veteran or Veteran's family speaking?", "3 - Veteran and Family; 2 - Veteran's Family; 1 - Veteran; 0 - No",
+  "Vet_Fam_Endorse", "Does the speaking Veteran or Veteran's Family explicitly endorse the President for office?", "1 - Yes; 0 - No",
+  "Vet_Fam_Attack", "Does the speaking Veteran or Veteran's Family attack or disparage other candidates running for office?", "1 - Yes; 0 - No",
+  "Vet_Fam_Issues", "Does the speaking Veteran or Veteran's Family address other topics outside of supporting the candidate?", "3 - Other Issues (List); 2 - National Security or Defense Issues; 1 - Veterans; 0 - No",
+  "Act_Duty_Imagery", "Does the advertisement feature imagery of active duty troops?", "1 - Yes; 0 - No",
+  "Vet_Imagery", "Does the advertisement feature imagery of Veterans?", "1 - Yes; 0 - No",
+  "Service_Imagery", "Does the advertisement feature military service imagery (planes, tanks, past images of combat, etc.?", "1 - Yes; 0 - No",
+  "General_Ad_Theme", "Is the ad itself an ad focused on the military, defense, or national security, or are the military/defense themes in the ad one part of an advertisement that addresses other topics?", "1 - military or defense only; 0 - other topics"
+
+  )
+ 
+
+text_tbl_ads %>% kable(booktabs=T, caption="Coding Scheme for WiscAd and WMP Campaign Advertisements") %>%
+  kable_styling(full_width = F, font_size=8, latex_options="striped" ) %>% 
+  column_spec(1, width="10em") %>% 
+  column_spec(2, width="15em") %>% 
+  column_spec(3, width="10em") 
+```
+
+Finally, I include several variables that were included in the original data, which will aid in drawing some broader comparisons between the data. These variables include:
+
+
+
+

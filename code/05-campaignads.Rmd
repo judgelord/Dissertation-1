@@ -77,7 +77,11 @@ slimdf2008 <- df2008 %>% filter(defpolicy==1 | DEF_NIRQ==1 | FOR_NIRQ==1 | vets=
 
 ```{r data2004, include=FALSE, echo=FALSE, warning=FALSE}
 # WiscAd Data; slight difference from 2008 data
-#EISSUE: if coded 52 - Veterans, 50 - Defense/Military
+#EISSUE: if coded 52 - Veterans; 50 - Defense/Military
+
+#ESSUE: if coded 51 - Missile Defense/Star Wars; 54 - Bosnia
+#EISSUE: if coded 57 - terrorism; 58 - Middle East;
+# EISSUE: if coded 59 - Afghanistan; 83 - September 11
 
 # read in the data and then summarize it
 df2004 <- read_dta(here("data", "WiscAds_2004 Presidential.dta"))
@@ -85,6 +89,12 @@ summary(df2004)
 
 # create a smaller df by filtering and then grouping by the ID of the advertisement (variable "creative")
 slimdf2004 <- df2004 %>% filter(EISSUE1 == 52 | EISSUE1 == 50 | EISSUE2 == 52 | EISSUE2 == 50 | EISSUE3 == 52 | EISSUE3 == 50 | EISSUE4 == 52 | EISSUE4 == 50) %>% group_by(EISSUE1, EISSUE2, EISSUE3, EISSUE4, creative) %>% count(creative) %>% view()
+#count 103
+
+
+# a more robust version of ads, if we include:
+robustdf2004 <- df2004 %>% filter(EISSUE1 == 52 | EISSUE1 == 50 | EISSUE1 == 51 | EISSUE1 == 54 | EISSUE1 == 57 | EISSUE1 == 58 | EISSUE1 == 59 | EISSUE1 == 83 | EISSUE2 == 52 | EISSUE2 == 50 | EISSUE2 == 51 | EISSUE2 == 54 | EISSUE2 == 57 | EISSUE2 == 58 | EISSUE2 == 59 | EISSUE2 == 83 | EISSUE3 == 52 | EISSUE3 == 50 | EISSUE3 == 51 | EISSUE3 == 54 | EISSUE3 == 57 | EISSUE3 == 58 | EISSUE3 == 59 | EISSUE3 == 83 | EISSUE4 == 52 | EISSUE4 == 50 | EISSUE4 == 51 | EISSUE4 == 54 | EISSUE4 == 57 | EISSUE4 == 58 | EISSUE4 == 59 | EISSUE4 == 83) %>% group_by(EISSUE1, EISSUE2, EISSUE3, EISSUE4, creative) %>% count(creative) %>% view()
+#count 164
 
 ```
 
@@ -94,13 +104,22 @@ slimdf2004 <- df2004 %>% filter(EISSUE1 == 52 | EISSUE1 == 50 | EISSUE2 == 52 | 
 #q32-35 deal with campaign themes: 
 # 52 - Veterans
 # 50 - Defense
-# 59 - Other Defense/Foreign policy issues
+
+# 54 - Bosnia; 
+# 51 - missile defense/star wars; 
+
 
 # read in the data and then summarize it
 df2000 <- read_dta(here("data", "Political Advertising in 2000.dta"))
 summary(df2000)
 
 # create a smaller df by filtering and then grouping by the ID of the advertisement (variable "creative")
-slimdf2000 <- df2000 %>% filter(q32 == 52 | q33 == 52 | q34 == 52 | q35 == 52 | q32 == 50 | q33 == 50 | q34 == 50 | q35 == 50 | q32 == 59 | q33 == 59 | q34 == 59 | q35 == 59) %>% group_by(q32, q33, q34, q35, custitle) %>% count(custitle) %>% view()
+slimdf2000 <- df2000 %>% filter(q32 == 52 | q33 == 52 | q34 == 52 | q35 == 52 | q32 == 50 | q33 == 50 | q34 == 50 | q35 == 50) %>% group_by(q32, q33, q34, q35, custitle) %>% count(custitle) %>% view()
+# count 83
+
+robustdf2000 <- df2000 %>% filter(q32 == 52 | q33 == 52 | q34 == 52 | q35 == 52 | q32 == 50 | q33 == 50 | q34 == 50 | q35 == 50 | q32 == 54 | q33 == 54 | q34 == 54 | q35 == 54 | q32 == 51 | q33 == 51 | q34 == 51 | q35 == 51) %>% group_by(q32, q33, q34, q35, custitle) %>% count(custitle) %>% view()
+# count 89
+
+
 
 ```
