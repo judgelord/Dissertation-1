@@ -5,7 +5,6 @@ date: "2/15/2021"
 output: html_document
 ---
 
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -29,97 +28,662 @@ library("lme4")
 library("brglm")
 library("bucky")
 library("haven")
+library("writexl")
 ```
 
-```{r data2016, include=FALSE, echo=FALSE, warning=FALSE}
-# Issue60-Military, 62-Veterans, 67-Afghanistan, 68-September 11th
-# Issue69-Terrorism, Issue70-Iraq, 73-ISIL or ISIS 
+# Notes for Data Cleaning
 
-# read in the data and then summarize it
+In this document, I have essentially cleaned 5 x data sets and prepared them for consolidation and future coding.  To that end, the majority of work was spent renaming variables and ensuring that all variables take on the same coding scheme in order to facilitate a time-series analyses in future versions of the chapter. 
+
+I have taken care to carefully document exactly what steps are taken to clean the data. 
+
+As of now, the only remaining tasks involve: (1) the "sponsor" variable for the 2000 data set, as the possible values do not follow the 1-4 scheme used in the 2004, 2008, 2012, and 2016 data sets; and (2) what to do about the "flag" variables (some data sets have this variable, and some do not).
+
+
+```{r data2016, include=FALSE, echo=FALSE, warning=FALSE}
+
+# This section of code "cleans" the data used from the 2016 data set.  
+
+## (1) To begin with, these are the issue numbers that help to 
+# narrow down which ad themes may feature the military.
+# Issue60-Military, 
+# Issue 61 - Foreign Policy (generic)
+# Issue 62-Veterans, 
+# Issue 64 - Nuclear Proliferation
+# Issue 65 - China
+# Issue 66 - Middle East
+# Issue 67-Afghanistan, 
+# Issue 68-September 11th
+# Issue69-Terrorism, 
+# Issue70-Iraq
+# Issue71-Israel
+# Issue 72 - Iran
+# Issue 73-ISIL or ISIS 
+# Issue 74 - Syria
+# 14 total issue areas
+
+
+# first read in the data and then summarize it
 df <- read_dta(here("data", "wmp-pres-2016-v1.1.dta"))
 summary(df)
 
-# create a smaller df by filtering and then grouping by the ID of the advertisement (variable "creative")
-slimdf <- df %>% filter(issue60==1 | issue62==1) %>% group_by(issue60, issue62, creative) %>% count(creative) %>% view()
+
+
+#Get an initial idea for how many ads there are are, which ones to watch, split. 
+# Coding to find the Total # of Ads: 914
+dfsplit  <- df %>% select(creative, issue60, issue61, issue62, issue64, issue65, issue66, issue67, issue68, issue69, issue70, issue71, issue72, issue73, issue74) %>% distinct() %>% view()
+
+#Ads to watch : 252
+dfsplit_watch <- dfsplit %>% filter(issue60==1 | issue61==1 |issue62==1 | issue64==1 | issue65==1 |issue66==1 | issue67==1 | issue68==1 | issue69==1 | issue70==1 | issue71==1 | issue72==1 | issue73==1 | issue74==1) %>% view()
+
+# Ads to not watch : 659
+dfsplit_dontwatch <- dfsplit %>% filter(issue60 !=1 & issue61 !=1 & issue62 !=1 & issue64 !=1 & issue65 !=1 & issue66 !=1 & issue67 !=1 & issue68 !=1 & issue69 !=1 & issue70 !=1 & issue71 != 1 & issue72 !=1 & issue73 !=1 & issue74 !=1) %>% view()
+
+# Ads that are coded as NA for all of these issue areas: 3
+dfsplit_NA <- dfsplit %>% filter(is.na(issue60) & is.na(issue61) & is.na(issue62) & is.na(issue64) & is.na(issue65) & is.na(issue66) & is.na(issue67) & is.na(issue68) & is.na(issue69) & is.na(issue70) & is.na(issue71) & is.na(issue72) & is.na(issue73) & is.na(issue74)) %>% view()
+
+
+
+# Now create a df by filtering and then grouping by the ID of the advertisement (variable "creative")
+robustdf <- df %>% filter(issue60==1 | issue61==1 |issue62==1 | issue64==1 | issue65==1 |issue66==1 | issue67==1 | issue68==1 | issue69==1 | issue70==1 | issue71==1 | issue72==1 | issue73==1 | issue74==1) %>% group_by(issue60, issue61, issue62, issue64, issue65, issue66, issue67, issue68, issue69, issue70, issue71, issue72, issue73, issue74, creative) %>% count(creative) %>% view()
+
+
+# begin forming a clean data set for 2016 that can be merged with other data across the years
+# step 1: filter the data using the filter command by issue area 
+# step 2: select the appropriate variables to include in the data using the 'select' verb
+# step 3: group the results using the 'group_by' verb
+
+clean_df_2016 <- df %>% 
+  filter(issue60==1 | issue61==1 |issue62==1 | issue64==1 | issue65==1 |issue66==1 | issue67==1 | issue68==1 | issue69==1 | issue70==1 | issue71==1 | issue72==1 | issue73==1 | issue74==1) %>% 
+  select(creative, l, election, tonecmag, sponsorcmag, party, sponsor, f_mention, f_picture, f_narrate, o_mention, o_picture, ad_tone, prty_mn, issue60, issue61, issue62, issue64, issue65, issue66, issue67, issue68, issue69, issue70, issue71, issue72, issue73, issue74) %>%
+  group_by(creative) %>% view()
+
+
+# initial cut at a data set to join to other data sets.
+# I've already selected which issue areas matter, so I can drop those here and 
+# because these issue areas will change over time. 
+# Next, I can group by the variables I am interested in. 
+# Then, I create a variable for count, referring to the number of times an ad was run
+# in a particular election cycle, and an ad for the election cycle more generally. 
+# I then use the "distinct" function to keep only the unique rows that matter, which is key. 
+# Then I rearrange the data and display it according to descending "count" order. 
+
+initial_2016_join <- clean_df_2016 %>% 
+  select(-issue60, -issue61,-issue62, -issue64, -issue65, -issue66, -issue67, -issue68, -issue69, -issue70, -issue71, -issue72, -issue73, -issue74) %>% 
+  group_by(creative, l, party, sponsor) %>%
+  mutate(
+    count = n(), 
+    year=2016
+  ) %>% 
+distinct() %>% 
+  select(year, count, creative:prty_mn) %>% 
+  arrange(desc(count)) %>% 
+  view()
+
+df_2016 <- initial_2016_join %>% select (-election, -tonecmag, -sponsorcmag) %>% view()
+# total of 252 ads to watch
+
+
+##########Unlikely Ads ###########
+
+# below is the list that is "unprobable" to contain the ads I think I need to watch
+clean_df_2016_unprobably <- df %>% 
+  filter(issue60 !=1 & issue61 !=1 & issue62 !=1 & issue64 !=1 & issue65 !=1 & issue66 !=1 & issue67 !=1 & issue68 !=1 & issue69 !=1 & issue70 !=1 & issue71 != 1 & issue72 !=1 & issue73 !=1 & issue74 !=1) %>% 
+  select(creative, l, issue60, issue61, issue62, issue64, issue65, issue66, issue67, issue68, issue69, issue70, issue71, issue72, issue73, issue74) %>%
+  group_by(creative)
+
+initial_2016_join_unprobable <- clean_df_2016_unprobably %>% 
+  group_by(creative, l) %>%
+  mutate(
+    count = n(), 
+    year=2016
+  ) %>% 
+distinct() %>% 
+  select(year, count, creative, l, issue60, issue61, issue62, issue64, issue65, issue66, issue67, issue68, issue69, issue70, issue71, issue72, issue73, issue74) %>% 
+  arrange(desc(count)) %>% 
+  view()
+
+# 659 ads to NOT watch
+
+df_2016_notlikely <- initial_2016_join_unprobable %>% select(-issue60, -issue61, -issue62, -issue64, -issue65, -issue66, -issue67, -issue68, -issue69, -issue70, -issue71, -issue72, -issue73, -issue74) %>% view()
+
+#total of 659 not to watch
 
 ```
 
+
 ```{r data2012, include=FALSE, echo=FALSE, warning=FALSE}
-# Issue60-Military, 62-Veterans, 67-Afghanistan, 68-September 11th
-# Issue69-Terrorism, Issue70-Iraq
-# Note - Issue 73, ISIL/ISIS does not exist
+# Issue60-Military, 
+# Issue61-Foreign Policy (generic)
+# Issue 62-Veterans
+# Issue 64 - nuclear proliferation
+# Issue 65-China
+# ISsue 66 - Middle East
+# Issue 67-Afghanistan, 
+# ISsue 68-September 11
+# Issue69-Terrorism 
+# Issue70- Iraq
+# Issue 71 - Israel
+# Issue 72 - Iran
+# 12 issue areas
+
 
 # read in the data and then summarize it
 df2012 <- read_dta(here("data", "wmp-pres-2012-v1.2_compress.dta"))
 summary(df2012)
 
-# create a smaller df by filtering and then grouping by the ID of the advertisement (variable "creative")
-slimdf2012 <- df2012 %>% filter(issue60==1 | issue62==1) %>% group_by(issue60, issue62, creative) %>% count(creative) %>% view()
+
+
+#Get an initial idea for how many ads there are are, which ones to watch, split. 
+df_2012_split  <- df2012 %>% select(creative, issue60, issue61, issue62, issue64, issue65, issue66, issue67, issue68, issue69, issue70, issue71, issue72) %>% distinct() %>% view()
+# Coding to find the Total # of Ads: 735
+
+df_2012_split_watch <- df_2012_split %>% filter(issue60==1 | issue61==1 |issue62==1 | issue64==1 | issue65==1 |issue66==1 | issue67==1 | issue68==1 | issue69==1 | issue70==1 | issue71==1 | issue72==1) %>% view()
+#Ads to watch : 102
+
+df_2012_split_dontwatch <- df_2012_split %>% filter(issue60 !=1 & issue61 !=1 & issue62 !=1 & issue64 !=1 & issue65 !=1 & issue66 !=1 & issue67 !=1 & issue68 !=1 & issue69 !=1 & issue70 !=1 & issue71 != 1 & issue72 !=1) %>% view()
+# Ads to not watch : 622
+
+df_2012_split_NA <- df_2012_split %>% filter(is.na(issue60) & is.na(issue61) & is.na(issue62) & is.na(issue64) & is.na(issue65) & is.na(issue66) & is.na(issue67) & is.na(issue68) & is.na(issue69) & is.na(issue70) & is.na(issue71) & is.na(issue72)) %>% view()
+#Ads that are N/A or not coded: 11
+
+
+
+# create a robust df by filtering and then grouping by the ID of the advertisement (variable "creative")
+robustdf2012 <- df2012 %>% filter(issue60==1 | issue61==1 | issue62==1 | issue64==1 | issue65==1 | issue66==1 | issue67==1 | issue68==1 | issue69==1 | issue70==1 | issue71==1 | issue72==1) %>% group_by(issue60, issue61, issue62, issue64, issue65, issue66, issue67, issue68, issue69, issue70, issue71, issue72, creative) %>% count(creative) %>% view()
+# count - 102
+
+
+# begin forming a clean data set for 2012 that can be merged with other data across the years
+# step 1: filter the data using the filter command by appropriate issue area 
+# step 2: select the appropriate variables to include in the data using the 'select' verb
+# step 3: group the results using the 'group_by' verb
+clean_df_2012 <- df2012 %>% 
+  filter(issue60==1 | issue61==1 | issue62==1 | issue64==1 | issue65==1 | issue66==1 | issue67==1 | issue68==1 | issue69==1 | issue70==1 | issue71==1 | issue72==1) %>% 
+  select(creative, l, election, tonecmag, sponsorcmag, affiliation, sponsorwmp, f_mention, f_picture, f_narrate, o_mention, o_picture, ad_tone, prty_mn, issue60, issue61, issue62, issue64, issue65, issue66, issue67, issue68, issue69, issue70, issue71, issue72) %>% 
+  group_by(creative) %>% view()
+
+
+# initial cut at a data set to join to other data sets.
+# I've already selected which issue areas matter, so I can drop those here and 
+# because these issue areas will change over time. 
+# Next, I can group by the variables I am interested in. 
+# Then, I create a variable for count, referring to the number of times an ad was run
+# in a particular election cycle, and an ad for the election cycle more generally. 
+# I then use the "distinct" function to keep only the unique rows that matter, which is key. 
+# Then I rearrange the data and display it according to descending "count" order. 
+
+initial_2012_join <- clean_df_2012 %>% 
+  select(-issue60, -issue61, -issue62, -issue64, -issue65, -issue66, -issue67, -issue68, -issue69, -issue70, -issue71, -issue72) %>% 
+  group_by(creative, l, affiliation, sponsorwmp, prty_mn) %>%
+  mutate(
+    count = n(), 
+    year=2012
+  ) %>% 
+distinct() %>% 
+  select(year, count, creative:prty_mn) %>% 
+  arrange(desc(count)) %>% 
+  view()
+
+# 107 ads to watch
+
+df_2012 <- initial_2012_join %>% 
+  select(-election, -tonecmag, -sponsorcmag) %>% 
+  rename(party=affiliation, sponsor=sponsorwmp) %>% view()
+
+
+
+
+##########################Not Likely############3
+
+# below is the list that is "unprobable" to contain the ads I think I need to watch
+clean_df_2012_unprobably <- df2012 %>% 
+  filter(issue60 !=1 & issue61 !=1 & issue62 !=1 & issue64 !=1 & issue65 !=1 & issue66 !=1 & issue67 !=1 & issue68 !=1 & issue69 !=1 & issue70 !=1 & issue71 != 1 & issue72 !=1) %>% 
+  select(creative, l, issue60, issue61, issue62, issue64, issue65, issue66, issue67, issue68, issue69, issue70, issue71, issue72) %>%
+  group_by(creative)
+
+initial_2012_join_unprobable <- clean_df_2012_unprobably %>% 
+  group_by(creative, l) %>%
+  mutate(
+    count = n(), 
+    year=2012
+  ) %>% 
+distinct() %>% 
+  select(year, count, creative, l, issue60, issue61, issue62, issue64, issue65, issue66, issue67, issue68, issue69, issue70, issue71, issue72) %>% 
+  arrange(desc(count)) %>% 
+  view()
+
+# 672 ads to NOT watch
+
+df_2012_notlikely <- initial_2012_join_unprobable %>% select(-issue60, -issue61, -issue62, -issue64, -issue65, -issue66, -issue67, -issue68, -issue69, -issue70, -issue71, -issue72) %>% view()
 
 ```
 
 ```{r data2008, include=FALSE, echo=FALSE, warning=FALSE}
 # Issues in General are coded differently than WMP data from 2012 and 2016
+
 # defpolicy
-# DEF_NIRQ
-# FOR_NIRQ
 # vets
+#SEPT11
+#terror
+#iraq
+#surge
+#mideast
+#ISSUE_IRAQ
+#FOR_NIRAQ
+#china
+#nukes
+#iran
+#afghan
+# DEF_NIRQ
+# 14 total issue areas
+
 
 # read in the data and then summarize it
 df2008 <- read_dta(here("data", "WiscAds2008_Presidential.dta"))
 summary(df2008)
 
-# create a smaller df by filtering and then grouping by the ID of the advertisement (variable "creative")
-slimdf2008 <- df2008 %>% filter(defpolicy==1 | DEF_NIRQ==1 | FOR_NIRQ==1 | vets==1) %>% group_by(defpolicy, DEF_NIRQ, FOR_NIRQ, vets, creative) %>% count(creative) %>% view()
+#Get an initial idea for how many ads there are are, which ones to watch, split. 
+df_2008_split  <- df2008 %>% select(creative, defpolicy, vets, SEPT11, terror, iraq, surge, mideast, iran, afghan, DEF_NIRQ, ISSUE_IRAQ, FOR_NIRQ, nukes, china) %>% distinct() %>% view()
+# Coding to find the Total # of Ads: 934
+
+df_2008_split_watch <- df_2008_split %>% filter(defpolicy==1 | vets==1 | SEPT11==1 | terror ==1 | iraq ==1 | surge ==1 | mideast ==1 | iran ==1 | afghan ==1 | DEF_NIRQ == 1 | ISSUE_IRAQ == 1 | FOR_NIRQ == 1 | nukes == 1 | china == 1) %>% view()
+#Ads to watch : 255
+
+df_2008_split_dontwatch <- df_2008_split %>% filter(defpolicy!=1 & vets!=1 & SEPT11!=1 & terror !=1 & iraq !=1 & surge !=1 & mideast !=1 & iran !=1 & afghan !=1 & DEF_NIRQ != 1 & ISSUE_IRAQ != 1 & FOR_NIRQ != 1 & nukes != 1 & china != 1) %>% view()
+# Ads to not watch : 679
+
+df_2008_split_NA <- df_2008_split %>% filter(is.na(defpolicy) & is.na(vets) & is.na(SEPT11) & is.na(terror) & is.na(iraq) & is.na(surge) & is.na(mideast) & is.na(iran) & is.na(afghan) & is.na(DEF_NIRQ) & is.na(ISSUE_IRAQ) & is.na(FOR_NIRQ) & is.na(nukes) & is.na(china)) %>% view()
+#Ads that are N/A or not coded: 0
+
+
+
+# create a larger df by filtering and then grouping by the ID of the advertisement (variable "creative")
+
+robustdf2008 <- df2008 %>% filter(defpolicy==1 | vets==1 | SEPT11==1 | terror ==1 | iraq ==1 | surge ==1 | mideast ==1 | iran ==1 | afghan ==1 | DEF_NIRQ == 1 | ISSUE_IRAQ == 1 | FOR_NIRQ == 1 | nukes == 1 | china == 1) %>% group_by(defpolicy, vets, SEPT11, terror, iraq, surge, mideast, iran, afghan, DEF_NIRQ, ISSUE_IRAQ, FOR_NIRQ, nukes, china, creative) %>% count(creative) %>% view()
+#count - 255
+
+# begin forming a clean data set for 2008 that can be merged with other data across the years
+# step 1: filter the data using the filter command by appropriate issue area 
+# step 2: select the appropriate variables to include in the data using the 'select' verb
+# step 3: group the results using the 'group_by' verb
+clean_df_2008 <- df2008 %>% 
+  filter(defpolicy==1 | vets==1 | SEPT11==1 | terror ==1 | iraq ==1 | surge ==1 | mideast ==1 | iran ==1 | afghan ==1 | DEF_NIRQ == 1 | ISSUE_IRAQ == 1 | FOR_NIRQ == 1 | nukes == 1 | china == 1) %>% 
+  select(creative, l, GROUP_NA, party, sponsor, FC_MNTN, FC_APER, OP_MNTN, AD_TONE, PRTY_MN, defpolicy, vets, SEPT11, terror, iraq, surge, mideast, iran, afghan, DEF_NIRQ, ISSUE_IRAQ, FOR_NIRQ, nukes, china) %>% 
+  group_by(creative) %>% view()
+
+# initial cut at a data set to join to other data sets.
+# I've already selected which issue areas matter, so I can drop those here and 
+# because these issue areas will change over time. 
+# Next, I can group by the variables I am interested in. 
+# Then, I create a variable for count, referring to the number of times an ad was run
+# in a particular election cycle, and an ad for the election cycle more generally. 
+# I then use the "distinct" function to keep only the unique rows that matter, which is key. 
+# Then I rearrange the data and display it according to descending "count" order. 
+
+initial_2008_join <- clean_df_2008 %>% 
+  select(-defpolicy, -vets, -SEPT11, -terror, -iraq, -surge, -mideast, -iran, -afghan, -DEF_NIRQ, -ISSUE_IRAQ, -FOR_NIRQ, -nukes, -china) %>%
+  group_by(creative, l, party) %>%
+  mutate(
+    count = n(), 
+    year=2008
+  ) %>% 
+distinct() %>% 
+  select(year, count, creative:PRTY_MN) %>% 
+  arrange(desc(count)) %>% 
+  view()
+#260 total ads
+
+# drop the "GROUP_NA" variable
+df_2008_almost <- initial_2008_join %>% select(-GROUP_NA) %>% view()
+
+# now use the mutate function to create multiple
+#variables
+#recode values of sponsor to match the 2012 and 2016 schemes (flip 4 and 3)
+
+df_2008 <- df_2008_almost %>% mutate(
+  f_mention=case_when(FC_MNTN==1 | FC_MNTN==3 | FC_MNTN==4 | FC_MNTN==5 ~ 1,
+                      FC_MNTN==0 | FC_MNTN==2 | FC_MNTN==98 | FC_MNTN==99 ~ 0),
+  f_picture=case_when(FC_MNTN==2 | FC_MNTN==3 | FC_APER==1 | FC_APER==2 ~ 1, 
+                      FC_APER==0 | FC_APER==98 | FC_APER==99 | FC_MNTN != 2 | FC_MNTN != 3 ~ 0),
+  f_narrate=case_when(FC_APER==1 | FC_APER==2 ~ 1, 
+                      FC_APER == 0 | FC_APER==98 | FC_APER==99 ~ 0),
+  o_mention=case_when(OP_MNTN == 1 | OP_MNTN ==3 ~ 1,
+                      OP_MNTN ==0 | OP_MNTN==2 | OP_MNTN == 98 | OP_MNTN ==99 ~ 0),
+  o_picture=case_when(OP_MNTN==2 | OP_MNTN==3 ~1,
+                      OP_MNTN==0 | OP_MNTN==1 | OP_MNTN==98 | OP_MNTN==99 ~ 0),
+  party=case_when(party==1 ~ "DEMOCRAT",
+                  party==2 ~ "REPUBLICAN",
+                  party != 1 | party!=2 ~ "OTHER"),
+  sponsor=case_when(sponsor==1~1,
+                    sponsor==2 ~2,
+                    sponsor==3~4,
+                    sponsor==4~3
+                    )
+  ) %>% 
+  select(-FC_MNTN, -FC_APER, -OP_MNTN) %>% 
+  relocate(AD_TONE, PRTY_MN, .after = o_picture) %>% 
+  rename(ad_tone=AD_TONE, prty_mn=PRTY_MN) %>% 
+  view()
+
+# 260 total ads
+
+
+###########UNLIKELY####################
+
+# below is the list that is "unprobable" to contain the ads I think I need to watch
+clean_df_2008_unprobably <- df2008 %>% 
+  filter(defpolicy!=1 & vets!=1 & SEPT11!=1 & terror !=1 & iraq !=1 & surge !=1 & mideast !=1 & iran !=1 & afghan !=1 & DEF_NIRQ != 1 & ISSUE_IRAQ != 1 & FOR_NIRQ != 1 & nukes != 1 & china != 1) %>% 
+  select(creative, l, defpolicy, vets, SEPT11, terror, iraq, surge, mideast, iran, afghan, DEF_NIRQ, ISSUE_IRAQ, FOR_NIRQ, nukes, china) %>%
+  group_by(creative)
+
+initial_2008_join_unprobable <- clean_df_2008_unprobably %>% 
+  group_by(creative, l) %>%
+  mutate(
+    count = n(), 
+    year=2008
+  ) %>% 
+distinct() %>% 
+  select(year, count, creative, l, defpolicy, vets, SEPT11, terror, iraq, surge, mideast, iran, afghan, DEF_NIRQ, ISSUE_IRAQ, FOR_NIRQ, nukes, china) %>% 
+  arrange(desc(count)) %>% 
+  view()
+
+# 706 ads to NOT watch
+
+df_2008_notlikely <- initial_2008_join_unprobable %>% select(-defpolicy, -vets, -SEPT11, -terror, -iraq, -surge, -mideast, -iran, -afghan, -DEF_NIRQ, -ISSUE_IRAQ, -FOR_NIRQ, -nukes, -china) %>% view()
+
+
 
 ```
 
 
+
 ```{r data2004, include=FALSE, echo=FALSE, warning=FALSE}
 # WiscAd Data; slight difference from 2008 data
-#EISSUE: if coded 52 - Veterans; 50 - Defense/Military
 
-#ESSUE: if coded 51 - Missile Defense/Star Wars; 54 - Bosnia
-#EISSUE: if coded 57 - terrorism; 58 - Middle East;
-# EISSUE: if coded 59 - Afghanistan; 83 - September 11
+#EISSUE: if coded 50 - then Defense/Military
+#ESSUE: if coded 51 - Missile Defense/Star Wars; 
+#EISSUE: if coded 52 - Veterans
+#EISSUE: if coded 53 - Foreign Policy
+#EISSUE: if coded 54 - Bosnia
+#EISSUE: if coded 55 - China
+#EISSUE: if coded 57 - terrorism
+#EISSUE: if coded 58 - Middle East;
+# EISSUE: if coded 59 - Afghanistan; 
+#EISSUE: if coded 83 - September 11
+# A total of 10 x topic areas plus 
+# 2 x explicit mention variables () ESEPT11, eterror  )
 
 # read in the data and then summarize it
 df2004 <- read_dta(here("data", "WiscAds_2004 Presidential.dta"))
 summary(df2004)
 
-# create a smaller df by filtering and then grouping by the ID of the advertisement (variable "creative")
-slimdf2004 <- df2004 %>% filter(EISSUE1 == 52 | EISSUE1 == 50 | EISSUE2 == 52 | EISSUE2 == 50 | EISSUE3 == 52 | EISSUE3 == 50 | EISSUE4 == 52 | EISSUE4 == 50) %>% group_by(EISSUE1, EISSUE2, EISSUE3, EISSUE4, creative) %>% count(creative) %>% view()
-#count 103
+
+#Get an initial idea for how many ads there are are, which ones to watch, split. 
+df_2004_split  <- df2004 %>% select(creative, EISSUE1, EISSUE2, EISSUE3, EISSUE4, ESEPT11, eterror) %>% distinct() %>% view()
+# Coding to find the Total # of Ads: 644
+
+df_2004_split_watch <- df_2004_split %>% filter(EISSUE1 == 50 | EISSUE1 == 51 | EISSUE1 == 52 | EISSUE1 == 53 | EISSUE1 == 54 | EISSUE1 == 55 | EISSUE1 == 57 | EISSUE1 == 58 | EISSUE1 == 59 | EISSUE1 == 83 | EISSUE2 == 50 | EISSUE2 == 51 | EISSUE2 == 52 | EISSUE2 == 53 | EISSUE2 == 54 | EISSUE2 == 55 | EISSUE2 == 57 | EISSUE2 == 58 | EISSUE2 == 59 | EISSUE2 == 83 | EISSUE3 == 50 | EISSUE3 == 51 | EISSUE3 == 52 | EISSUE3 == 53 | EISSUE3 == 54 | EISSUE3 == 55 | EISSUE3 == 57 | EISSUE3 == 58 | EISSUE3 == 59 | EISSUE3 == 83 | EISSUE4 == 50 | EISSUE4 == 51 | EISSUE4 == 52 | EISSUE4 == 53 | EISSUE4 == 54 | EISSUE4 == 55 | EISSUE4 == 57 | EISSUE4 == 58 | EISSUE4 == 59 | EISSUE4 == 83 | ESEPT11==1 | eterror==1) %>% view()
+#Ads to watch : 185
+
+df_2004_split_dontwatch <- df_2004_split %>% filter(EISSUE1 != 50 & EISSUE1 != 51 & EISSUE1 != 52 & EISSUE1 != 53 & EISSUE1 != 54 & EISSUE1 != 55 & EISSUE1 != 57 & EISSUE1 != 58 & EISSUE1 != 59 & EISSUE1 != 83 & EISSUE2 != 50 & EISSUE2 != 51 & EISSUE2 != 52 & EISSUE2 != 53 & EISSUE2 != 54 & EISSUE2 != 55 & EISSUE2 != 57 & EISSUE2 != 58 & EISSUE2 != 59 & EISSUE2 != 83 & EISSUE3 != 50 & EISSUE3 != 51 & EISSUE3 != 52 & EISSUE3 != 53 & EISSUE3 != 54 & EISSUE3 != 55 & EISSUE3 != 57 & EISSUE3 != 58 & EISSUE3 != 59 & EISSUE3 != 83 & EISSUE4 != 50 & EISSUE4 != 51 & EISSUE4 != 52 & EISSUE4 != 53 & EISSUE4 != 54 & EISSUE4 != 55 & EISSUE4 != 57 & EISSUE4 != 58 & EISSUE4 != 59 & EISSUE4 != 83 & ESEPT11!=1 & eterror!=1) %>% view()
+# Ads to not watch : 455
+
+df_2004_split_NA <- df_2004_split %>% filter(is.na(EISSUE1) & is.na(EISSUE2) & is.na(EISSUE3) & is.na(EISSUE4) & is.na(ESEPT11) & is.na(eterror)) %>% view()
+#Ads that are N/A or not coded: 2
 
 
 # a more robust version of ads, if we include:
-robustdf2004 <- df2004 %>% filter(EISSUE1 == 52 | EISSUE1 == 50 | EISSUE1 == 51 | EISSUE1 == 54 | EISSUE1 == 57 | EISSUE1 == 58 | EISSUE1 == 59 | EISSUE1 == 83 | EISSUE2 == 52 | EISSUE2 == 50 | EISSUE2 == 51 | EISSUE2 == 54 | EISSUE2 == 57 | EISSUE2 == 58 | EISSUE2 == 59 | EISSUE2 == 83 | EISSUE3 == 52 | EISSUE3 == 50 | EISSUE3 == 51 | EISSUE3 == 54 | EISSUE3 == 57 | EISSUE3 == 58 | EISSUE3 == 59 | EISSUE3 == 83 | EISSUE4 == 52 | EISSUE4 == 50 | EISSUE4 == 51 | EISSUE4 == 54 | EISSUE4 == 57 | EISSUE4 == 58 | EISSUE4 == 59 | EISSUE4 == 83) %>% group_by(EISSUE1, EISSUE2, EISSUE3, EISSUE4, creative) %>% count(creative) %>% view()
-#count 164
+robustdf2004 <- df2004 %>% filter(EISSUE1 == 50 | EISSUE1 == 51 | EISSUE1 == 52 | EISSUE1 == 53 | EISSUE1 == 54 | EISSUE1 == 55 | EISSUE1 == 57 | EISSUE1 == 58 | EISSUE1 == 59 | EISSUE1 == 83 | EISSUE2 == 50 | EISSUE2 == 51 | EISSUE2 == 52 | EISSUE2 == 53 | EISSUE2 == 54 | EISSUE2 == 55 | EISSUE2 == 57 | EISSUE2 == 58 | EISSUE2 == 59 | EISSUE2 == 83 | EISSUE3 == 50 | EISSUE3 == 51 | EISSUE3 == 52 | EISSUE3 == 53 | EISSUE3 == 54 | EISSUE3 == 55 | EISSUE3 == 57 | EISSUE3 == 58 | EISSUE3 == 59 | EISSUE3 == 83 | EISSUE4 == 50 | EISSUE4 == 51 | EISSUE4 == 52 | EISSUE4 == 53 | EISSUE4 == 54 | EISSUE4 == 55 | EISSUE4 == 57 | EISSUE4 == 58 | EISSUE4 == 59 | EISSUE4 == 83 | ESEPT11==1 | eterror==1) %>% group_by(EISSUE1, EISSUE2, EISSUE3, EISSUE4, ESEPT11, eterror, creative) %>% count(creative) %>% view()
+#count 185
+
+# begin forming a clean data set for 2004 that can be merged with other data across the years
+# step 1: filter the data using the filter command by appropriate issue area 
+# step 2: select the appropriate variables to include in the data using the 'select' verb
+# step 3: group the results using the 'group_by' verb
+clean_df_2004 <- df2004 %>% 
+  filter(EISSUE1 == 50 | EISSUE1 == 51 | EISSUE1 == 52 | EISSUE1 == 53 | EISSUE1 == 54 | EISSUE1 == 55 | EISSUE1 == 57 | EISSUE1 == 58 | EISSUE1 == 59 | EISSUE1 == 83 | EISSUE2 == 50 | EISSUE2 == 51 | EISSUE2 == 52 | EISSUE2 == 53 | EISSUE2 == 54 | EISSUE2 == 55 | EISSUE2 == 57 | EISSUE2 == 58 | EISSUE2 == 59 | EISSUE2 == 83 | EISSUE3 == 50 | EISSUE3 == 51 | EISSUE3 == 52 | EISSUE3 == 53 | EISSUE3 == 54 | EISSUE3 == 55 | EISSUE3 == 57 | EISSUE3 == 58 | EISSUE3 == 59 | EISSUE3 == 83 | EISSUE4 == 50 | EISSUE4 == 51 | EISSUE4 == 52 | EISSUE4 == 53 | EISSUE4 == 54 | EISSUE4 == 55 | EISSUE4 == 57 | EISSUE4 == 58 | EISSUE4 == 59 | EISSUE4 == 83 | ESEPT11==1 | eterror==1) %>% 
+  select(creative, spotleng, Party, Sponsor, EFC_MNTN, EFC_APER, EOP_MNTN, EAD_TONE, EPRTY_MN, EISSUE1, EISSUE2, EISSUE3, EISSUE4, ESEPT11, eterror) %>% 
+  group_by(creative) %>% view()
+
+# initial cut at a data set to join to other data sets.
+# I've already selected which issue areas matter, so I can drop those here and 
+# because these issue areas will change over time. 
+# Next, I can group by the variables I am interested in. 
+# Then, I create a variable for count, referring to the number of times an ad was run
+# in a particular election cycle, and an ad for the election cycle more generally. 
+# I then use the "distinct" function to keep only the unique rows that matter, which is key. 
+# Then I rearrange the data and display it according to descending "count" order. 
+
+initial_2004_join <- clean_df_2004 %>% 
+  select(-EISSUE1, -EISSUE2, -EISSUE3, -EISSUE4, -ESEPT11, -eterror) %>% 
+  group_by(creative, spotleng, Party) %>%
+  mutate(
+    count = n(), 
+    year=2004
+  ) %>% 
+distinct() %>% 
+  select(year, count, creative:EPRTY_MN) %>% 
+  arrange(desc(count)) %>% 
+  view()
+# 191 Ads
+
+# use mutate function to create multiple variables to match 2012/2016 schemes
+#recode values of sponsor to match the 2012 and 2016 schemes (flip 4 and 3)
+df_2004 <- initial_2004_join %>% mutate(
+  f_mention=case_when(EFC_MNTN==1 | EFC_MNTN==3 | EFC_MNTN==4 | EFC_MNTN==5 ~ 1,
+                      EFC_MNTN==0 | EFC_MNTN==2 | EFC_MNTN==98 | EFC_MNTN==99 ~ 0),
+  f_picture=case_when(EFC_MNTN==2 | EFC_MNTN==3 | EFC_APER==1 | EFC_APER==2 ~ 1, 
+                      EFC_APER==0 | EFC_APER==98 | EFC_APER==99 | EFC_MNTN != 2 | EFC_MNTN != 3 ~ 0),
+  f_narrate=case_when(EFC_APER==1 | EFC_APER==2 ~ 1, 
+                      EFC_APER == 0 | EFC_APER==98 | EFC_APER==99 ~ 0),
+  o_mention=case_when(EOP_MNTN == 1 | EOP_MNTN ==3 ~ 1,
+                      EOP_MNTN ==0 | EOP_MNTN==2 | EOP_MNTN == 98 | EOP_MNTN ==99 ~ 0),
+  o_picture=case_when(EOP_MNTN==2 | EOP_MNTN==3 ~1,
+                      EOP_MNTN==0 | EOP_MNTN==1 | EOP_MNTN==98 | EOP_MNTN==99 ~ 0),
+  ad_tone=case_when(EAD_TONE == 2 ~1,
+                    EAD_TONE == 3 ~ 2,
+                    EAD_TONE == 1 ~ 3,
+                    EAD_TONE <= 98 ~4),
+  Party=case_when(Party==1 ~ "DEMOCRAT",
+                  Party==2 ~ "REPUBLICAN",
+                  Party != 1 | Party!=2 ~ "OTHER"),
+  sponsor=case_when(Sponsor==1 ~ 1,
+                    Sponsor ==2 ~2,
+                    Sponsor ==3 ~4,
+                    Sponsor ==4 ~3 )
+  )%>% 
+  select(-EFC_MNTN, -EFC_APER,-EOP_MNTN, -EAD_TONE, -Sponsor) %>% 
+  relocate(EPRTY_MN, .after = ad_tone) %>% 
+  rename(
+    l=spotleng,
+    party=Party,
+    prty_mn=EPRTY_MN
+  ) %>% 
+  relocate(sponsor, .after = party) %>% 
+  view()
+
+# 191 ads to watch
+
+
+
+###########UNLIKELY##############
+
+
+# below is the list that is "unprobable" to contain the ads I think I need to watch
+clean_df_2004_unprobably <- df2004 %>% 
+  filter(EISSUE1 != 50 & EISSUE1 != 51 & EISSUE1 != 52 & EISSUE1 != 53 & EISSUE1 != 54 & EISSUE1 != 55 & EISSUE1 != 57 & EISSUE1 != 58 & EISSUE1 != 59 & EISSUE1 != 83 & EISSUE2 != 50 & EISSUE2 != 51 & EISSUE2 != 52 & EISSUE2 != 53 & EISSUE2 != 54 & EISSUE2 != 55 & EISSUE2 != 57 & EISSUE2 != 58 & EISSUE2 != 59 & EISSUE2 != 83 & EISSUE3 != 50 & EISSUE3 != 51 & EISSUE3 != 52 & EISSUE3 != 53 & EISSUE3 != 54 & EISSUE3 != 55 & EISSUE3 != 57 & EISSUE3 != 58 & EISSUE3 != 59 & EISSUE3 != 83 & EISSUE4 != 50 & EISSUE4 != 51 & EISSUE4 != 52 & EISSUE4 != 53 & EISSUE4 != 54 & EISSUE4 != 55 & EISSUE4 != 57 & EISSUE4 != 58 & EISSUE4 != 59 & EISSUE4 != 83 & ESEPT11!=1 & eterror!=1) %>% 
+  select(creative, spotleng, EISSUE1, EISSUE2, EISSUE3, EISSUE4, ESEPT11, eterror) %>%
+  group_by(creative)
+
+initial_2004_join_unprobable <- clean_df_2004_unprobably %>% 
+  group_by(creative, spotleng) %>%
+  mutate(
+    count = n(), 
+    year=2004
+  ) %>% 
+distinct() %>% 
+  select(year, count, creative, spotleng, EISSUE1, EISSUE2, EISSUE3, EISSUE4, ESEPT11, eterror) %>% 
+  arrange(desc(count)) %>% 
+  view()
+
+# 462 ads to NOT watch
+
+df_2004_notlikely <- initial_2004_join_unprobable %>% 
+  select(-EISSUE1, -EISSUE2, -EISSUE3, -EISSUE4, -ESEPT11, -eterror) %>% 
+  rename(
+    l=spotleng
+    ) %>% view()
+
 
 ```
+
 
 ```{r data2000, include=FALSE, echo=FALSE, warning=FALSE}
 # WiscAd Data; slight difference from 2004 data
 # instead of creative, title of ad called "custitle"
 #q32-35 deal with campaign themes: 
-# 52 - Veterans
-# 50 - Defense
 
-# 54 - Bosnia; 
+# 50 - Defense
 # 51 - missile defense/star wars; 
+# 52 - Veterans
+# 53 - Foreign Policy
+# 54 - Bosnia; 
+# 55 - China;
+# 59 - Other defense/foreign policy issues
+# 7 total issues
 
 
 # read in the data and then summarize it
 df2000 <- read_dta(here("data", "Political Advertising in 2000.dta"))
 summary(df2000)
 
-# create a smaller df by filtering and then grouping by the ID of the advertisement (variable "creative")
-slimdf2000 <- df2000 %>% filter(q32 == 52 | q33 == 52 | q34 == 52 | q35 == 52 | q32 == 50 | q33 == 50 | q34 == 50 | q35 == 50) %>% group_by(q32, q33, q34, q35, custitle) %>% count(custitle) %>% view()
-# count 83
+# this data is different from the other data sets.  Must first
+# filter for Presidential data only (q3 = 80 or 85 or 90)
 
-robustdf2000 <- df2000 %>% filter(q32 == 52 | q33 == 52 | q34 == 52 | q35 == 52 | q32 == 50 | q33 == 50 | q34 == 50 | q35 == 50 | q32 == 54 | q33 == 54 | q34 == 54 | q35 == 54 | q32 == 51 | q33 == 51 | q34 == 51 | q35 == 51) %>% group_by(q32, q33, q34, q35, custitle) %>% count(custitle) %>% view()
-# count 89
+#Get an initial idea for how many ads there are are, which ones to watch, split. 
+df_2000_split  <- df2000 %>% select(custitle, q3, q32, q33, q34, q35) %>% 
+  filter(q3==80 | q3 == 95 | q3 == 99) %>% 
+  distinct() %>% view()
+# Coding to find the Total # of Ads: 730
+
+df_2000_split_watch <- df_2000_split %>% filter(q32 == 50 | q33 == 50 | q34 == 50 | q35 == 50 | q32 == 51 | q33 == 51 | q34 == 51 | q35 == 51 | q32 == 52 | q33 == 52 | q34 == 52 | q35 == 52 | q32 == 53 | q33 == 53 | q34 == 53 | q35 == 53 | q32 == 54 | q33 == 54 | q34 == 54 | q35 == 54 | q32 == 55 | q33 == 55 | q34 == 55 | q35 == 55 | q32 == 59 | q33 == 59 | q34 == 59 | q35 == 59) %>% view()
+#Ads to watch : 29
+
+df_2000_split_dontwatch <- df_2000_split %>% filter(q32 != 50 & q33 != 50 & q34 != 50 & q35 != 50 & q32 != 51 & q33 != 51 & q34 != 51 & q35 != 51 & q32 != 52 & q33 != 52 & q34 != 52 & q35 != 52 & q32 != 53 & q33 != 53 & q34 != 53 & q35 != 53 & q32 != 54 & q33 != 54 & q34 != 54 & q35 != 54 & q32 != 55 & q33 != 55 & q34 != 55 & q35 != 55 & q32 != 59 & q33 != 59 & q34 != 59 & q35 != 59) %>% view()
+# Ads to not watch : 525
+
+df_2000_split_NA <- df_2000_split %>% filter(is.na(q32) & is.na(q33) & is.na(q34) & is.na(q35)) %>% view()
+#Ads that are N/A or not coded: 173
 
 
+# begin forming a clean data set for 2004 that can be merged with other data across the years
+# step 1: filter the data using the filter command by appropriate issue area 
+# step 2: select the appropriate variables to include in the data using the 'select' verb
+# step 3: group the results using the 'group_by' verb
+clean_df_2000 <- df2000 %>% 
+  filter(q32 == 50 | q33 == 50 | q34 == 50 | q35 == 50 | q32 == 51 | q33 == 51 | q34 == 51 | q35 == 51 | q32 == 52 | q33 == 52 | q34 == 52 | q35 == 52 | q32 == 53 | q33 == 53 | q34 == 53 | q35 == 53 | q32 == 54 | q33 == 54 | q34 == 54 | q35 == 54 | q32 == 55 | q33 == 55 | q34 == 55 | q35 == 55 | q32 == 59 | q33 == 59 | q34 == 59 | q35 == 59) %>% 
+  select(custitle, len, q5, sponsor, q3, q12, q13, q14, q15, q20, q21, q22, q32, q33, q34, q35) %>% 
+  filter(q3==80 | q3 == 95 | q3 == 99) %>%  # trimming down races to presidential/issues/other
+  group_by(custitle) %>% view()
+
+# initial cut at a data set to join to other data sets.
+# I've already selected which issue areas matter, so I can drop those here and 
+# because these issue areas will change over time. 
+# Next, I can group by the variables I am interested in. 
+# Then, I create a variable for count, referring to the number of times an ad was run
+# in a particular election cycle, and an ad for the election cycle more generally. 
+# I then use the "distinct" function to keep only the unique rows that matter, which is key. 
+# Then I rearrange the data and display it according to descending "count" order. 
+
+initial_2000_join <- clean_df_2000 %>% 
+  select(-q3, -q32, -q33, -q34, -q35) %>% 
+  group_by(custitle, len, sponsor) %>%
+  mutate(
+    count = n(), 
+    year=2000
+  ) %>% 
+distinct() %>% 
+  select(year, count, custitle:q22) %>% 
+  arrange(desc(count)) %>% 
+  view()
+# 30 ads
+
+df_2000 <- initial_2000_join %>% mutate(
+  f_mention=case_when(q12== 1 | q12== 4 ~ 1,
+                      q12==0 | q12 ==3 ~ 0),
+  f_picture=case_when(q12==2 | q12==4 ~ 1, 
+                      q12 ==1 | q12 ==3 | q12==0 ~ 0),
+  f_narrate=case_when(q15==1 ~ 1, 
+                      q15 == 0 | q15 == 9 ~ 0),
+  o_mention=case_when(q13 == 4 | q13 ==2 ~ 1,
+                      q13 ==0 | q13==1 | q13 == 3 ~ 0),
+  o_picture=case_when(q13==3 | q13==2 ~1,
+                      q13==0 | q13==1 | q13==4 ~ 0),
+  ad_tone=case_when(q14 == 2 ~ 1,
+                    q14 == 3 ~ 2,
+                    q14 == 1 ~ 3,
+                    q14 ==0 | q14==4 ~ 4),
+  prty_mn=case_when(q22==0 | q22==1 ~ 0,
+                    q22==4 ~ 1,
+                    q22 == 2 ~2,
+                    q22 == 3 ~3),
+  Party=case_when(q5==1 ~ "DEMOCRAT",
+                  q5==2 ~ "REPUBLICAN",
+                  q5 != 1 | q5 != 2 ~ "OTHER")
+  )%>% 
+  select(-q5, -q12, -q13, -q14, -q15, -q20, -q21, -q22) %>% 
+  relocate(Party, .after = len) %>% 
+  rename(
+    creative=custitle, 
+    l=len,
+    party=Party
+  ) %>% 
+  view()
+
+
+
+##########Unlikely############
+
+# below is the list that is "unprobable" to contain the ads I think I need to watch
+clean_df_2000_unprobably <- df2000 %>% 
+  filter(q32 != 50 & q33 != 50 & q34 != 50 & q35 != 50 & q32 != 51 & q33 != 51 & q34 != 51 & q35 != 51 & q32 != 52 & q33 != 52 & q34 != 52 & q35 != 52 & q32 != 53 & q33 != 53 & q34 != 53 & q35 != 53 & q32 != 54 & q33 != 54 & q34 != 54 & q35 != 54 & q32 != 55 & q33 != 55 & q34 != 55 & q35 != 55 & q32 != 59 & q33 != 59 & q34 != 59 & q35 != 59) %>% 
+  select(custitle, len, q3, q32, q33, q34, q35) %>% 
+  filter(q3==80 | q3 == 95 | q3 == 99) %>% 
+  group_by(custitle)
+
+initial_2000_join_unprobable <- clean_df_2000_unprobably %>% 
+  group_by(custitle, len) %>%
+  mutate(
+    count = n(), 
+    year=2000
+  ) %>% 
+distinct() %>% 
+  select(year, count, custitle, len, q3, q32, q33, q34, q35) %>% 
+  arrange(desc(count)) %>% 
+  view()
+
+# 526 ads to NOT watch
+
+df_2000_notlikely <- initial_2000_join_unprobable %>% select(-q3, -q32, -q33, -q34, -q35) %>% 
+   rename(
+    creative=custitle, 
+    l=len) %>% view()
+
+
+```
+
+```{r join_data_frames, include=FALSE, echo=FALSE, warning=FALSE}
+
+# Here, bind the rows of all pertinent data frames and 
+# then write to an excel file for future coding. 
+
+# File for Likely
+df_comb_init_cads <- bind_rows(df_2016, df_2012, df_2008, df_2004, df_2000) %>% view()
+df_comb_init_cads %>% write_xlsx(here("data", "df_comb_init_cads.xlsx"))
+
+# File for Unlikely
+df_comb_init_cads_unlikely <- bind_rows(df_2016_notlikely, df_2012_notlikely, df_2008_notlikely, df_2004_notlikely, df_2000_notlikely) %>% view() 
+df_comb_init_cads_unlikely %>% write_xlsx(here("data", "df_comb_init_cads_unlikely.xlsx"))
 
 ```
