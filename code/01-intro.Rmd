@@ -5,7 +5,7 @@ date: |
   `r format(Sys.time(), '%B %d, %Y')`
 abstract: |
   
-  _This introductory chapter derives and explains the field of civil-military relations. Using Samuel Huntington's 1957 work, The Soldier and the State, as well as critiques of his work, this chapter argues that US civil-military relations have been bounded and influenced by the adherence by civilian and military actors to three central principles or governing standards, including: civilian control of the military, the non-partisanship of the military institution, and the degree to which the military fills an active role in domestic politics. After describing each of these principles in detail, the chapter then presents the plan of the dissertation. Ultimately, this dissertation seeks to advance the scholarly understanding of US civil-military relations and to provide a unique perspective about how the domestic structure of a state influences the ability of a military to adhere to professional standards and principles._  
+  _This chapter derives and explains the field of civil-military relations and introduces the research question to be explored throughout the dissertation. Using Samuel Huntington's 1957 book, The Soldier and the State, as well as critiques of his work, this chapter argues that US civil-military relations have been bounded and influenced by the adherence by both civilian and military actors to three central principles or governing standards, including the principle of civilian control of the military, that of non-partisanship of the military, and a third principle which I coin the "non-interference" of the military into certain realms of state policy, which describes the degree to which the military weighs in on issues that are indirectly or altogether unrelated to national security policy. After describing each of these three principles in detail, this chapter then presents the broad plan of the dissertation. Ultimately, this dissertation seeks to provide a unique perspective regarding the influence of a state's domestic characteristics - namely, the level of political polarization and military prestige present in society - on instances of political behaviors committed by the military institution and military actors._  
   
 geometry: margin = 1.15in              # margin widths
 fontsize: 12pt                         # text size
@@ -293,5 +293,6 @@ In the pages to follow, I develop and test a theory that argues that the levels 
 
 \pagebreak
 \singlespace
+\newpage
 
 

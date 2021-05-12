@@ -469,7 +469,7 @@ distinct() %>%
 # 191 Ads
 
 # use mutate function to create multiple variables to match 2012/2016 schemes
-#recode values of sponsor to match the 2012 and 2016 schemes (flip 4 and 3)
+#recode values of sponsor and adtone to match the 2012 and 2016 schemes (flip 4 and 3)
 df_2004 <- initial_2004_join %>% mutate(
   f_mention=case_when(EFC_MNTN==1 | EFC_MNTN==3 | EFC_MNTN==4 | EFC_MNTN==5 ~ 1,
                       EFC_MNTN==0 | EFC_MNTN==2 | EFC_MNTN==98 | EFC_MNTN==99 ~ 0),
@@ -558,8 +558,10 @@ df_2004_notlikely <- initial_2004_join_unprobable %>%
 df2000 <- read_dta(here("data", "Political Advertising in 2000.dta"))
 summary(df2000)
 
-# this data is different from the other data sets.  Must first
-# filter for Presidential data only (q3 = 80 or 85 or 90)
+# this data is different from the other data sets in that it
+# includes advertisements from multiple types of races (house, senate, President, etc.)
+# Must therefore first filter for Presidential 
+# races only data only (q3 = 80 or 95 or 99)
 
 #Get an initial idea for how many ads there are are, which ones to watch, split. 
 df_2000_split  <- df2000 %>% select(custitle, q3, q32, q33, q34, q35) %>% 
@@ -609,6 +611,12 @@ distinct() %>%
   view()
 # 30 ads
 
+
+# below, I create several variables (using other, similar existing variables) 
+# to match existing variables in the 2012 and 2016 data sets.  
+# these variables include f_mention, f_picture, f_narrate, o_mention, o_picture
+# ad_tone, prty_mn, Party, and sponsor.
+
 df_2000 <- initial_2000_join %>% mutate(
   f_mention=case_when(q12== 1 | q12== 4 ~ 1,
                       q12==0 | q12 ==3 ~ 0),
@@ -630,7 +638,11 @@ df_2000 <- initial_2000_join %>% mutate(
                     q22 == 3 ~3),
   Party=case_when(q5==1 ~ "DEMOCRAT",
                   q5==2 ~ "REPUBLICAN",
-                  q5 != 1 | q5 != 2 ~ "OTHER")
+                  q5 != 1 | q5 != 2 ~ "OTHER"),
+  sponsor=case_when(sponsor ==1 | sponsor ==2 | sponsor ==9 | sponsor ==10 | sponsor == 11 | sponsor ==12 ~ 1,
+                    sponsor ==3 | sponsor ==4 | sponsor ==13 | sponsor == 14 | sponsor ==15 | sponsor ==16 ~ 2,
+                    sponsor == 7 | sponsor ==8 ~ 3,
+                    sponsor ==5 | sponsor ==6 | sponsor ==17 | sponsor == 18 | sponsor ==80 ~ 4)
   )%>% 
   select(-q5, -q12, -q13, -q14, -q15, -q20, -q21, -q22) %>% 
   relocate(Party, .after = len) %>% 
@@ -663,7 +675,7 @@ distinct() %>%
   arrange(desc(count)) %>% 
   view()
 
-# 526 ads to NOT watch
+# 526 ads to NOT watch. 
 
 df_2000_notlikely <- initial_2000_join_unprobable %>% select(-q3, -q32, -q33, -q34, -q35) %>% 
    rename(

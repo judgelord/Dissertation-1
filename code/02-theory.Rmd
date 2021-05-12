@@ -5,7 +5,7 @@ date: |
   `r format(Sys.time(), '%B %d, %Y')`
 abstract: |
   
-  _This chapter advances a theory that describes how the political behaviors that involve the US military are impacted by two distinct factors: the level of domestic political polarization within a society, and the degree of prestige the military institution commands. I argue that these two factors greatly shape the constraining influence of three central principles of civil-military relations: civilian control of the military, the non-partisanship of the military institution, and the "non-interference" of the military into certain realms of state politics. The chapter further argues that a total of four possible domestic environments are possible, each of which is marked by relative levels of polarization and military prestige, and that each environment leads to unique patterns of political behavior conducted by civilian and military actors which involve the military._  
+  _This chapter advances a theory that describes how the political behaviors that involve the US military are impacted by two distinct domestic factors: the level of domestic political polarization, and the degree of prestige the military institution commands within and across society. I argue that these two factors greatly shape the degree to which the three central principles of civil-military relations (civilian control of the military, the non-partisanship of the military institution, and the "non-interference" of the military into certain realms of state politics) constrain political behaviors committed by members of the military institution (and the military institution writ large). The chapter further argues that in order to better understand why the military commits certain political behaviors that challenge or violate one or more of the central principles of civil-military relations, one must understand that a total of four possible domestic environments are possible, each of which correspond to relative levels of polarization and military prestige. Furthermore, each environment is associated with patterns of political behavior conducted by civilian and military actors which involve the military institution and military actors._  
   
 geometry: margin = 1.15in              # margin widths
 fontsize: 12pt                         # text size
@@ -500,7 +500,7 @@ text_env <- tribble(~"Environment", ~"Low Polarization", ~"High Polarization",
   kable(text_env, booktabs=T, caption="Types of Domestic Environments for Civil-Military Relations and their Impact on Political Behaviors") %>%
   kable_styling(full_width = F, font_size=10, latex_options="striped") %>% 
   column_spec(1, width="10em") %>% 
-  column_spec(2:3, width="20em") 
+  column_spec(2:3, width="15em") 
 ```
 
 ## Low Polarization, Low Military Prestige
@@ -519,17 +519,17 @@ When both polarization and military prestige exist at relatively high levels, mi
 
 Based on the theoretical predictions that follow from Table \@ref(tab:poss-environment), it is possible to derive the following six hypotheses: 
 
-H1: Military actors are increasingly active in a partisan manner when polarization is high relative to periods of low polarization. 
+H1: Military actors are increasingly active in a partisan manner when polarization is high relative to periods of low polarization.
 
-H2: Military elites increasingly challenge civilian authorities in a visible, public manner during periods of high military prestige relative to periods of low military prestige. 
+H2: Military elites increasingly challenge civilian authorities in a visible, public manner during periods of high military prestige relative to periods of low military prestige.
 
-H3: When military prestige is high but political polarization is low, military actors are increasingly likely to challenge civilians on use of force initiatives, military policy, and other national security issues rather than political issues that are unrelated to these issue areas.
+H3: When military prestige is high, the level of political polarization moderates the issues over which military actors challenge civilian actors. When military prestige is high and political polarization is low, military actors will likely challenge civilians on use of force initiatives, military policy, and other issues that are directly related to national security. However, when military prestige is high and polarization is high, military actors are more likely to challenge civilians over political issues that do not directly involve the military, or are indirectly related to national security policy. 
 
-H4: When military prestige is high, civilian leaders will increasingly attempt to leverage or harness the military (either as an institution, or individual military figures who possess outsized levels of prestige/popularity) for their own political purposes and advantages relative to when military prestige is low. 
+H4: When military prestige is high, civilian leaders will attempt to leverage or harness the military (either as an institution, or individual military figures who possess outsized levels of prestige/popularity) for their own political purposes and advantages relative to when military prestige is low.
 
-H5: When polarization is high, civilian leaders will employ the military (either as an institution, or individual military figures who possess outsized levels of prestige/popularity) to support (or denounce) policy initiatives that align with (or oppose) underlying ideologies associated with a polarizing issue or cause relative to when polarization is low. 
+H5: When polarization is high, the level of military prestige moderates the propensity of civilian leaders to employ the military (as an institution, or individual military actors) in public ways to support (or denounce) policy initiatives or political candidates. When polarization is high and military prestige is high, civilian actors will use the military in public ways to advocate publicly for policies and/or partisan political candidates. When polarization is high and military prestige is low, however, civilians actors are less inclined to use the military to publicly advocate for policies and/or partisan political candidates.  
 
-H6: When polarization and military prestige are high, civilian political parties will increasingly compete for the military institution and in increasingly public ways relative to when polarization and military prestige are low. 
+H6:  When polarization and prestige are high, there is increased public competition between the civilian political parties for the military institution relative to when polarization and military prestige are low. 
 
 ## Summary
 
