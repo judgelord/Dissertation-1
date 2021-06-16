@@ -391,22 +391,42 @@ df <- df %>%
     mil_img = case_when(
     (vet_fam != 0) | (act_dty_img ==1 | vet_img ==1 | us_mil_hard_img ==1 | us_cmbt_img==1) ~ 1, 
   (vet_fam == 0) & (act_dty_img ==0 & vet_img ==0 & us_mil_hard_img ==0 & us_cmbt_img==0) ~ 0
-)
+),
+  no_mil_img = case_when(
+    (vet_fam != 1) & (act_dty_img !=1 & vet_img !=1 & us_mil_hard_img !=1 & us_cmbt_img!=1) ~ 1, 
+  (vet_fam != 0) | (act_dty_img ==1 | vet_img ==1 | us_mil_hard_img ==1 | us_cmbt_img==1) ~ 0
+  )
     ) %>% 
   view()
 
-# create variables that calculate 
-#(1) the total # of ads per election cycle containing military imagery 
+# create a new df called 'adj_df' that 
+# takes the original df and adds additional variables 
+#(1) sum_mil_img, the total # of ads per election cycle containing military imagery 
 #(mil_img ==1); 
-#(2) if an ad features a prominent veteran or veteran's family in the ad
+#(2) sum_no_mil_img, the total # of ads per cycle containing no military imagery
+#(3) mil_fig, if an ad features a prominent veteran or veteran's family in the ad
 # (mil_fig==1)
-#(3) the total # of ads per cycle that feature a veteran or family endorser
+#(4) sum_mil_fig_cycle, the total # of ads per cycle that feature a veteran or family endorser
 # sum_mil_fig_cycle
-df %>% group_by(year) %>% mutate(
+#(5) sum_def_vet_ad_theme, the total # of ads per cycle that address entirely matters
+# of national security, defense, or veterans issues
+adj_df <- df %>% group_by(year) %>% mutate(
     sum_mil_img_cycle=sum(mil_img),
+    sum_no_mil_img_cycle=sum(no_mil_img),
     mil_fig=case_when(vet_fam != 0 ~1,
                       vet_fam == 0 ~ 0),
-    sum_mil_fig_cycle=sum(mil_fig)) %>% view()
+    sum_mil_fig_cycle=sum(mil_fig),
+    sum_def_vet_ad_theme=sum(def_vet_ad_theme),
+    def_theme_and_mil_img=case_when((def_vet_ad_theme==1) & (mil_img==1) ~1,
+                                    (def_vet_ad_theme!=1) | (mil_img==0) ~0),
+    sum_def_theme_and_mil_img=sum(def_theme_and_mil_img),
+    not_def_theme_but_mil_img=case_when((def_vet_ad_theme!=1) & (mil_img==1) ~ 1,
+                                         (mil_img==0) | (def_theme_and_mil_img==1) ~0),
+    sum_not_def_theme_but_mil_img=sum(not_def_theme_but_mil_img),
+    non_def_vet_ad_theme=case_when((def_vet_ad_theme==0) ~1,
+                                  (def_vet_ad_theme==1) ~ 0),
+    sum_non_def_vet_ad_theme=sum(non_def_vet_ad_theme)
+    ) %>% view()
 
 desc_stats <- tribble(
   ~'Election Cycle', ~'Total Ads', ~'Ads Selected for Examination', ~'Ads Selected but Missing from the Data', ~'Ads Examined that Contained Some Form of Military Imagery', ~'Ads Examined that Prominently Feature a Veteran or Veteran Family', 
@@ -456,6 +476,20 @@ kable(def_prominence, booktabs=T, caption="Percentage of Presidential Campaign A
 From 2008 to 2012, the US' involvement in Iraq lessened while its involvement in Afghanistan increased. Indeed, President Barack Obama in 2009 decided to increase the number of US forces in Afghanistan as part of a surge of US forces. Though the Afghan surge did not bring the acclaim that the earlier surge to Iraq did, there were nonetheless important victories along the way, perhaps none as important as the killing of Osama bin Laden, the architecht of the 9/11 attacks, in early 2011. Additionally, US casualties in Afghanistan had peaked in the summer of 2011, and declined afterwards, especially in the months leading up to the 2012 election [@us_department_of_defense_dcas_2021-1]. At the time of the election in November of 2012, few observers could point to Afghanistan and say that the surge of forces there had not worked. At the same time, there was no appetite - from politicians and the public, alike - to do anything substantially greater there. Therefore, the relatively low percentage of campaign advertisements featuring the military in 2012 is unsurprising. 
 
 However, in the 2016 election, the percentage of advertisements featuring military imagery rose sharply compared to the 2012 election. Despite the surges in Iraq and Afghanistan being long finished at this point, the passage of time also facilitated the opportunity for Americans and political candidates to think about the trajectory of US foreign and national security policy in broader and more critical terms. Hillary Clinton, the Democratic Candidate for President, was largely seen as an extension of Barack Obama, particularly in the realm of foreign policy, as Clinton had served as Obama's Secretary of State. Moreover, since the 2012 election, several US foreign policy choices were viewed rather negatively, including Obama's handling of events in Syria in 2013 (including Obama's infamous "red line" statement) and concern over rising Russian aggression. Hillary Clinton in particular was portrayed extremely negatively after a US Ambassador and three other Americans were killed on September 12, 2012, when terrorists attacked the US consulate in Banghazi, Libya [@bixby_parents_2016]. Donald Trump, an outside candidate who ran and won as a Republican, instead ran on a platform of putting "America First," which included promises to cease fighting endless wars and rebuilding the US military. For these reasons, one can understand how and why military imagery, at least in a general sense, would have been more prominent in 2016 than in 2012. 
+
+# Can Candidates Afford to Bypass or Ignore the Military?
+
+During advertisements in which foreign or national security policy is the prominent theme or issue discussed, one can expect a reasonable chance to see pictures of troops in uniform, tanks or airplanes, or other forms of military imagery. But it is not clear that in other advertisements, many of which are 30 seconds in length and discuss a variety of themes or issues, the military would be one of these issues that "make the cut" and are chosen by candidates to be conveyed to the public.
+
+Figure \@ref(fig:def-theme) displays the number and portion of campaign advertisements by election cycle separated by those that entirely address a national security/defense/military theme versus that do not. 
+
+```{r def-theme, include=TRUE, echo=FALSE, fig.cap="Presidential Campaign Advertisements Featuring Military Imagery, Separated by Ads that are Entirely Focused on National Security Topics"}
+
+plot1 <- ggplot(data=adj_df, aes(x=year, y=n)) + labs(x="Source", y="Number of Campaign Advertisements") + geom_col() + geom_text(aes(label=n), position=position_dodge(width=.9), vjust=-.25) 
+
+colplot2
+
+```
 
 \singlespace
 
