@@ -129,7 +129,7 @@ df_2016 <- initial_2016_join %>% select (-election, -tonecmag, -sponsorcmag) %>%
 # below is the list that is "unprobable" to contain the ads I think I need to watch
 clean_df_2016_unprobably <- df %>% 
   filter(issue60 !=1 & issue61 !=1 & issue62 !=1 & issue64 !=1 & issue65 !=1 & issue66 !=1 & issue67 !=1 & issue68 !=1 & issue69 !=1 & issue70 !=1 & issue71 != 1 & issue72 !=1 & issue73 !=1 & issue74 !=1) %>% 
-  select(creative, l, issue60, issue61, issue62, issue64, issue65, issue66, issue67, issue68, issue69, issue70, issue71, issue72, issue73, issue74) %>%
+  select(creative, l, party, issue60, issue61, issue62, issue64, issue65, issue66, issue67, issue68, issue69, issue70, issue71, issue72, issue73, issue74) %>%
   group_by(creative)
 
 initial_2016_join_unprobable <- clean_df_2016_unprobably %>% 
@@ -139,7 +139,7 @@ initial_2016_join_unprobable <- clean_df_2016_unprobably %>%
     year=2016
   ) %>% 
 distinct() %>% 
-  select(year, count, creative, l, issue60, issue61, issue62, issue64, issue65, issue66, issue67, issue68, issue69, issue70, issue71, issue72, issue73, issue74) %>% 
+  select(year, count, creative, l, party, issue60, issue61, issue62, issue64, issue65, issue66, issue67, issue68, issue69, issue70, issue71, issue72, issue73, issue74) %>% 
   arrange(desc(count)) %>% 
   view()
 
@@ -239,7 +239,7 @@ df_2012 <- initial_2012_join %>%
 # below is the list that is "unprobable" to contain the ads I think I need to watch
 clean_df_2012_unprobably <- df2012 %>% 
   filter(issue60 !=1 & issue61 !=1 & issue62 !=1 & issue64 !=1 & issue65 !=1 & issue66 !=1 & issue67 !=1 & issue68 !=1 & issue69 !=1 & issue70 !=1 & issue71 != 1 & issue72 !=1) %>% 
-  select(creative, l, issue60, issue61, issue62, issue64, issue65, issue66, issue67, issue68, issue69, issue70, issue71, issue72) %>%
+  select(creative, l, affiliation, issue60, issue61, issue62, issue64, issue65, issue66, issue67, issue68, issue69, issue70, issue71, issue72) %>%
   group_by(creative)
 
 initial_2012_join_unprobable <- clean_df_2012_unprobably %>% 
@@ -249,8 +249,9 @@ initial_2012_join_unprobable <- clean_df_2012_unprobably %>%
     year=2012
   ) %>% 
 distinct() %>% 
-  select(year, count, creative, l, issue60, issue61, issue62, issue64, issue65, issue66, issue67, issue68, issue69, issue70, issue71, issue72) %>% 
+  select(year, count, creative, l, affiliation, issue60, issue61, issue62, issue64, issue65, issue66, issue67, issue68, issue69, issue70, issue71, issue72) %>% 
   arrange(desc(count)) %>% 
+  rename(party=affiliation) %>% 
   view()
 
 # 672 ads to NOT watch
@@ -374,8 +375,11 @@ df_2008 <- df_2008_almost %>% mutate(
 # below is the list that is "unprobable" to contain the ads I think I need to watch
 clean_df_2008_unprobably <- df2008 %>% 
   filter(defpolicy!=1 & vets!=1 & SEPT11!=1 & terror !=1 & iraq !=1 & surge !=1 & mideast !=1 & iran !=1 & afghan !=1 & DEF_NIRQ != 1 & ISSUE_IRAQ != 1 & FOR_NIRQ != 1 & nukes != 1 & china != 1) %>% 
-  select(creative, l, defpolicy, vets, SEPT11, terror, iraq, surge, mideast, iran, afghan, DEF_NIRQ, ISSUE_IRAQ, FOR_NIRQ, nukes, china) %>%
-  group_by(creative)
+  select(creative, l, party, defpolicy, vets, SEPT11, terror, iraq, surge, mideast, iran, afghan, DEF_NIRQ, ISSUE_IRAQ, FOR_NIRQ, nukes, china) %>% mutate(
+    party=case_when(party==1 ~ "DEMOCRAT",
+                  party==2 ~ "REPUBLICAN",
+                  party != 1 | party!=2 ~ "OTHER")
+  ) %>% group_by(creative)
 
 initial_2008_join_unprobable <- clean_df_2008_unprobably %>% 
   group_by(creative, l) %>%
@@ -384,7 +388,7 @@ initial_2008_join_unprobable <- clean_df_2008_unprobably %>%
     year=2008
   ) %>% 
 distinct() %>% 
-  select(year, count, creative, l, defpolicy, vets, SEPT11, terror, iraq, surge, mideast, iran, afghan, DEF_NIRQ, ISSUE_IRAQ, FOR_NIRQ, nukes, china) %>% 
+  select(year, count, creative, l, party, defpolicy, vets, SEPT11, terror, iraq, surge, mideast, iran, afghan, DEF_NIRQ, ISSUE_IRAQ, FOR_NIRQ, nukes, china) %>% 
   arrange(desc(count)) %>% 
   view()
 
@@ -513,18 +517,20 @@ df_2004 <- initial_2004_join %>% mutate(
 # below is the list that is "unprobable" to contain the ads I think I need to watch
 clean_df_2004_unprobably <- df2004 %>% 
   filter(EISSUE1 != 50 & EISSUE1 != 51 & EISSUE1 != 52 & EISSUE1 != 53 & EISSUE1 != 54 & EISSUE1 != 55 & EISSUE1 != 57 & EISSUE1 != 58 & EISSUE1 != 59 & EISSUE1 != 83 & EISSUE2 != 50 & EISSUE2 != 51 & EISSUE2 != 52 & EISSUE2 != 53 & EISSUE2 != 54 & EISSUE2 != 55 & EISSUE2 != 57 & EISSUE2 != 58 & EISSUE2 != 59 & EISSUE2 != 83 & EISSUE3 != 50 & EISSUE3 != 51 & EISSUE3 != 52 & EISSUE3 != 53 & EISSUE3 != 54 & EISSUE3 != 55 & EISSUE3 != 57 & EISSUE3 != 58 & EISSUE3 != 59 & EISSUE3 != 83 & EISSUE4 != 50 & EISSUE4 != 51 & EISSUE4 != 52 & EISSUE4 != 53 & EISSUE4 != 54 & EISSUE4 != 55 & EISSUE4 != 57 & EISSUE4 != 58 & EISSUE4 != 59 & EISSUE4 != 83 & ESEPT11!=1 & eterror!=1) %>% 
-  select(creative, spotleng, EISSUE1, EISSUE2, EISSUE3, EISSUE4, ESEPT11, eterror) %>%
-  group_by(creative)
+  select(creative, spotleng, Party, EISSUE1, EISSUE2, EISSUE3, EISSUE4, ESEPT11, eterror) %>%
+  group_by(creative) %>% view()
 
 initial_2004_join_unprobable <- clean_df_2004_unprobably %>% 
   group_by(creative, spotleng) %>%
   mutate(
     count = n(), 
-    year=2004
+    year=2004,
+    Party=case_when(Party==1 ~ "DEMOCRAT",
+                  Party==2 ~ "REPUBLICAN",
+                  Party != 1 | Party!=2 ~ "OTHER")
   ) %>% 
 distinct() %>% 
-  select(year, count, creative, spotleng, EISSUE1, EISSUE2, EISSUE3, EISSUE4, ESEPT11, eterror) %>% 
-  arrange(desc(count)) %>% 
+  select(year, count, creative, spotleng, Party, EISSUE1, EISSUE2, EISSUE3, EISSUE4, ESEPT11, eterror) %>% rename(party=Party) %>% arrange(desc(count)) %>% 
   view()
 
 # 462 ads to NOT watch
@@ -660,9 +666,9 @@ df_2000 <- initial_2000_join %>% mutate(
 # below is the list that is "unprobable" to contain the ads I think I need to watch
 clean_df_2000_unprobably <- df2000 %>% 
   filter(q32 != 50 & q33 != 50 & q34 != 50 & q35 != 50 & q32 != 51 & q33 != 51 & q34 != 51 & q35 != 51 & q32 != 52 & q33 != 52 & q34 != 52 & q35 != 52 & q32 != 53 & q33 != 53 & q34 != 53 & q35 != 53 & q32 != 54 & q33 != 54 & q34 != 54 & q35 != 54 & q32 != 55 & q33 != 55 & q34 != 55 & q35 != 55 & q32 != 59 & q33 != 59 & q34 != 59 & q35 != 59) %>% 
-  select(custitle, len, q3, q32, q33, q34, q35) %>% 
+  select(custitle, len, q3, q5, q32, q33, q34, q35) %>% 
   filter(q3==80 | q3 == 95 | q3 == 99) %>% 
-  group_by(custitle)
+  group_by(custitle) %>% view()
 
 initial_2000_join_unprobable <- clean_df_2000_unprobably %>% 
   group_by(custitle, len) %>%
@@ -671,16 +677,20 @@ initial_2000_join_unprobable <- clean_df_2000_unprobably %>%
     year=2000
   ) %>% 
 distinct() %>% 
-  select(year, count, custitle, len, q3, q32, q33, q34, q35) %>% 
+  select(year, count, custitle, len, q3, q5, q32, q33, q34, q35) %>% 
   arrange(desc(count)) %>% 
   view()
 
 # 526 ads to NOT watch. 
 
-df_2000_notlikely <- initial_2000_join_unprobable %>% select(-q3, -q32, -q33, -q34, -q35) %>% 
+df_2000_notlikely <- initial_2000_join_unprobable %>% mutate(
+  party=case_when(q5==1 ~ "DEMOCRAT",
+                  q5==2 ~ "REPUBLICAN",
+                  q5 != 1 | q5 != 2 ~ "OTHER")
+  ) %>% select(-q3, -q5, -q32, -q33, -q34, -q35) %>% 
    rename(
     creative=custitle, 
-    l=len) %>% view()
+    l=len) %>% drop_na() %>% view()
 
 
 ```
