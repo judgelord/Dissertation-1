@@ -424,11 +424,14 @@ summary(df2004)
 
 
 #Get an initial idea for how many ads there are are, which ones to watch, split. 
-df_2004_split  <- df2004 %>% select(creative, EISSUE1, EISSUE2, EISSUE3, EISSUE4, ESEPT11, eterror) %>% distinct() %>% view()
+df_2004_split  <- df2004 %>% select(creative, EISSUE1, EISSUE2, EISSUE3, EISSUE4, ESEPT11, eterror, EACTOR1, EACTOR2, EACTOR3, EACTOR90, ecfcred, EISSUE90) %>% distinct() %>% view()
 # Coding to find the Total # of Ads: 644
 
 df_2004_split_watch <- df_2004_split %>% filter(EISSUE1 == 50 | EISSUE1 == 51 | EISSUE1 == 52 | EISSUE1 == 53 | EISSUE1 == 54 | EISSUE1 == 55 | EISSUE1 == 57 | EISSUE1 == 58 | EISSUE1 == 59 | EISSUE1 == 83 | EISSUE2 == 50 | EISSUE2 == 51 | EISSUE2 == 52 | EISSUE2 == 53 | EISSUE2 == 54 | EISSUE2 == 55 | EISSUE2 == 57 | EISSUE2 == 58 | EISSUE2 == 59 | EISSUE2 == 83 | EISSUE3 == 50 | EISSUE3 == 51 | EISSUE3 == 52 | EISSUE3 == 53 | EISSUE3 == 54 | EISSUE3 == 55 | EISSUE3 == 57 | EISSUE3 == 58 | EISSUE3 == 59 | EISSUE3 == 83 | EISSUE4 == 50 | EISSUE4 == 51 | EISSUE4 == 52 | EISSUE4 == 53 | EISSUE4 == 54 | EISSUE4 == 55 | EISSUE4 == 57 | EISSUE4 == 58 | EISSUE4 == 59 | EISSUE4 == 83 | ESEPT11==1 | eterror==1) %>% view()
 #Ads to watch : 185
+
+df_2004_split_watch_revised <- df_2004_split %>% filter(EISSUE1 == 50 | EISSUE1 == 51 | EISSUE1 == 52 | EISSUE1 == 53 | EISSUE1 == 54 | EISSUE1 == 55 | EISSUE1 == 57 | EISSUE1 == 58 | EISSUE1 == 59 | EISSUE1 == 83 | EISSUE2 == 50 | EISSUE2 == 51 | EISSUE2 == 52 | EISSUE2 == 53 | EISSUE2 == 54 | EISSUE2 == 55 | EISSUE2 == 57 | EISSUE2 == 58 | EISSUE2 == 59 | EISSUE2 == 83 | EISSUE3 == 50 | EISSUE3 == 51 | EISSUE3 == 52 | EISSUE3 == 53 | EISSUE3 == 54 | EISSUE3 == 55 | EISSUE3 == 57 | EISSUE3 == 58 | EISSUE3 == 59 | EISSUE3 == 83 | EISSUE4 == 50 | EISSUE4 == 51 | EISSUE4 == 52 | EISSUE4 == 53 | EISSUE4 == 54 | EISSUE4 == 55 | EISSUE4 == 57 | EISSUE4 == 58 | EISSUE4 == 59 | EISSUE4 == 83 | ESEPT11==1 | eterror==1 | EACTOR1 ==16 | EACTOR2 == 16 | EACTOR3 ==16 | EACTOR90=="family of soldiers" | ecfcred==13 | EISSUE90=="IRAQ") %>% view()
+#Ads to watch : 239 revised ads
 
 df_2004_split_dontwatch <- df_2004_split %>% filter(EISSUE1 != 50 & EISSUE1 != 51 & EISSUE1 != 52 & EISSUE1 != 53 & EISSUE1 != 54 & EISSUE1 != 55 & EISSUE1 != 57 & EISSUE1 != 58 & EISSUE1 != 59 & EISSUE1 != 83 & EISSUE2 != 50 & EISSUE2 != 51 & EISSUE2 != 52 & EISSUE2 != 53 & EISSUE2 != 54 & EISSUE2 != 55 & EISSUE2 != 57 & EISSUE2 != 58 & EISSUE2 != 59 & EISSUE2 != 83 & EISSUE3 != 50 & EISSUE3 != 51 & EISSUE3 != 52 & EISSUE3 != 53 & EISSUE3 != 54 & EISSUE3 != 55 & EISSUE3 != 57 & EISSUE3 != 58 & EISSUE3 != 59 & EISSUE3 != 83 & EISSUE4 != 50 & EISSUE4 != 51 & EISSUE4 != 52 & EISSUE4 != 53 & EISSUE4 != 54 & EISSUE4 != 55 & EISSUE4 != 57 & EISSUE4 != 58 & EISSUE4 != 59 & EISSUE4 != 83 & ESEPT11!=1 & eterror!=1) %>% view()
 # Ads to not watch : 455
@@ -441,6 +444,10 @@ df_2004_split_NA <- df_2004_split %>% filter(is.na(EISSUE1) & is.na(EISSUE2) & i
 robustdf2004 <- df2004 %>% filter(EISSUE1 == 50 | EISSUE1 == 51 | EISSUE1 == 52 | EISSUE1 == 53 | EISSUE1 == 54 | EISSUE1 == 55 | EISSUE1 == 57 | EISSUE1 == 58 | EISSUE1 == 59 | EISSUE1 == 83 | EISSUE2 == 50 | EISSUE2 == 51 | EISSUE2 == 52 | EISSUE2 == 53 | EISSUE2 == 54 | EISSUE2 == 55 | EISSUE2 == 57 | EISSUE2 == 58 | EISSUE2 == 59 | EISSUE2 == 83 | EISSUE3 == 50 | EISSUE3 == 51 | EISSUE3 == 52 | EISSUE3 == 53 | EISSUE3 == 54 | EISSUE3 == 55 | EISSUE3 == 57 | EISSUE3 == 58 | EISSUE3 == 59 | EISSUE3 == 83 | EISSUE4 == 50 | EISSUE4 == 51 | EISSUE4 == 52 | EISSUE4 == 53 | EISSUE4 == 54 | EISSUE4 == 55 | EISSUE4 == 57 | EISSUE4 == 58 | EISSUE4 == 59 | EISSUE4 == 83 | ESEPT11==1 | eterror==1) %>% group_by(EISSUE1, EISSUE2, EISSUE3, EISSUE4, ESEPT11, eterror, creative) %>% count(creative) %>% view()
 #count 185
 
+# revised df, with additional selection criteria
+robustdf2004_revised <- df2004 %>% filter(EISSUE1 == 50 | EISSUE1 == 51 | EISSUE1 == 52 | EISSUE1 == 53 | EISSUE1 == 54 | EISSUE1 == 55 | EISSUE1 == 57 | EISSUE1 == 58 | EISSUE1 == 59 | EISSUE1 == 83 | EISSUE2 == 50 | EISSUE2 == 51 | EISSUE2 == 52 | EISSUE2 == 53 | EISSUE2 == 54 | EISSUE2 == 55 | EISSUE2 == 57 | EISSUE2 == 58 | EISSUE2 == 59 | EISSUE2 == 83 | EISSUE3 == 50 | EISSUE3 == 51 | EISSUE3 == 52 | EISSUE3 == 53 | EISSUE3 == 54 | EISSUE3 == 55 | EISSUE3 == 57 | EISSUE3 == 58 | EISSUE3 == 59 | EISSUE3 == 83 | EISSUE4 == 50 | EISSUE4 == 51 | EISSUE4 == 52 | EISSUE4 == 53 | EISSUE4 == 54 | EISSUE4 == 55 | EISSUE4 == 57 | EISSUE4 == 58 | EISSUE4 == 59 | EISSUE4 == 83 | ESEPT11==1 | eterror==1 | EACTOR1 ==16 | EACTOR2 == 16 | EACTOR3 ==16 | EACTOR90=="family of soldiers" | ecfcred==13 | EISSUE90=="IRAQ") %>% group_by(EISSUE1, EISSUE2, EISSUE3, EISSUE4, ESEPT11, eterror, EACTOR1, EACTOR2, EACTOR3, EACTOR90, ecfcred, EISSUE90, creative) %>% count(creative) %>% view()
+#count 239
+
 # begin forming a clean data set for 2004 that can be merged with other data across the years
 # step 1: filter the data using the filter command by appropriate issue area 
 # step 2: select the appropriate variables to include in the data using the 'select' verb
@@ -449,6 +456,14 @@ clean_df_2004 <- df2004 %>%
   filter(EISSUE1 == 50 | EISSUE1 == 51 | EISSUE1 == 52 | EISSUE1 == 53 | EISSUE1 == 54 | EISSUE1 == 55 | EISSUE1 == 57 | EISSUE1 == 58 | EISSUE1 == 59 | EISSUE1 == 83 | EISSUE2 == 50 | EISSUE2 == 51 | EISSUE2 == 52 | EISSUE2 == 53 | EISSUE2 == 54 | EISSUE2 == 55 | EISSUE2 == 57 | EISSUE2 == 58 | EISSUE2 == 59 | EISSUE2 == 83 | EISSUE3 == 50 | EISSUE3 == 51 | EISSUE3 == 52 | EISSUE3 == 53 | EISSUE3 == 54 | EISSUE3 == 55 | EISSUE3 == 57 | EISSUE3 == 58 | EISSUE3 == 59 | EISSUE3 == 83 | EISSUE4 == 50 | EISSUE4 == 51 | EISSUE4 == 52 | EISSUE4 == 53 | EISSUE4 == 54 | EISSUE4 == 55 | EISSUE4 == 57 | EISSUE4 == 58 | EISSUE4 == 59 | EISSUE4 == 83 | ESEPT11==1 | eterror==1) %>% 
   select(creative, spotleng, Party, Sponsor, EFC_MNTN, EFC_APER, EOP_MNTN, EAD_TONE, EPRTY_MN, EISSUE1, EISSUE2, EISSUE3, EISSUE4, ESEPT11, eterror) %>% 
   group_by(creative) %>% view()
+
+## revised
+
+clean_df_2004_revised <- df2004 %>% 
+  filter(EISSUE1 == 50 | EISSUE1 == 51 | EISSUE1 == 52 | EISSUE1 == 53 | EISSUE1 == 54 | EISSUE1 == 55 | EISSUE1 == 57 | EISSUE1 == 58 | EISSUE1 == 59 | EISSUE1 == 83 | EISSUE2 == 50 | EISSUE2 == 51 | EISSUE2 == 52 | EISSUE2 == 53 | EISSUE2 == 54 | EISSUE2 == 55 | EISSUE2 == 57 | EISSUE2 == 58 | EISSUE2 == 59 | EISSUE2 == 83 | EISSUE3 == 50 | EISSUE3 == 51 | EISSUE3 == 52 | EISSUE3 == 53 | EISSUE3 == 54 | EISSUE3 == 55 | EISSUE3 == 57 | EISSUE3 == 58 | EISSUE3 == 59 | EISSUE3 == 83 | EISSUE4 == 50 | EISSUE4 == 51 | EISSUE4 == 52 | EISSUE4 == 53 | EISSUE4 == 54 | EISSUE4 == 55 | EISSUE4 == 57 | EISSUE4 == 58 | EISSUE4 == 59 | EISSUE4 == 83 | ESEPT11==1 | eterror==1 | EACTOR1 ==16 | EACTOR2 == 16 | EACTOR3 ==16 | EACTOR90=="family of soldiers" | ecfcred==13 | EISSUE90=="IRAQ") %>% 
+  select(creative, spotleng, Party, Sponsor, EFC_MNTN, EFC_APER, EOP_MNTN, EAD_TONE, EPRTY_MN, EISSUE1, EISSUE2, EISSUE3, EISSUE4, ESEPT11, eterror, EACTOR1, EACTOR2, EACTOR3, EACTOR90, ecfcred, EISSUE90) %>% 
+  group_by(creative) %>% view()
+
 
 # initial cut at a data set to join to other data sets.
 # I've already selected which issue areas matter, so I can drop those here and 
@@ -471,6 +486,22 @@ distinct() %>%
   arrange(desc(count)) %>% 
   view()
 # 191 Ads
+
+#revised
+
+initial_2004_join_revised <- clean_df_2004_revised %>% 
+  select(-EISSUE1, -EISSUE2, -EISSUE3, -EISSUE4, -ESEPT11, -eterror, -EACTOR1, -EACTOR2, -EACTOR3, -EACTOR90, -ecfcred, -EISSUE90) %>% 
+  group_by(creative, spotleng, Party) %>%
+  mutate(
+    count = n(), 
+    year=2004
+  ) %>% 
+distinct() %>% 
+  select(year, count, creative:EPRTY_MN) %>% 
+  arrange(desc(count)) %>% 
+  view()
+# 246 Ads
+
 
 # use mutate function to create multiple variables to match 2012/2016 schemes
 #recode values of sponsor and adtone to match the 2012 and 2016 schemes (flip 4 and 3)
@@ -509,12 +540,49 @@ df_2004 <- initial_2004_join %>% mutate(
 
 # 191 ads to watch
 
+df_2004_revised <- initial_2004_join_revised %>% mutate(
+  f_mention=case_when(EFC_MNTN==1 | EFC_MNTN==3 | EFC_MNTN==4 | EFC_MNTN==5 ~ 1,
+                      EFC_MNTN==0 | EFC_MNTN==2 | EFC_MNTN==98 | EFC_MNTN==99 ~ 0),
+  f_picture=case_when(EFC_MNTN==2 | EFC_MNTN==3 | EFC_APER==1 | EFC_APER==2 ~ 1, 
+                      EFC_APER==0 | EFC_APER==98 | EFC_APER==99 | EFC_MNTN != 2 | EFC_MNTN != 3 ~ 0),
+  f_narrate=case_when(EFC_APER==1 | EFC_APER==2 ~ 1, 
+                      EFC_APER == 0 | EFC_APER==98 | EFC_APER==99 ~ 0),
+  o_mention=case_when(EOP_MNTN == 1 | EOP_MNTN ==3 ~ 1,
+                      EOP_MNTN ==0 | EOP_MNTN==2 | EOP_MNTN == 98 | EOP_MNTN ==99 ~ 0),
+  o_picture=case_when(EOP_MNTN==2 | EOP_MNTN==3 ~1,
+                      EOP_MNTN==0 | EOP_MNTN==1 | EOP_MNTN==98 | EOP_MNTN==99 ~ 0),
+  ad_tone=case_when(EAD_TONE == 2 ~1,
+                    EAD_TONE == 3 ~ 2,
+                    EAD_TONE == 1 ~ 3,
+                    EAD_TONE <= 98 ~4),
+  Party=case_when(Party==1 ~ "DEMOCRAT",
+                  Party==2 ~ "REPUBLICAN",
+                  Party != 1 | Party!=2 ~ "OTHER"),
+  sponsor=case_when(Sponsor==1 ~ 1,
+                    Sponsor ==2 ~2,
+                    Sponsor ==3 ~4,
+                    Sponsor ==4 ~3 )
+  )%>% 
+  select(-EFC_MNTN, -EFC_APER,-EOP_MNTN, -EAD_TONE, -Sponsor) %>% 
+  relocate(EPRTY_MN, .after = ad_tone) %>% 
+  rename(
+    l=spotleng,
+    party=Party,
+    prty_mn=EPRTY_MN
+  ) %>% 
+  relocate(sponsor, .after = party) %>% 
+  view()
+
+# 246 ads to watch
+
 
 
 ###########UNLIKELY##############
 
 
 # below is the list that is "unprobable" to contain the ads I think I need to watch
+ df2004 %>% filter(creative=="PRES/WBR SPEAK OUT") %>% view()
+
 clean_df_2004_unprobably <- df2004 %>% 
   filter(EISSUE1 != 50 & EISSUE1 != 51 & EISSUE1 != 52 & EISSUE1 != 53 & EISSUE1 != 54 & EISSUE1 != 55 & EISSUE1 != 57 & EISSUE1 != 58 & EISSUE1 != 59 & EISSUE1 != 83 & EISSUE2 != 50 & EISSUE2 != 51 & EISSUE2 != 52 & EISSUE2 != 53 & EISSUE2 != 54 & EISSUE2 != 55 & EISSUE2 != 57 & EISSUE2 != 58 & EISSUE2 != 59 & EISSUE2 != 83 & EISSUE3 != 50 & EISSUE3 != 51 & EISSUE3 != 52 & EISSUE3 != 53 & EISSUE3 != 54 & EISSUE3 != 55 & EISSUE3 != 57 & EISSUE3 != 58 & EISSUE3 != 59 & EISSUE3 != 83 & EISSUE4 != 50 & EISSUE4 != 51 & EISSUE4 != 52 & EISSUE4 != 53 & EISSUE4 != 54 & EISSUE4 != 55 & EISSUE4 != 57 & EISSUE4 != 58 & EISSUE4 != 59 & EISSUE4 != 83 & ESEPT11!=1 & eterror!=1) %>% 
   select(creative, spotleng, Party, EISSUE1, EISSUE2, EISSUE3, EISSUE4, ESEPT11, eterror) %>%
@@ -703,6 +771,10 @@ df_2000_notlikely <- initial_2000_join_unprobable %>% mutate(
 # File for Likely
 df_comb_init_cads <- bind_rows(df_2016, df_2012, df_2008, df_2004, df_2000) %>% view()
 df_comb_init_cads %>% write_xlsx(here("data", "df_comb_init_cads.xlsx"))
+
+# Revised File for Likely
+revised_df_comb_init_cads <- bind_rows(df_2016, df_2012, df_2008, df_2004_revised, df_2000) %>% view()
+revised_df_comb_init_cads %>% write_xlsx(here("data", "revised_df_comb_init_cads.xlsx"))
 
 # File for Unlikely
 df_comb_init_cads_unlikely <- bind_rows(df_2016_notlikely, df_2012_notlikely, df_2008_notlikely, df_2004_notlikely, df_2000_notlikely) %>% view() 
