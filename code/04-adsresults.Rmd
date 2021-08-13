@@ -1,0 +1,944 @@
+---
+title: "True Colors? The Military Institution and Presidential Campaign Advertisements, 2000-2016"
+author: "Peter M. Erickson"
+date: |
+  `r format(Sys.time(), '%B %d, %Y')`
+abstract: |
+  
+  _Using data from the Wisconsin Advertising Project (WiscAd) and the Wesleyan Media Project (WMP) consisting of Presidential Campaign advertisements used in the five Presidential Elections from 2000 -2016, this chapter examines variation in the use of military figures and symbols in presidential campaign television advertisements. The results of a large-N, quantitative analysis of these advertisements indicate that political candidates are using a growing and diverse set of military actors (retired military officers, veterans, and veteran family members) to convey partisan sentiments to the American Public, and that these actors are challenging the military's non-partisan ethic with greater frequency while supporting democratic (rather than Republican) candidates. These results, furthermore, are consistent with a broader theory that explains the willingness of civilian and military actors to challenge conventional principles of civil-military relations, including the norm of non-partisanship, as a result of the level of military prestige and the level of political polarization across society._  
+  
+geometry: margin = 1.15in              # margin widths
+fontsize: 12pt                         # text size
+bibliography: dissertation.bib         # bibliography file
+biblio-style: authoryear               # citation style
+urlcolor: blue                         # links to external URLs
+citecolor: black                       # links to bibliography
+linkcolor: magenta                     # internal figures, footnotes, etc.
+indent: true                          # paragraph format
+                                       # true for indented paragraphs
+                                       
+header-includes:
+    - \usepackage{setspace}
+    - \usepackage{multirow}
+    - \usepackage{indentfirst}
+   
+    
+output: 
+  bookdown::pdf_document2:
+    keep_tex: true
+    latex_engine: pdflatex
+    number_sections: false
+    toc: false
+    fig_caption: true
+    citation_package: biblatex
+    includes: 
+      in_header: 
+        - latex-preamble.tex
+  bookdown::htmldocument2: default
+  bookdown::word_document2:
+      toc: false
+---
+
+\doublespacing 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo=FALSE,
+  include=FALSE,
+  message=FALSE,
+  error=FALSE,
+  fig.height=3,
+  fig.width=4,
+  out.width="90%")
+```
+
+```{r, include = FALSE, echo = FALSE}
+library("here")       # file paths
+library("tidyverse")  # workhorse package
+library("tidylog")
+library("kableExtra")
+library("knitr")
+library("ggdag")
+library("dagitty")
+library("gridExtra")
+library("broom")
+library("dplyr")
+library("reshape2")
+library("pacman")
+library("ggrepel")
+library("cowplot")
+library("stargazer")
+```
+
+\newpage
+
+# Introduction
+
+On October 10, 2020, then candidate Joe Biden's campaign team aired an advertisement touting the former Vice President's national security credentials, including his experience working with the military as both Vice President and before that, US Senator from Delaware. The advertisement is narrated by a man identified as Jim, an "Iraq War Veteran," who describes the role of the former Vice President in delivering Mine Resistant Ambush Protected (MRAP) vehicles, whose heavy armor helped protect servicemen and women while deployed to Iraq and Afghanistan. Within days, however, the advertisement was pulled by the Biden Campaign after a retired Army Lieutenant General, Sean MacFarland, objected to the advertisement on the grounds that the ad used images of him without his consent [@moore_biden_2020]. These images featured then Lieutenant General MacFarland in uniform, shaking hands with Biden as the former Vice President arrived to Iraq [@moore_biden_2020]. 
+
+In objecting to the ad, MacFarland noted that he had not granted permission to the Biden Campaign to use these images in the advertisement. MacFarland was concerned that voters would assume that his appearance in the ad constituted an endorsement of Biden. MacFarland objected specifically by stating, "A number of people have understandably inferred that my appearance [in this Biden Campaign advertisement] constitutes an endorsement of the former Vice President. It does not. To be clear, I have not endorsed President Trump, either. I object to the use of ANY military personnel in uniform in political ads - full stop" [MacFarland quoted in @moore_biden_2020]. Essentially, MacFarland was arguing that both military actors and political campaign teams needed to better conform to the principle of non-partisanship with respect to the military, especially active duty forces. 
+This incident serves as one of several during the 2020 Presidential Election in which political candidates used the military in ways that push against, challenge, and in some cases, violate the non-partisan ideals of the military.^[President Trump's Campaign likewise used military symbols and imagery inappropriately, and perhaps on more than one occasion. For a salient example in which the Chairman of the Joint Chiefs of Staff appeared in one of Trump's advertisements, see @seligman_top_2020.] While civilians have long appealed to the public by harnessing the popularity of the military or of individual military figures in a variety of ways, the practice of doing so during a closely contested election season highlights the ways in which polarized politics challenge particular behaviors of both military and civilian actors with respect to the military remaining an apolitical institution.  
+
+In this chapter, I examine the degree to which there has been variation in the way that civilian presidential candidates have featured the military during campaign television advertisements over time. It is an interesting question to consider for several reasons, the most notable of which is perhaps because the content of television campaign advertisements is ultimately the purview of civilians rather than military actors. Military figures might agree to appear in an advertisement (unlike Lieutenant General MacFarland), but the decision to air a particular campaign advertisement belongs to civilians, such as a political candidate's campaign team or a political interest group. Uncovering potential variation in the ways that the military as an institution has featured in the course of Presidential campaign ads can therefore shed some light on the degree to which civilian actors are complying with one of the most fundamental principles of US civil-military relations: the non-partisanship of the military. 
+
+This paper ultimately argues that from 2000 - 2016, there was significant variation in how the military - its symbols and actors - featured in presidential campaign television advertisements. In particular, the data shows that an increasingly diverse set of military actors have been used by political candidates to convey partisan sentiments to the American public, and that these actors have increasingly expressed these sentiments while supporting Democratic, rather than Republican, candidates seeking office. In other words, despite a lengthy scholarship that has argued that the military and its leaders share more in common with the Republican rather than the Democratic Party [@ricks_widening_1997; @davis_attitudes_2001], military figures who appeared in campaign advertisements during the time period examined engaged with greater frequency in overtly partisan behaviors, such as endorsing and attacking candidates running for office, on behalf of the Democratic Party, rather than the Republican Party. This paper claims that the uptick in these partisan behaviors are the result of two factors: a popular and prestigious military, and increasing political polarization.
+
+This chapter proceeds in four parts. First, this chapter summarizes a theory which argues that the respective levels of political polarization and the prestige of the military impact the ability of civilian and military actors to abide by three central principles of civil-military relations: civilian control of the military, the non-partisanship of the military institution, and the "non-interference" of the military institution into particular political spheres that are the purview of civilian actors. In the second part of the chapter, I present the methodology and the data. I then present the results. In so doing, I partially engage with the topic of "issue ownership," which in the American Politics literature, deals with how different political parties claim primacy over certain political topics and issues [@petrocik_issue_2003; @sides_consequences_2007]. I argue that rising polarization and the military's relatively high level of military prestige are the main drivers of variation in how the military has featured within campaign ads over the period examined. In the fourth section of the paper, I address potential confounding variables and alternate explanations that could challenge the main results before concluding.   
+
+# Military Prestige, Polarization, and Central Principles of Civil-Military Relations
+
+Civil-military relationships are fraught with at least some degree of tension. This tension is especially felt in democracies due to the fact that a polity chooses to arm its military so that its military is strong and capable of defending the state, while at the same time, the polity must take steps to ensure that the military cannot pose a threat to the state itself [@feaver_civil-military_1996]. While some degree of tension within a state's civil-military relationship is irreducible, there are nonetheless principles that both sets of actors, civilian and military, can adhere to in order to facilitate as effective a relationship as possible. 
+
+These principles are that of civilian control of the military, the non-partisanship of the military institution, and the "non-interference" of the military into certain spheres of state politics. In this section of the paper, I briefly define and describe these three principles. I then argue that two broad societal factors - how prestigious a state's military is, and the level of political polarization within a society - influence the degree to which military and civilian actors adhere to these central principles of civil-military relations.
+
+## Central Principles of U.S. Civil-Military Relations
+
+The principles of civilian control of the military, non-partisanship of the military institution, and "non-interference" of the military are rooted in both a lengthy scholarship as well as the traditions and heritage of the US military. From Samuel Huntington's classic _The Soldier and the State_, to generations of subsequent scholars who are critics of Huntingtonian thought, civilian control of the military has remained perhaps the benchmark principle by which a state's civil-military relationship is evaluated, particularly among democracies [@kohn_how_1997; @feaver_armed_2005]. Modern scholarship has conceptualized civilian control not in binary terms such that it either exists or does not within a state, but rather along a spectrum that evaluates the degree of "relative political power" that exists between a state's civilian leaders and military authorities [@bruneau_civil-military_2019, 7; see also @brooks_shaping_2008]. At the risk of oversimplification, the principle of civilian control is strong when, in general terms, civilian authorities hold final control over what the military does, and when the military obeys the lawful orders of a state's rightfully elected leaders. 
+
+The principle of the military as a non-partisan actor is directly linked to that of civilian control, and refers to the idea that in democracies, the military institution exists outside of partisan politics. Indeed, one of Huntington's goals in offering his theory of _objective civilian control_ of the military was to "render [the military] politically sterile and neutral," as doing so would enable the military to maximize its own professional aspects and thus, achieve the highest level of security for the United States [@huntington_soldier_1957, 84]. Despite a myriad of scholars who have offered strong critiques of Huntington [@rapp_civil-military_2015; @brooks_paradoxes_2020], Huntington and his critics affirm that in democracies, the state is best served when the military views itself and behaves as if it is not beholden to or aligned with a particular political party or cleavage. 
+
+A third central principle of American civil-military relations, that of "non-interference," is the idea that the military serves the unique function of defending the nation, and therefore, the military weighs in on, influences, and actions only those policy arenas that comprise national security or defense. Said differently, the principle of "non-interference" acknowledges that although the military must understand politics and the political ramifications of its behavior, it likewise recognizes that there are political spheres that are not for the military to solve. There perhaps may not be a separate sphere of military influence that civilians must respect and not encroach upon, as critics of Huntington have argued, but there is, according to the principle of "non-interference", such a rule for the military: military actors should not encroach upon those policy arenas that are not military in nature. What policy arenas are in bounds versus out of bounds for military actors is no easy delineation, and certainly, the policy arenas that comprise the bucket of national security change for a variety of reasons. Nonetheless, the principle of "non-interference" acknowledges that political space always exists that is only the purview of civilian rather than military leaders. In his 1962 address to the Corps of Cadets at West Point, retired Army General Douglas MacArthur, no stranger to troubled civil-military relations, emphasized this principle not in name, but in sentiment, when he told the Corps, "...the very obsession of your public service must be Duty, Honor, Country. Others will debate the controversial issues, national and international, which divide men’s minds. But serene, calm, aloof, you stand as the Nation’s war guardians, as its lifeguards from the raging tides of international conflict, as its gladiators in the arena of battle..." [@macarthur_duty_1962].  
+
+## How Polarization and Military Prestige Affect the Constraining Influence of the Central Principles of Civil-Military Relations
+
+Two critical questions for scholars and practitioners of civil-military relations is what influence do the central principles have on the behavior of civilian and military actors, and what variables affect the degree to which these principles are adhered to and followed? After all, if there is always some degree of tension in civil-military relations, are there ways of predicting how much tension there will be, and why? In the paragraphs to follow, I articulate a theory in which two independent variables, political polarization and military prestige, impact the degree to which the central principles of civil-military relations are adhered to. Note that both independent variables are systemic and broad political variables, rather than contextual variables, such as the presence of an ongoing war or a particular conflict, which I assume can (and the empirical record of the United States clearly shows) also affect the degree to which civilian and military actors adhere to the principles of civilian control, the non-partisanship of the military institution, and "non-interference" of the military into certain affairs of the state. 
+
+My argument is that the level of respective political polarization and military prestige in society affects the constraining influence the central principles of civil-military relations have on the behavior of civilian and military actors. Building on  a "motives and opportunities" framework to explain military involvement in politics [@finer_man_1962; @taylor_politics_2003] in general, I argue that high levels of political polarization provide a motive and high levels of military prestige an opportunity for civilian and military actors to buck the constraining influence of the principles of civilian control of the military, non-partisanship of the military institution, and "non-interference" of the military into certain areas of state policy. 
+
+High levels of political polarization provide a motive for some military and civilian actors to shun the central principles of civil-military relations because high levels of political polarization are correlated with a weakening of ideological unity. As polarization rises, divergence of opinion occurs, among civilian leaders, military leaders, and the country as a whole as political thoughts and attitudes move away from the political center and towards ideological extremes [@hare_polarization_2014; @abramowitz_great_2018]. Indeed, as the last several years of US politics has demonstrated, and as multiple scholars have argued, political polarization in the US can be conceived of not merely as disagreement about specific policy choices (though such disagreement is certainly present), but as something much deeper - disagreement about which fundamental worldviews, ideals, and values should shape and hold sway over society [@deneen_why_2018; @mohler_jr_gathering_2020].  
+
+As diametrically-opposed worldviews, ideas, and values compete for primacy in politics as polarization rises [@white_values_2002; @mann_its_2012], military and civilian actors become increasingly likely to engage in a variety of behaviors that support, advocate, denounce, or condemn these competing worldviews, ideas, and values. In other words, an environment marked bu high polarization provides a motive to engage in behaviors that run counter to the principles of civilian control, non-partisanship, and "non-interference" of the military. Furthermore, rising political polarization thus indicates that it becomes increasingly difficult for an actor such as the military institution, which is normatively a non-partisan actor, to remain outside of the partisan fray, as its members believe that crucial issues are at stake. 
+
+High levels of military prestige, on the other hand, provide an opportunity for military and civilian actors to similarly engage in behaviors that challenge or violate one or more of the central principles of civil-military relations. As the military becomes increasingly prestigious within society, some military and civilian actors believe that the military's potential to impact public opinion also rises. Note that the argument I am making here is about a belief in the potential to sway public opinion, rather than actually move how the public feels over a set of issues. 
+
+The difference is subtle, but important. As the military institution becomes more trusted, some civilian and military actors will behave as though the military institution can and should be placed in more visible positions to convey arguments to the public. A significant amount of scholarship in the subject area of political communication describes how, why, and the extent to which elites can and do influence public opinion [for a sampling of this scholarship, see @saunders_no_2017; @guisinger_mapping_2017; @baum_relationships_2008; and @kertzer_bottom-up_2017]. While scholars differ on the degree to which elites actually sway public opinion, scholars who claim that elites do in fact possess an outsized ability to impact public opinion note that the public looks for two central attributes among elite actors - "knowledge" and "trustworthiness" - when determining which elites to listen to as reputable sources of information [@lupia_democratic_1998, 69-76]. Other scholars claim that the more elites are perceived by the public to hold these attributes in abundance, the greater their ability to "cue" or shape public opinion [@zaller_nature_1992]. Thus, there will thus be an increasing number of opportunities for military actors to be visible to, and heard by, the American public as military prestige rises. 
+
+## Polarization and Prestige Lead to Four Types of Domestic Structures
+
+When we consider the impact of polarization and prestige in tandem, four possible domestic structures or environments emerge, each of which corresponds to a relatively high or low degree of polarization and military prestige. These four structures are displayed in Table \@ref(tab:poss-environment-ch6). 
+
+```{r poss-environment-ch6, echo=FALSE, include=TRUE, error=FALSE, message=FALSE}
+
+text_env <- tribble(~"Environment", ~"Low Polarization", ~"High Polarization",
+  "Low Prestige", "Little Motive or Opportunity to Challenge Principles of Civil-Military Relations. Civilian and Military Actors are Relatively United Ideologically; Behaviors that Challenge Principles of Civil-Military Relations are Few and Relatively Private", 
+  "There exists Motive, but little Opportunity to Challenge Principles of Civil-Military Relations. Civilian and Military Actors are Relatively Divided Ideologically; Behaviors Involving the Military Institution are More Common, but Remain Private",  
+  "High Prestige", "Little Motive, but Opportunity to Challenge Principles of Civil-Military Relations. Civilian and Military Actors are Relatively United Ideologically; Behaviors Involving the Military Institution are Few, but Public and Visible", 
+  "Motive and Opportunity Exists to Challenge Principles of Civil-Military Relations. Civilian and Military Actors are Relatively Divided Ideologically; Behaviors Involving the Military Institution are Frequent, and Public and Visible" 
+  )
+ 
+ 
+
+  kable(text_env, booktabs=T, caption="Types of Domestic Environments for Civil-Military Relations and their Impact on The Constraining Influence of Central Principles of Civil-Military Relations") %>%
+  kable_styling(full_width = F, font_size=10.5, latex_options="striped") %>% 
+  column_spec(1, width="8em") %>% 
+  column_spec(2:3, width="15em") 
+```
+
+## Low Polarization, Low Military Prestige
+Under conditions when polarization and military prestige are both relatively low, military actors possess neither a "motive" nor "opportunity" to intervene in politics [@finer_man_1962]. Low polarization levels indicate there is little if any ideological substance driving military actors to challenge foundational principles of civil-military relations, and low prestige suggests that  the military lacks the ability to leverage public opinion. This leads to the theoretical expectation that while there might certainly be conflict between military and civilian leaders over isolated, context-driven events, there will likely not be widespread and substantive instances of political behavior that challenge or violate the standards or principles of civil-military relations. Historical periods which pose as examples of this domestic structure include the post-Vietnam and pre-World War two eras.
+
+## High Polarization, Low Military Prestige
+When polarization is high but military prestige is low, military and civilian actors may in fact be divided ideologically. Some of these actors likely possess a true "motive" to advance particular ideologies, even if doing so involves conducting behaviors that challenge, threaten or violate the governing standards of civil-military relations [@finer_man_1962]. However, as a result of the low level of military prestige that exists in this particular domestic structure, civilian and/or military actors lack the "opportunity" to significantly involve the military institution in ways that challenge the central principles of civil-military relations. This leads to the theoretical expectation that while there might be some instances of civilian or military actors engaging in less-visible forms of behavior that challenge the foundational principles of civil-military relations, these efforts will stop short of attempting to harness the military to sway public opinion. Historical examples of this era include the Gilded Age through the beginning of American involvement in World War One, or approximately 1875-1915.
+
+## Low Polarization, High Military Prestige
+Under conditions of low polarization but relatively high military prestige, military and civilians actors are relatively united ideologically, and therefore do not possess a strong ideological "motive" to engage in political behaviors that challenge or threaten the principles of civil-military relations [@finer_man_1962]. However, the "opportunity" to use the military institution to leverage public opinion exists [@finer_man_1962]. Under these conditions, it is possible that military and/or civilian actors will engage in forms of political behaviors that harness or leverage the military to move public opinion. This leads to the theoretical expectation that under these domestic conditions, military actors in particular pose a considerable "latent political influence" because they are popular with the public [@brooks_militaries_2009, 231]. The military under these conditions may pose a considerable force to block, obstruct, or influence debates about the use of military force and national security more broadly. Examples of this period include the post-World War Two until the Korean War, and the post-Gulf War period (1991) until approximately 2010.
+
+## High Polarization, High Military Prestige
+When both polarization and military prestige exist at relatively high levels, military and civilian actors possess both a "motive" and an "opportunity" to use the military in ways that challenge, threaten, or violate the fundamental principles of civil-military relations [@finer_man_1962]. Under these conditions, there is a greater likelihood that certain civilian and/or military actors believe so strongly in particular political issues or sets of political issues that they are willing to push the boundaries of the principles of civilian control, non-partisanship, and "non-interference" of the military by engaging in behaviors activities that do so than when polarization is low. Moreover, as a result of the military's relatively high degree of prestige, military and civilian actors will seek to use the military in public and visible ways, as they deem the military institution capable of impacting public opinion. Examples of this period include the post-US Civil War period during American Reconstruction, 1865-1870, and from approximately 2010 - present day.
+
+## Hypotheses
+
+These predictions lead more generally to the formation of the following three hypotheses regarding the behavior of civilian actors:
+
+H4: When military prestige is high, civilian leaders will attempt to leverage or harness the military (either as an institution, or individual military figures who possess outsized levels of prestige/popularity) for their own political purposes and advantages relative to when military prestige is low.
+
+H5: When polarization is high, the level of military prestige moderates the propensity of civilian leaders to employ the military (as an institution, or individual military actors) in public ways to support (or denounce) policy initiatives or political candidates. When polarization is high and military prestige is high, civilian actors will use the military in public ways to advocate publicly for policies and/or partisan political candidates. When polarization is high and military prestige is low, however, civilians actors are less inclined to use the military to publicly advocate for policies and/or partisan political candidates.  
+
+H6:  When polarization and prestige are high, there is increased public competition between the civilian political parties for the military institution relative to when polarization and military prestige are low. 
+
+# Methodology
+
+In order to uncover potential variation in the behavior of civilian actors that may challenge one or more of the central principles of civil-military relations, we must examine a behavior committed by these actors, and campaign advertisements are a solid choice to consider. To begin with, there is no _a priori_ expectation that the content of campaign advertisements would, or must, violate or challenge the principles of civilian control, non-partisanship, and "non-interference" of the military. Campaign advertisements, after all, especially within democratic communities, comprise an integral part of the democratic process as candidates seek to win office. At the same time, because elections in the US occur at regular intervals and because campaign ads are inherently designed to shape public opinion by persuading voters, the content of campaign ads likely changes, and for a variety of factors. The issues that are important to voters are not static, and the political atmosphere in general changes over time. In short, there is reason to suspect that changes in the relative levels of political polarization society and the military's prestige could impact the degree to which civilian candidates feature or showcase the military in the content of campaign advertisements.  
+
+A next task, however, is determining how to identify whether civilian actors are adhering to the fundamental principles of civil-military relations through the content of campaign advertisements. By definition, civilian actors cannot expressly violate the principle of civilian control of the military, though this should not be taken to mean that civilians have no role in ensuring such a principle is maintained and enforced. Rather, I mean simply that civilians actors cannot engage in acts of blatant defiance or disobedience against themselves, whereas military actors can choose to blatantly disregard their civilian bosses. However, civilian actors can expressly violate, or at least challenge, the other two central principles of civil-military relations: that of non-partisanship of the military, and the "non-interference" of the military into certain realms of state policy. What might potential violations of these two principles look like when committed by civilians in the arena of campaign advertisements?
+
+A violation of the principle of non-partisanship of the military vis-a-vis campaign advertisements would occur if an advertisement clearly intimated that the military favored or endorsed a particular candidate, or the policies or political stances of a candidate, or a political party over another. Such a message, deliberate or not, could and likely would communicate to the American public that the military (or a faction of the military, or particular leaders within the military) favors a particular political entity over another. A violation of the principle of "non-interference" of the military into certain realms of state policy would occur vis-a-vis campaign advertisements if the military was portrayed in such a way that it weighed in on policy arenas that are largely disconnected from national security, defense, and other essential roles the military is expected to fill in American society [@ben-meir_civil-military_1995]. 
+
+If the theory regarding the impact of political polarization and military prestige on the constraining influence of central principles of civil-military relations is correct, it is possible to predict how each of the unique environments displayed in Table \@ref(tab:poss-environment-ch6) might shape the way in which civilian actors decide to use the military in political campaign advertisements. In environments where military prestige is low, regardless of the level of polarization, civilian actors are less inclined to appeal to the public using the military as an institution. Therefore, civilian actors whose goal is to sway as many citizens as possible to vote a certain way are less likely to appeal to the American public using the military. Simply put, there likely will not be many campaign advertisements that feature the military when the military's prestige is relatively low. 
+
+On the other hand, when the military's prestige within society is high, civilian candidates are more likely to feature the military to appeal to the public, and therefore, the military will appear in campaign advertisements more often than when military prestige is low. Yet the level of political polarization that is present in society will likely impact _how_ the military is featured in campaign advertisements, and critically, the degree to which these ads challenge the principles of non-partisanship and/or "non-interference" of the military. When military prestige is high but polarization is low, the military will appear often in campaign ads, but in politically neutral ways. Alternately, when military prestige is high and polarization is high, the military will appear often in campaign ads, and in ways that challenge the norms of non-partisanship and/or "non-interference."  
+
+## The Data
+
+The data used in this chapter consist of presidential campaign advertisements from the 2000 - 2016 elections. Across this sixteen year time period, the military's prestige has remained relatively constant and high. 64% of the American public expressed either "quite a lot" or "a great deal" of confidence in the military in 2000, and 73% did the same in 2016, according to Gallup Public Opinion Polling [@noauthor_confidence_2020]. Over the same time period, however, the level of polarization has increased significantly by almost every measure of polarization, including polarization in Congress (DW_Nominate Scores [@jeffrey_b_lewis_voteview_2020]) and among the electorate ("affective polarization" [@iyengar_affect_2012]). Therefore, the time period examined in this paper covers a transition from an environment of high prestige and low polarization to one of high prestige and high polarization. ^[Unfortunately, the raw data used to code the 1996 election is no longer available to review; hence, this study begins with the 2000 Presidential Election. Additionally, raw data for the 2020 Election is not available at the time of this writing, but is projected to become available sometime in 2022.] 
+
+The data is made available from the Wisconsin Advertising Project (WiscAD) and Wesleyan Media Project (WMP), which are two entities that have systematically tracked campaign advertising beginning with the 1996 Presidential Election. For 2012 and 2016, the data comes from WMP, and consists of full motion video, to include sound [@fowler_presidential_2017; @fowler_presidential_2020]. For 2008, 2004, and 2000, the data comes from WiscAd, and consists of individual PDF documents containing a full transcript and several still images of the advertisement [@goldstein_political_2002; @goldstein_presidential_2007; @goldstein_presidential_2011]. 
+
+WiscAD and WMP gather the television advertisements with the assistance of a commercial company, the Campaign Media Analysis Group (CMAG). CMAG provides several pieces of information when releasing the data, such as the media market in which a particular advertisement aired, the estimated cost of running a particular advertisement, the time of day the advertisement was run, and other variables. A group of scholars and graduate students affiliated with WiscAD and WMP then conduct additional coding on the advertisements. This coding varies to some extent by election cycle, but otherwise remains markedly similar. The additional variables that are coded for in each election cycle include items such as the specific issues that an advertisement mentions or addresses during the advertisement, whether a candidate is featured during the advertisement, and whether a given advertisement takes on a negative tone, and more (see a future chapter Appendix for a comparison, by year, of media market breakdowns). 
+
+A three part empirical strategy is necessary. First, I have to select the right data from which to conduct further coding. That is, I have to select those advertisements that are most likely to feature the military. Second, I must then code for key variables that measure the variation that I wish to capture. That is, I require a coding classification scheme that can capture potential challenges or violations to the principles of  non-partisanship and "non-interference" of the military. The third and final portion of the empirical strategy consists of the analytic steps to determine whether there has been, in a statistical sense, variation over time in the way that the military has featured in campaign advertisements. This portion includes the descriptive statistics and regression analyses used to convey the results of the coding and classification scheme. In the section to follow, I detail these procedures. 
+
+## Data Selection
+
+The first step of the empirical strategy is selecting the data. I must determine which advertisements are the most likely to feature the military in some way, either by containing military symbols, images, scenes, or actors. To proceed with data selection, I harness the issue classification coding already completed by WiscAd and WMP. Coders from WiscAd and WMP coded each advertisement for a series of dozens of dichotomous indicators, such as, "are any of these issues mentioned in the ad?" [@goldstein_presidential_2011]. 
+
+My goal is to find the issues that I think are most correlated with the military and national defense issues more broadly, and select the ads that discuss these issues. I include issues such as the military and defense, veterans affairs, China, Iran, terrorism, September 11, the war in Iraq, Afghanistan, the surge, and a host of other issues. These are captured in Table \@ref(tab:election-issues-cycle) below. 
+
+```{r election-issues-cycle, include=TRUE, echo=FALSE}
+
+
+text_tbl_issues <- tribble(~"Campaign Year", ~"Issues Highly Correlated with the Military", ~"Number of Issue Areas or Explicit Mentions",
+  "2000", "Defense; Missile Defense/Star Wars; Veterans; Foreign Policy; Bosnia; China; Other Defense/Foreign Policy Issues", "7 Issue Areas",
+  "2004", "Defense; Missile Defense/Star Wars; Veterans; Foreign Policy; Bosnia; China; Terrorism; Middle East; Afghanistan; September 11", "10 Issue Areas plus several explicit variables (Is September 11 or terrorism explicitly mentioned, and is 'the military' a source of actor credibility?)",
+  "2008", "Defense Policy; Veterans; September 11; Terrorism; Iraq; Surge; Middle East; Defense Issue NOT related to Iraq; Iraq as an Issue; China; Nuclear Weapons; Iran; Afghanistan; Other Defense Issue NOT related to Iraq", " 10 Issue Area plus four explicit mentions (September 11, Terrorism, Surge, Iraq)",
+  "2012", "Military; Foreign Policy (generic); Veterans; Nuclear Proliferation; China; Middle East; Afghanistan; September 11; Terrorism; Iraq; Israel; Iran", "12 Issue Areas",
+  "2016", "Military; Foreign Policy (generic); Veterans; Nuclear Proliferation; China; Middle East; Afghanistan; September 11; Terrorism; Iraq; Israel; Iran; ISIL or ISIS; Syria", "14 Issue Areas"
+  )
+
+text_tbl_issues %>% kable(booktabs=T, caption="Selecting Advertisements For Further Coding") %>%
+  kable_styling(full_width = F, font_size=10.5, latex_options="striped" ) %>% 
+  column_spec(1, width="7em") %>% 
+  column_spec(2, width="20em") %>% 
+  column_spec(3, width="10em")
+
+ 
+
+
+```
+
+Using this data selection strategy, I determine the number of advertisements by election cycle that require viewing and further analysis. Across the data, I observe 895 of the total 3865 campaign advertisements, or 23% of the total number of ads). I check this selection criteria by randomly selecting 332 of the 2970 ads that are not analyzed to get an idea of how well the data selection strategy worked in practice. I find that while the selection criteria is not perfect, it works reasonably well: of the 332 ads randomly observed that were unlikely to contain military imagery, 19 ads (5.7%) contained brief glimpses of military imagery. By way of comparison, 45% of the 883 ads selected for further coding contain some type of military imagery. [See the Appendix for a full run-down of data selection by election year. It is also worth pointing out here that for the purposes of regression conducted later in this paper, only 1 of the 332 (.3% ) ads chosen at random contained a military figure appearing in a predominant manner in a campaign advertisement.] 
+
+```{r el-ads-numeric, include=TRUE, echo=FALSE}
+
+text_tbl_ads <- tribble(~"Campaign Year", ~"# Ads Likely to Contain Military Imagery (Selected)", ~" # Ads Unlikely to Contain Military Imagery (Not Selected, but Checked at Random)", ~"Total Presidential Campaign Cycle Ads",
+  "2000", "30", "526","556",
+  "2004", "246", "407","653",
+  "2008", "260", "706","966",
+  "2012", "107", "672","779",
+  "2016", "252", "659", "911",
+  "Total Number of Campaign Ads", "895","2970", "3865"
+  )
+ 
+
+text_tbl_ads %>% kable(booktabs=T, caption="Advertisements by Election Cycle that are Likely and Unlike to Feature the Military, and the Total Number of Ads") %>%
+  kable_styling(full_width = F, font_size=10.5, latex_options="striped" ) %>% 
+  column_spec(1, width="8em") %>% 
+  column_spec(2:3, width="8em") %>% 
+  column_spec(4, width="12em") 
+
+
+```
+
+## Data Coding
+
+The second stage of the empirical strategy involves coding the advertisements in order to capture the particular variation I am interested in. I first capture several variables that WiscAd and WMP have already coded for that may be instructive when analyzing the data. Although each codebook for each election cycle is distinct, there are variables, upon close inspection, that are similar across the years. After cleaning and formatting the data (renaming several variables and changing the possible values each variable can take to ensure uniformity), in order to ensure that coding classifications are uniform. Ultimately, I determine that 11 variables will aid in the analysis I wish to conduct. These variables, and a short description of each, are displayed in Table \@ref(tab:existing-variables) on the following page. 
+
+```{r existing-variables, include=TRUE, echo=FALSE}
+
+text_vars <- tribble(~"Variable Name", ~"Question", ~"Possible Values",
+  "Creative",  "What is the title of the ad?", "varies by each ad",
+  "Length", "How long is the ad (in seconds)", "0-120",
+  "Party", "What is the Party of the favored candidate?", "Republican; Democrat; Other",
+  "Sponsor", "Who sponsored the advertisement?", "1 - Candidate; 2 - Party; 3 - Coordinated Between a Candidate and Party; 4 - Interest Group/Other",
+  "f_mention", "Is the favored candidate mentioned in the ad?", "1 - Yes; 0 - No",
+  "f_picture", "Is the favored candidate pictured in the ad?", "1 - Yes; 0 - No",
+  "f_narrate", "Does the favored candidate narrate the ad?", "1 - Yes; 0- No",
+  "o_mention", "Is/are the opposition candidate/s mentioned in the ad?", "1 - Yes; 0 - No",
+  "o_picture", "Is/are the opposition candidate/s pictured in the ad?", "1 - Yes; 0 - No",
+  "ad_tone", "In your judgement, is the primary purpose of the ad to promote a specific candidate, attack a candidate, contrast the candidate, or other?", "1 - contrast; 2- promote; 3 - attack; 4 - other",
+  "prty_mn", "Does the ad mention the party label of the favored candidate or the opponent?", "0 - No, 1 - Yes, favored candidate's party; 2 - Yes, opposition candidate's party; 3 - Yes, both candidate's parties; 4 - yes, favored candidate's party but only in the paid for by line"
+
+  )
+
+
+text_vars %>% kable(booktabs=T, caption="Existing Variables from WiscAd and WMP") %>%
+  kable_styling(full_width = F, font_size=10.5, latex_options="striped" ) %>% 
+  column_spec(1, width="8em") %>% 
+  column_spec(2, width="12em") %>% 
+  column_spec(3, width="15em") 
+
+
+```
+
+I then develop several additional variables specifically related to the military. At perhaps the broadest level, I want to capture advertisements that feature military imagery or symbols in some way. I therefore develop four dichotomous variables related to different forms of imagery, including whether an ad contains imagery of US soldiers or troops, veterans, combat, or US military hardware. 
+
+The first kind of military imagery, that of US soldiers or troops, include images of US servicemen and women in uniform of any kind. It could include a single soldier saluting, or thousands of US servicemen and women training, or a host of other possible scenarios. The key thing I look for are images of US military uniforms, military medals, or insignia that are clearly related to US soldiers. The second type of military imagery relates to veterans, which I consider distinct from images of troops. This indicator variable looks for any image of a veteran, which could include gatherings of veterans, such as a Veterans of Foreign Wars or American Legion group, or imagery of a wounded veteran recovering in a hospital, or a veteran in a wheelchair later in life. The third indicator accounts for images of combat. This could include things such as an explosion, or a scene containing fighting involving US soldiers. The fourth indicator accounts for US military hardware, such as imagery of a naval vessel, a tank, an airplane, a helicopter, etc. 
+
+The purpose of these four indicator variables is to obtain a general idea of the types of military imagery that are associated with a particular campaign ad. These four indicator variables do not indicate that any of the central principles of civil-military relations have been challenged or violated by a particular ad, but they might prove helpful in providing a broad idea of how the military was portrayed by civilian candidates in a given election season. 
+
+I then develop several additional variables that are designed to specifically capture some of the more substantive challenges to the principles of non-partisanship and/or "non-interference" of the military. The first is a categorical variable that captures instances of  various military actors appearing in a prominent way in the campaign advertisement. By appearing in a prominent way, I have in mind a military figure portrayed in a way that is more than a quick glimpse. This could include a military figure speaking or narrating the advertisement, or a different narrator drawing attention to the fact that they are endorsed or supported by a particular military figure. I anticipate that in most of the advertisements, the value for this variable will take the value of "N/A", indicating that the advertisement does not feature a military figure in a prominent way. But I allow for the possibility that several types of military figures might appear in an ad in a distinct and prominent way, including a retired military officer (such as generals or admirals), a military veteran (who is not a retired general or admiral), a family member of a veteran, or a veteran _and_ members of his or her family. 
+
+I then create variables to capture what actions, if any, these military figures who appear in a prominent way perform. I develop indicator variables for whether the military figure explicitly endorses a political candidate for office, attacks or disparages other candidates running for office, and finally, whether the military figure addresses issues that are outside of the candidate's personal characteristics or defense/veteran issues, broadly speaking. The variables for endorsing or attacking a candidate might capture violations of the principle of non-partisanship, whereas the variable for addressing topics that are tangential to national security might capture violations of the principle of "non-interference" of the military.
+
+Finally, I develop four additional variables that measure a variety of helpful items. These include the overall purpose of the advertisement, whether the candidate is a veteran, whether the advertisement explicitly mentions that the candidate is a veteran, and whether the advertisement itself is entirely focused on military, defense, veteran, and/or or national security issues. These variables, the question they intend to answer, and the potential range of values these variables can take, are displayed in Table \@ref(tab:el-ads-additional).
+
+```{r el-ads-additional, include=TRUE, echo=FALSE}
+
+text_vars <- tribble(~"Variable Name", ~"Question", ~"Possible Values",
+  "Ad_Purpose",  "What is the overall purpose of the ad", "1-promote or disparage candidates for an election; 2 - promote/disparage a specific issue or proposition that is on the ballot, 3 - to discuss a general theme (the economy, immigration, etc.) that does not do 1 or 2;  4 - other",
+  "Can_Vet", "Is the candidate a Veteran?", "1 - Yes; 0 - No",
+  "Can_Vet_Mention", "Does the ad explicitly state or portray the candidate as a Veteran?", "1 - Yes, 0 - No",
+  "Vet_Fam", "Does the ad feature a Retired Military Elite, Veteran, or Veteran's family speaking?", "3 - Veteran and Family; 2 - Veteran's Family; 1 - Veteran; 0 - No",
+  "Vet_Fam_Endorse", "Does the Military Figure who appears in a prominent way explicitly endorse the candidate for office?", "1 - Yes; 0 - No; 99-N/A",
+  "Vet_Fam_Attack", "Does the Military Figure who appears in a prominent way explicitly attack or disparage other candidates running for office?", "1 - Yes; 0 - No; 99 - N/A",
+  "Vet_Fam_Out_Issues", "Does the Military Figure who appears in a prominent way address topics other than the candidate's personal characteristics or defense/veteran (broadly related) issues?", "1 - Yes, the vet or vet's family addresses topics outside of the candidate's characteristics and/or veterans/defense (broadly related) issues; 0 - No, the vet or vet's family only addresses the candidate's characteristics and/or veterans/defense issues; 99 - N/A",
+  "Act_Duty_Imagery", "Does the advertisement feature imagery of US troops in uniform?", "1 - Yes; 0 - No",
+  "Vet_Imagery", "Does the advertisement feature imagery of Veterans (VFW, veteran gatherings, etc.)?", "1 - Yes; 0 - No",
+  "us_mil_hard_Imagery", "Does the advertisement feature imagery of US military hardware (planes, tanks, helicopters, ships)?", "1 - Yes; 0 - No",
+  "Combat_Imagery", "Does the advertisement feature images of past or present combat involving US military forces (prior wars, scenes of combat)?", "1 - Yes, 0 - No",
+  "Def_Vet_Ad_Theme", "Is the ad itself focused entirely on military, defense, veteran, or national security issues?", "1 - Yes, military/defense/veteran issues only; 0 - other topics"
+
+  )
+ 
+
+text_vars %>% kable(booktabs=T, caption="Additional Variables / Anticipated Coding Scheme") %>%
+  kable_styling(full_width = F, font_size=10.5, latex_options="striped" ) %>% 
+  column_spec(1, width="8em") %>% 
+  column_spec(2, width="14em") %>% 
+  column_spec(3, width="16em") %>% add_footnote(label = "Vet_Fam_Endorse, Vet_Fam_Attack, and Vet_Fam_Out_Issues can take a value of N/A if the variable Vet_Fam equals 0.")
+```
+
+# Results
+
+## Summary Statistics
+
+In this section of the paper, I present the results, beginning with broader statistics regarding the type of military imagery appearing in campaign advertisements. I then home in on a more substantive examination of the instances in which specific campaign ads potentially violated one or more of the principles of civil-military relations by examining the use of military figures to appear in campaign ads in a prominent way. 
+
+Table \@ref(tab:desc-stats) shows, for each election cycle, the total number of advertisements aired on the nation's top media markets, the number of advertisements that met the selection criteria and were subsequently examined, the number of selected advertisements that were missing, the number of advertisements that featured some form of military imagery, and the number of advertisements that featured either a veteran and/or a veteran's family in a prominent way. Of the 895 ads selected, 883 were analyzed (12 of the 895 advertisements were missing from the data), of which, 398 (45%) contained some form of military imagery, while 485 (55%) did not. 
+ 
+```{r data, include=FALSE, echo=FALSE}
+# read in the raw data
+raw_df <- read_csv(here("data", "df_comb_init_cads_edits.csv"))
+summary(raw_df)
+
+# truncate the data at the first 895 observations, and drop 3 x variables (notes, endorser, and #end_who)
+# also, replace NA with 0 for the variable "finished" - will come in handy later. 
+
+df <- raw_df[1:895,] %>% select(-notes) %>% 
+  mutate_at(
+    .vars = vars(finished),
+    .funs = ~ case_when(is.na(.) ~ 0, TRUE ~1)
+) %>% view()
+```
+ 
+```{r data selection results, include=FALSE, echo=FALSE}
+#create a variable called Yrcount that counts the number of ads per election cycle
+#create a variable called "mil_img" if there is any type of military imagery category in a 
+# given ad
+df <- df %>% 
+  filter(finished ==1) %>% 
+  group_by(year) %>% 
+  mutate(
+    Yrcount=n(),
+    mil_img = case_when(
+    (vet_fam != 0) | (act_dty_img ==1 | vet_img ==1 | us_mil_hard_img ==1 | us_cmbt_img==1) ~ 1, 
+  (vet_fam == 0) & (act_dty_img ==0 & vet_img ==0 & us_mil_hard_img ==0 & us_cmbt_img==0) ~ 0
+),
+  no_mil_img = case_when(
+    (vet_fam != 1) & (act_dty_img !=1 & vet_img !=1 & us_mil_hard_img !=1 & us_cmbt_img!=1) ~ 1, 
+  (vet_fam != 0) | (act_dty_img ==1 | vet_img ==1 | us_mil_hard_img ==1 | us_cmbt_img==1) ~ 0
+  )
+    ) %>% 
+  view()
+
+# create a new df called 'adj_df' that 
+# takes the original df and adds additional variables 
+#(1) sum_mil_img, the total # of ads per election cycle containing military imagery 
+#(mil_img ==1); 
+#(2) sum_no_mil_img, the total # of ads per cycle containing no military imagery
+#(3) mil_fig, if an ad features a prominent veteran or veteran's family in the ad
+# (mil_fig==1)
+#(4) sum_mil_fig_cycle, the total # of ads per cycle that feature a veteran or family endorser
+# sum_mil_fig_cycle
+#(5) sum_def_vet_ad_theme, the total # of ads per cycle that address entirely matters
+# of national security, defense, or veterans issues
+adj_df <- df %>% group_by(year) %>% mutate(
+    sum_mil_img_cycle=sum(mil_img),
+    sum_no_mil_img_cycle=sum(no_mil_img),
+    mil_fig=case_when(vet_fam != 0 ~1,
+                      vet_fam == 0 ~ 0),
+    sum_mil_fig_cycle=sum(mil_fig),
+    sum_def_vet_ad_theme=sum(def_vet_ad_theme),
+    def_theme_and_mil_img=case_when((def_vet_ad_theme==1) & (mil_img==1) ~1,
+                                    (def_vet_ad_theme!=1) | (mil_img==0) ~0),
+    sum_def_theme_and_mil_img=sum(def_theme_and_mil_img),
+    not_def_theme_but_mil_img=case_when((def_vet_ad_theme!=1) & (mil_img==1) ~ 1,
+                                         (mil_img==0) | (def_theme_and_mil_img==1) ~0),
+    sum_not_def_theme_but_mil_img=sum(not_def_theme_but_mil_img),
+    non_def_vet_ad_theme=case_when((def_vet_ad_theme==0) ~1,
+                                  (def_vet_ad_theme==1) ~ 0),
+    sum_non_def_vet_ad_theme=sum(non_def_vet_ad_theme)
+    ) %>% view()
+
+desc_stats <- tribble(
+  ~'Election Cycle', ~'Total Ads', ~'# of Ads Selected for Examination', ~'# Ads Selected but Missing from Data', ~'Ads Examined that Contained Some Form of Military Imagery', ~'Ads Which Prominently Featured a Retired General/Admiral, Vet, or Vet Family Member', 
+  2000, 556, 30, 2, 15, 2,
+  2004, 653, 246, 1, 119, 39,
+  2008, 966, 260, 9, 100, 13,
+  2012, 779, 107, 0, 44, 14,
+  2016, 911, 252, 0, 120, 31)
+
+```
+
+
+```{r desc-stats, include=TRUE, echo=FALSE}
+ 
+kable(desc_stats, booktabs=T, caption="Summary Statistics, The Military in Presidential Campaign Advertisements, 2000-2016") %>%
+  kable_styling(full_width = F, font_size=10.5, latex_options="striped") %>% 
+  column_spec(1:2, width="3em") %>% 
+  column_spec(3:6, width="6.5em") 
+
+
+```
+
+Figure \@ref(fig:img-type) below displays the incidence of the four types of military imagery in presidential campaign advertisements in each election cycle. With the exception of the 2016 presidential election, imagery of active duty military was the most common form of military image used in presidential campaign ads. Veteran imagery was the second-most common form of military imagery in 2004, 2008, and 2012. These patterns did not hold in 2016, when veteran imagery was the most common type of military image used in campaign advertisements, and in 2000, when veteran imagery was the third-most common category of military imagery featured in campaign ads. Finally, note that combat imagery was the least used form of military imagery in 2000, 2012, and 2016, but the third most likely (and almost the second most likely) in 2004 and 2008. The most reasonable explanation for this difference was American combat operations in Iraq and Afghanistan that loomed large over the 2004 and 2008 elections, respectively. 
+
+```{r img-type, include=TRUE, echo=FALSE, error=FALSE, warning=FALSE, fig.height=4, fig.width=6, fig.cap="Number of Presidental Campaign TV Ads Displaying Military Imagery, By Type of Military Imagery"}
+
+adj_df %>% view()
+
+# in the code below, I create a category for each of the 4 x military image types, by year, that shows the total number of instances each image type appears
+
+img_types_df <- adj_df %>% group_by(year) %>% 
+  mutate(
+    act_duty_img_total=sum(act_dty_img),
+    vet_img_total=sum(vet_img),
+    us_cmbt_img_total=sum(us_cmbt_img),
+    us_mil_hard_img_total=sum(us_mil_hard_img)
+  ) %>% view()
+
+graphable_img_types_df <- img_types_df %>% 
+  select(year, act_duty_img_total:us_mil_hard_img_total) %>% pivot_longer(act_duty_img_total:us_mil_hard_img_total, names_to = "statistic", values_to = "Number") %>% distinct () %>% view ()
+
+plot_img_type <- ggplot(data=graphable_img_types_df, aes(fill=statistic, x=year, y=Number)) + geom_bar(position="dodge", stat="identity") + labs(x="Election", y="Number of Instances") + scale_fill_discrete(name="Military Imagery Type",
+                         breaks=c("act_duty_img_total", "vet_img_total", "us_cmbt_img_total", "us_mil_hard_img_total"),
+                         labels=c("Active-Duty Military", "Veteran", "Combat", "Mil. Hardware")) + theme(legend.position="bottom")
+
+plot_img_type
+
+
+```
+
+In order to better understand the patterns of prominence of various types of military imagery over time, it is also helpful to understand, in a broader sense, how significant issues related to national defense were in each election cycle. Table \@ref(tab:def-prominence) below displays the percentage of total presidential campaign advertisements by election cycle that featured at least one of the forms of military imagery (active duty troops or insignia, veterans, military hardware, or combat). Note, for example, that during the 2000 presidential election, roughly two percent of presidential campaign advertisements featured military imagery of some sort, whereas during the 2004 election, this figure rose to approximately thirteen percent. The likely reason for this sharp increase between election cycles is the September 11, 2001 attacks on the US, which was subsequently followed by respective military operations against Afghanistan later in 2001 and Iraq in 2003. Therefore, in 2004, when George W. Bush ran as the incumbent against the Democratic challenger, John Kerry (who was a decorated combat veteran of the Vietnam War), the direction of the war effort in Iraq featured as a major campaign theme, and thus, a greater number of total campaign advertisements featured some flavor of military imagery.  
+
+```{r def-prominence, include=TRUE, echo=FALSE}
+def_prominence <- tribble(
+  ~'Election Cycle', ~'Percentage of Ads Containing Military Imagery', ~'Potential Reason', 
+  '2000 Election', 2, 'Late 1990s Pre-9/11 Era; the USA was not yet steadily at war',
+  '2004 Election', 18, 'The War in Iraq was a year and a half old, but was already controversial; whether to stay or change course in Iraq was a major campaign theme',
+  '2008 Election', 10.3, 'The Surge in Iraq had began to show signs that it was working; thus, there was less controversy about what to do in Iraq compared to the 2004 Election',
+  '2012 Election', 5.6, 'The US had by this time drawn down heavily in Iraq, and had implemented a surge in Afghanistan roughly two years prior to the election. Additionally, Osama Bin Laden had been killed in 2011 by US military forces, and Barack Obama, seeking re-election, had higher priorities than Afghanistan',
+  '2016 Election', 13.1, 'The ongoing wars in Iraq and Afghanistan had receded somewhat from the center of US public attention; however, the rise of ISIS, Russian aggression, and other general issues regarding Syria as well as Benghazi featured prominently as a Campaign Theme')
+
+kable(def_prominence, booktabs=T, caption="Percentage of Presidential Campaign TV Ads that Feature Military Imagery, 2000 - 2016") %>%
+  kable_styling(full_width = F, font_size=10.5, latex_options="striped") %>% 
+  column_spec(1:2, width="4em") %>% 
+  column_spec(3, width="18em") 
+
+```
+
+Relative to the figure of 13 percent in 2004, the next three presidential elections - 2008, 2012, and 2016 - saw two declines followed by a sharp rise in the proportion of campaign advertisements that featured the military. A full unpacking of these trends requires a much lengthier description than can be given here, but one possible explanation points to several trends and important events involving the military and US foreign policy that occurred in the twelve years between the 2004 and 2016 elections. In 2008, the surge of US military forces in Iraq had shown signs that it was, albeit imperfectly, working in terms of reducing sectarian violence in Iraq, and thus, there was less division among the US public about how to proceed. US casualties had also been declining steadily throughout the calendar year of 2008 after peaking in 2007, further strengthening the argument that the surge of US forces from 2007 - 2008 had tamed much of the violence in Iraq [@us_department_of_defense_dcas_2021]. 
+
+From 2008 to 2012, the US' involvement in Iraq lessened while its involvement in Afghanistan increased. Indeed, President Barack Obama in 2009 decided to increase the number of US forces in Afghanistan as part of a surge of US forces. Though the Afghan surge did not bring the acclaim that the earlier surge to Iraq did, there were nonetheless important victories along the way, perhaps none as important as the killing of Osama bin Laden, the architect of the 9/11 attacks, in early 2011. Additionally, the number of US casualties in Afghanistan peaked in the summer of 2011, and declined afterwards, especially in the months leading up to the 2012 election [@us_department_of_defense_dcas_2021-1]. At the time of the election in November of 2012, few observers could point to Afghanistan and say that the surge of forces there had not worked. At the same time, there was little if any appetite - from politicians and the public, alike - to do anything substantially greater there. Combined with the fact that 2012 was a reelection year for the incumbent, Barack Obama, the relatively low percentage of campaign advertisements featuring the military in 2012 is somewhat unsurprising. 
+
+However, in the 2016 election, the percentage of advertisements featuring military imagery rose sharply compared to the 2012 election. The passage of time facilitated an opportunity for Americans and political candidates to think about the trajectory of US foreign and national security policy in broad and critical terms. Hillary Clinton, the Democratic Candidate for President, was largely seen as an extension of Barack Obama, particularly in the realm of foreign policy, as Clinton had served as Obama's Secretary of State. Moreover, since the 2012 election, several US foreign policy choices were viewed rather negatively, including Obama's handling of events in Syria in 2013 (including Obama's infamous "red line" statement) and concern over rising Russian aggression. Hillary Clinton in particular was portrayed extremely negatively after a US Ambassador and three other Americans were killed on September 12, 2012, when terrorists attacked the US consulate in Benghazi, Libya [@bixby_parents_2016]. Donald Trump, an outside candidate who ran and ultimately won as a Republican, instead ran on a platform of putting "America First," which included promises to cease fighting endless wars and rebuilding the US military. For these reasons, one can understand how and why military imagery, at least in a general sense, would have been more prominent in 2016 than in 2012. 
+## The Use of Prominent Military Figures in Campaign Ads
+
+I now pivot to asking how often certain military figures, such as retired generals or admirals, veterans, or veteran family members, appear or feature in prominent ways during campaign ads. I define appearing or featuring prominently as the use of a military figure to ground, or form the basis of, a particular campaign advertisement, such as a military figure narrating an advertisement, and declaring his or her support for a political candidate. The main idea here is to identify those instances when a military figure did not just literally appear in an advertisement, but rather was displayed or appeared in an advertisement in a clearly recognizable and unmistakeable way.
+
+Figure \@ref(fig:mil-endorse) shows the number of times in each election cycle that various military figures appeared in a prominent way in a campaign advertisement (in instances where the the viewer is informed that a certain candidate was "endorsed" by several former members of the Joint Chiefs of Staff, whose photo is displayed during the ad, I have labeled this category as "retired generals/admirals pictured only"). 
+
+```{r mil-endorse, include=TRUE, echo=FALSE, warning=FALSE, error=FALSE, message=FALSE, fig.height=5, fig.width=7.5, fig.cap="Prominent Appearances of Military Figures in Presidential Campaign TV Ads, By Type of Military Actor, 2000-2016  "}
+
+# create a df with the variables I will need
+prom_figs_df <- adj_df %>% filter(vet_fam!=0) %>% select (year, count, creative, party, sponsor, ad_purpose, vet_fam, vet_fam_end, vet_fam_atk, vet_fam_out_issues, prom_mil_fig) %>% group_by(year, party) %>% view()
+
+# create counts of all of the pertinent variables such as 
+# counts of prominent veteran appearances, prominent vet family appearances, etc.
+
+prom_figs_df <- prom_figs_df %>% 
+  group_by(year) %>% mutate(
+    veteran_prominent=case_when(prom_mil_fig=="vet" ~ 1, prom_mil_fig!="vet" ~0),
+    total_veteran_prominent=sum(veteran_prominent),
+    elite_prominent=case_when(prom_mil_fig=="elite" ~1, prom_mil_fig !="elite" ~0),
+    total_elite_prominent=sum(elite_prominent),
+    family_vet_prominent=case_when(prom_mil_fig=="family" ~1, prom_mil_fig !="family" ~0),
+    total_family_vet_prominent=sum(family_vet_prominent),
+    elite_prominent_gen_sense=case_when(prom_mil_fig=="elitegeneralsense"~1, prom_mil_fig!="elitegeneralsense" ~0),
+    total_elite_mil_fig_gen_sense=sum(elite_prominent_gen_sense),
+    elite_pol_mil_fig=case_when(prom_mil_fig=="elitepolfig" ~1, prom_mil_fig!="elitepolfig"~0),
+    total_elite_pol_mil_fig=sum(elite_pol_mil_fig),
+     total_elite_appearances=total_elite_prominent+total_elite_mil_fig_gen_sense+total_elite_pol_mil_fig,
+    total_prominent_appearances=total_veteran_prominent + total_elite_prominent + total_family_vet_prominent + total_elite_mil_fig_gen_sense + total_elite_pol_mil_fig
+    ) %>% view()
+
+# begin making the first facet / panel graph wrap 
+
+facet_wrap1 <- prom_figs_df %>% select(year, veteran_prominent:total_prominent_appearances) %>% distinct() %>% select(-veteran_prominent, -elite_prominent, -family_vet_prominent, -elite_prominent_gen_sense, -elite_pol_mil_fig, -total_elite_appearances) %>% view()
+
+# now make the data into longer format for graphing and prepare to graph
+
+facet_wrap1 <- facet_wrap1  %>% pivot_longer(total_veteran_prominent:total_prominent_appearances, names_to = "question", values_to = "value") %>% view ()
+
+plot3 <- ggplot(data=facet_wrap1, aes(fill=question, x=year, y=value)) + geom_bar(position="dodge", stat="identity") + labs(x="Election", y="Number of Prominent Appearances by Military Figures") + scale_fill_discrete(name="Actor",
+                         breaks=c("total_veteran_prominent", "total_elite_prominent", "total_family_vet_prominent", "total_elite_mil_fig_gen_sense", "total_elite_pol_mil_fig", "total_prominent_appearances"),
+                         labels=c("Vets", "Retired Gen./Adm.","Family Members of Vets", "Retired Gen./Adm. Mentioned/Pictured Only", "Pol.Figures w/Mil. Backgrounds", "Total Appearances")) + theme(legend.position="bottom")
+
+plot3
+
+```
+
+Figure \@ref(fig:mil-endorse) portrays an interesting story over time: military figures appeared in campaign advertisements in prominent ways relatively rarely in the 2000 Election, the most frequently in the 2004 Election, and in gradually increasing frequency in the 2008, 2002, and 2012 Elections, respectively. It is also striking that there has been a general increase over time in the variety of military figures appearing in campaign advertisements in prominent ways. In 2000 for instance, there were a total of two appearances by military figures, both of whom were retired generals and admirals. In the 2016 election, there were 31 total appearances by military figures, consisting of 14 veterans (not generals or admirals), eight family members of veterans, six retired generals/admirals, two retired generals/admirals who were pictured or mentioned only, and one prominent political figure with a military background (Representative Tulsi Gabbard, who appeared in an advertisement endorsing Bernie Sanders for the Democratic Nomination while touting her military credentials). 
+
+Yet it is the 2004 Election, however, which elicited the greatest number of military figures appearing in prominent ways in campaign ads (39). In 2004, a number of veterans, family member of veterans, and retired officers coalesced to attack the war record of the Democratic Candidate, Senator John Kerry. The group, which was an official political action committee known as the "Swiftboat Veterans for Truth," claimed that Kerry had exaggerated his war record and was undeserving of many of the heroic medals he had received [@ullman_whats_2008]. The group even published a book that turned out to be _New York Times_ bestseller, whose title embodied the group's main charge against Kerry: "Unfit for Command" [@buckaloo_swiftboat_nodate]. Although it is hard to quantify, the group's attacks almost surely were effective. One scholar argues that the combination of the veracity of the Swiftboat ads, the fact that they largely featured real veterans as opposed to paid actors, and the timing of their release (the ads were released in August, the "doldrums period between conventions," which facilitated these ads having quite a bit of exposure in the media) badly hurt Kerry's chances as a candidate [@devlin_contrasts_2005, 292].
+
+It is not my purpose in this paper to render a normative judgement on the actions of the Swiftboat Veterans. One can reasonably state that such behavior was inherently partisan, for the underlying purpose of the group was to prevent Kerry from ascending to the Presidency. On the other hand, the attacks came from Kerry's fellow Vietnam Veterans, and in terms of substance, were squarely aimed at what these veterans felt was an embellished and untruthful war record. Considering the divisions in American society that the Vietnam War revealed, if not caused, one might reasonably conclude that while the impact of the Swiftboat Veterans actions was partisan, their main intent (though certainly not that of the Republican Party) was to set the record straight on Kerry, rather than to meddle in partisan politics. 
+
+It is my claim, however, that there is a much more significant story that needs to be explained given the data presented in Figure \@ref(fig:mil-endorse). The major part of this story involves the usage of military figures in prominent ways when the political candidates are not veterans. We might understand, even if we don't agree with, the mobilization of military figures during political campaigns when one or both candidates are veterans, as was the case in 2004 when Kerry ran against Bush. Yet in 2008, 2012, and 2016, only once was there a major party candidate who was a veteran (John McCain, the Republican nominee, in 2008). What explains the fact that in 2012 and 2016, when there were no final candidates who were veterans, military figures still appeared in prominent ways in campaign ads at higher levels than in 2008, and did these figures behave in such a way as to challenge the central principles of civil-military relations? I now turn my attention to answering these crucial questions. 
+
+## Are Campaign Ads Increasingly Challenging Principles of Civil-Military Relations?
+
+To do this, I catalogue the instances of retired military elites, veterans, and veteran family members appearing prominently in campaign ads. I operationalize adherence to the central principles of civil-military relations, maintaining the non-partisanship of the military, and the "non-interference" of the military institution, in two ways. To operationalize adherence to the principle of non-partisanship, I code for instances in which a military figure blatantly endorses and/or attacks a political candidate. I code endorsing and attacking a political candidate in explicit terms. In other words, a military figure must explicitly state words to the effect of, "I endorse Candidate X," or "that is why I am voting for Candidate X," to be considered an endorsement, or words such as, "Candidate Y does not have what it takes to be President because he or she is a lousy candidate," to be considered an attack, respectively. 
+
+To operationalize adherence to the principle of non-interference, I catalog instances of military figures addressing topics that are tangential to national security issues or military expertise in their comments during campaign ads. A military figure who talks only about the national security concerns does not, in my view, expressly violate the principle of non-interference, whereas a military figure who talks about the candidate's plans to lower subscription drug prices, does. Of note, operationalizing adherence to the central principles of civil-military relations in this manner leaves open the theoretical possibility that a military figure can in fact appear in a prominent way in a campaign ad without challenging one or more of these principles, or at least that there is a difference in how obvious a challenge might be. This possibility is suspect in one sense, but vital in order to obtain a picture of adherence to central principles of civil-military relations by military figures with respect to prominently appearing in campaign advertisements. Figure \@ref(fig:actor-principle) displays the number of distinct advertisements aired in each election cycle in which retired generals and admirals, veterans, and veteran family members explicitly endorse or attack a presidential candidate running for office, or address issues that are tangential if not altogether outside of military expertise during presidential elections from 2000 - 2016. 
+
+```{r actor-principle-prep, include=FALSE, echo=FALSE, error=FALSE, warning=FALSE}
+
+prom_figs_df %>% view()
+
+facet_wrap2 <- prom_figs_df %>% group_by(year) %>% mutate(
+  vet_endorse=case_when(prom_mil_fig=="vet" & vet_fam_end==1 ~ 1, prom_mil_fig!="vet" | vet_fam_end != 1 ~0),
+  vet_endorse_total=sum(vet_endorse),
+  elite_endorse=case_when((prom_mil_fig=="elite" | prom_mil_fig=="elitegeneralsense" | prom_mil_fig=="elitepolfig") & vet_fam_end==1 ~ 1, (prom_mil_fig!="elite" | prom_mil_fig!="elitegeneralsense" | prom_mil_fig!="elitepolfig") | vet_fam_end!=1 ~ 0), 
+  elite_endorse_total=sum(elite_endorse), 
+  family_endorse=case_when(prom_mil_fig=="family" & vet_fam_end==1 ~1, prom_mil_fig!="family" | vet_fam_end != 1 ~0),
+  family_endorse_total=sum(family_endorse),
+  vet_attack=case_when(prom_mil_fig=="vet" & vet_fam_atk==1 ~ 1, prom_mil_fig!="vet" | vet_fam_atk != 1 ~0),
+  vet_attack_total=sum(vet_attack),
+  elite_attack=case_when((prom_mil_fig=="elite" | prom_mil_fig=="elitegeneralsense" | prom_mil_fig=="elitepolfig") & vet_fam_atk==1 ~ 1, (prom_mil_fig!="elite" | prom_mil_fig!="elitegeneralsense" | prom_mil_fig!="elitepolfig") | vet_fam_atk!=1 ~ 0), 
+  elite_attack_total=sum(elite_attack), 
+  family_attack=case_when(prom_mil_fig=="family" & vet_fam_atk==1 ~1, prom_mil_fig!="family" | vet_fam_atk != 1 ~0),
+  family_attack_total=sum(family_attack),
+  vet_issues=case_when(prom_mil_fig=="vet" & vet_fam_out_issues==1 ~ 1, prom_mil_fig!="vet" | vet_fam_out_issues != 1 ~0),
+  vet_issues_total=sum(vet_issues),
+  elite_issues=case_when((prom_mil_fig=="elite" | prom_mil_fig=="elitegeneralsense" | prom_mil_fig=="elitepolfig") & vet_fam_out_issues==1 ~ 1, (prom_mil_fig!="elite" | prom_mil_fig!="elitegeneralsense" | prom_mil_fig!="elitepolfig") | vet_fam_out_issues!=1 ~ 0), 
+  elite_issues_total=sum(elite_issues), 
+  family_issues=case_when(prom_mil_fig=="family" & vet_fam_out_issues==1 ~1, prom_mil_fig!="family" | vet_fam_out_issues != 1 ~0),
+  family_issues_total=sum(family_issues),
+  endorse_total=vet_endorse_total+elite_endorse_total+family_endorse_total,
+  attack_total=vet_attack_total+elite_attack_total+family_attack_total,
+  issues_total=vet_issues_total+elite_issues_total+family_issues_total
+) %>% select(year, party, sponsor, ad_purpose, prom_mil_fig, total_veteran_prominent, total_family_vet_prominent, total_elite_appearances, total_prominent_appearances, vet_endorse_total, elite_endorse_total, family_endorse_total, vet_attack_total, elite_attack_total, family_attack_total, vet_issues_total, elite_issues_total, family_issues_total, endorse_total, attack_total, issues_total) %>% view()
+
+
+# this line contains all of the information needed for the subsequent graphs!
+facet_wrap2graph <- facet_wrap2 %>% select(year, total_veteran_prominent:issues_total) %>% distinct() %>% view()
+
+#all military figures
+
+milfigures_plot <- facet_wrap2graph %>% select(endorse_total, attack_total, issues_total, total_prominent_appearances) %>% print()
+
+milfigures_plot_graph <- milfigures_plot %>% pivot_longer(endorse_total:total_prominent_appearances, names_to="category", values_to="value") %>% view()
+
+milfigures_plot_graph <- ggplot(milfigures_plot_graph, aes(fill=category, x=year, y=value)) + geom_bar(position="dodge", stat="identity") + theme_bw() + theme(legend.position=c(.4, .85)) + scale_x_continuous(breaks=seq(2000, 2016, by = 4)) + scale_y_continuous(limits=c(0, 55, by=5)) + labs(x="Election", y="Number of Instances") + scale_fill_grey(start=0.2, end=0.8, name="All Military Figures",
+                         breaks=c("attack_total", "endorse_total", "issues_total", "total_prominent_appearances"),
+                         labels=c("Attack Candidate", "Endorse Candidate","Address Topics Outside of Expertise", "Total Appearances"))
+
+milfigures_plot_graph
+
+# prepare to make individual plots
+
+#elite graphs
+elite_plot <- facet_wrap2graph %>% select(elite_endorse_total, elite_attack_total, elite_issues_total, total_elite_appearances) %>% print()
+
+elite_plot_graph <- elite_plot %>% pivot_longer(elite_endorse_total:total_elite_appearances, names_to = "category", values_to = "value") %>% view()
+
+elite_plot_graph <- ggplot(elite_plot_graph, aes(fill=category, x=year, y=value)) + geom_bar(position="dodge", stat="identity") + theme_bw() + theme(legend.position=c(.4, .85)) + scale_x_continuous(breaks=seq(2000, 2016, by = 4)) + scale_y_continuous(limits=c(0, 14, by=2)) + labs(x="Election", y="Number of Instances") + scale_fill_grey(start=0.2, end=0.8, name="Retired Generals/Admirals",
+                         breaks=c("elite_attack_total", "elite_endorse_total", "elite_issues_total", "total_elite_appearances"),
+                         labels=c("Attack Candidate", "Endorse Candidate","Address Topics Outside of Expertise", "Total Appearances"))
+
+elite_plot_graph
+  
+
+
+#vet graphs
+
+vet_plot <- facet_wrap2graph %>% select(vet_endorse_total, vet_attack_total, vet_issues_total, total_veteran_prominent) %>% print()
+
+vet_plot_graph <- vet_plot %>% pivot_longer(vet_endorse_total:total_veteran_prominent, names_to="category", values_to="value") %>% view ()
+
+vet_plot_graph$category <- gsub("vet_","", vet_plot_graph$category)
+
+vet_plot_graph <- ggplot(vet_plot_graph, aes(fill=category, x=year, y=value)) + geom_bar(position="dodge", stat="identity") + theme_bw() + theme(legend.position=c(.4, .85)) + scale_x_continuous(breaks=seq(2000, 2016, by = 4)) + scale_y_continuous(limits=c(0, 30, by=4)) + labs(x="Election", y="Number of Instances") + scale_fill_grey(start=0.2, end=0.8, name="Veteran",
+                         breaks=c("attack_total", "endorse_total", "issues_total", "total_veteran_prominent"),
+                         labels=c("Attack Candidate", "Endorse Candidate","Address Topics Outside of Expertise", "Total Appearances"))
+
+vet_plot_graph
+
+# family graphs
+family_plot <- facet_wrap2graph %>% select(family_endorse_total, family_attack_total, family_issues_total, total_family_vet_prominent) %>% print()
+
+family_plot_graph <- family_plot %>% pivot_longer(family_endorse_total:total_family_vet_prominent, names_to="category", values_to="value") %>% print()
+
+family_plot_graph <- ggplot(family_plot_graph, aes(fill=category, x=year, y=value)) + geom_bar(position="dodge", stat="identity") + theme_bw() + theme(legend.position=c(.5, .85)) + scale_x_continuous(breaks=seq(2000, 2016, by = 4)) + scale_y_continuous(limits=c(0, 20, by=4)) + labs(x="Election", y="Number of Instances") + scale_fill_grey(start=0.2, end=0.8, name="Family Members of Vets",
+                         breaks=c("family_attack_total", "family_endorse_total", "family_issues_total", "total_family_vet_prominent"),
+                         labels=c("Attack Candidate", "Endorse Candidate","Address Topics Outside of Expertise", "Total Appearances"))
+
+family_plot_graph
+
+```
+
+```{r actor-principle, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, fig.height=10, fig.width=8,fig.cap="Instances of A) Retired Generals and Admirals, B) Veterans, and C) Family Members of Veterans Engaging in Forms of Partisan Activity (Attack and Endorse Political Candidates, and Address Topics Outside of Military Expertise) in Presidential Campaign Television Ads, 2000 - 2016"}
+
+plot_grid(milfigures_plot_graph, elite_plot_graph, vet_plot_graph, family_plot_graph, labels = "AUTO")
+
+```
+Figure \@ref(fig:actor-principle) displays several interesting points. First, Panel A shows that across all types of military figures who appear in a prominent way in a campaign ad, these figures engage in overtly partisan behaviors when they do appear, such as attacking or endorsing candidates. 2004 certainly elicited the greatest number of prominent military figure appearances (39 in total), which included 21 attacks, 9 endorsements, and 1 instance of addressing a topic that was tangential to military expertise. In 2016, on the other hand, out of 31 total military figure prominent appearances, there were 25 attacks, 14 endorsements, and three instances of addressing a topic that was tangential to military expertise. To the degree that it _may_ have been possible for a military figure to prominently been featured in at least a less-partisan manner in the past, the data here indicates that this is not the case: if and when military figures do appear, they increasingly engage in overtly partisan behavior. 
+
+Panels broken down by military figure type largely show this trend as well. For instance, Panel B indicates that of the two retired general/admiral appearances in the 2000 election, one involved addressing a topic outside of military expertise, but none explicitly endorses or attacked a political candidate. In 2008, the number of retired general/admiral appearances equaled the number of endorsements. And in 2016, of the nine retired general/admiral prominent appearances, seven included attacks on candidates, while four included explicit endorsements. 
+
+## Do Military Figures Really Associate More Closely with the GOP?
+
+Given this data, it is important to discern on whose behalf (which political party) the partisan activity is occurring by military figures when they do appear in campaign ads in prominent ways. Are there discernible patterns here? One might suspect, given a lengthy literature on U.S. civil-military relations that the military is associated more closely with the Republican Party than the Democratic Party [@davis_attitudes_2001; @ricks_widening_1997; see also @golby_duty_2011], that military figures engage in more partisan activity on behalf of the Republican rather than the Democratic Party. However, the results show otherwise. 
+
+Figure \@ref(fig:behavior-party) displays the total number of military figure prominent appearances, endorsements, attacks, and instances of addressing issues that are tangential to military expertise, separated by the party affiliation of the sponsor of the campaign ad. The results indicate that from 2000-2016, military figures who appear in prominent ways during campaign ads appear and engage in specific partisan behaviors more often on behalf of Democratic rather than Republican candidates. 
+
+```{r behavior-party-prep, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
+
+# partisan appearances
+mil_fig_appear_by_party <- prom_figs_df %>% ungroup() %>% select(year, party) %>% group_by(year, party) %>% mutate(count = n()) %>% distinct() %>% rename(value=count) %>% view ()
+
+mil_fig_appear_by_party_graph <- ggplot(mil_fig_appear_by_party, aes(fill=party, x=year, y=value)) + geom_bar(position="dodge", stat="identity", width=.95) + theme_bw() + theme(legend.position=c(.5, .80)) + scale_x_continuous(breaks=seq(2000, 2016, by = 4)) + scale_y_continuous(limits=c(0, 40, by=4)) + labs(x="Election", y="Number") + scale_fill_grey(start=0.2, end=0.8, name="Military Figure Appearances on Behalf of", breaks=c("DEMOCRAT", "REPUBLICAN", "OTHER"), labels=c("Democratic Candidate", "Republican Candidate","Other"))
+
+mil_fig_appear_by_party_graph
+                                        
+# partisan endorsements
+mil_fig_endorse_by_party <- prom_figs_df %>% filter(vet_fam_end==1) %>% ungroup() %>% select(year, party, vet_fam_end) %>% group_by(year, party, vet_fam_end) %>% mutate(count = n()) %>% distinct() %>% rename(value=count) %>% print()
+
+mil_fig_endorse_by_party_graph <- ggplot(mil_fig_endorse_by_party, aes(fill=party, x=year, y=value)) + geom_bar(position="dodge", stat="identity", width=.95) + theme_bw() + theme(legend.position=c(.5, .80)) + scale_x_continuous(breaks=seq(2000, 2016, by = 4)) + scale_y_continuous(limits=c(0, 12, by=2)) + labs(x="Election", y="Number") + scale_fill_grey(start=0.2, end=0.8, name="Military Figure Endorsements\n on Behalf of", breaks=c("DEMOCRAT", "REPUBLICAN", "OTHER"), labels=c("Democratic Candidates", "Republican Candidates","Other"))
+
+mil_fig_endorse_by_party_graph
+
+# partisan attacks
+mil_fig_attack_by_party <- prom_figs_df %>% filter(vet_fam_atk==1) %>% ungroup() %>% select(year, party, vet_fam_atk) %>% group_by(year, party, vet_fam_atk) %>% mutate(count = n()) %>% distinct() %>% rename(value=count) %>% print()
+
+mil_fig_attack_by_party_graph <- ggplot(mil_fig_attack_by_party, aes(fill=party, x=year, y=value)) + geom_bar(position="dodge", stat="identity", width=.95) + theme_bw() + theme(legend.position=c(.4, .80)) + scale_x_continuous(breaks=seq(2000, 2016, by = 4)) + scale_y_continuous(limits=c(0, 24, by=4)) + labs(x="Election", y="Number") + scale_fill_grey(start=0.2, end=0.8, name="Military Figure Attacks in\n Campaign Ads on Behalf of", breaks=c("DEMOCRAT", "REPUBLICAN", "OTHER"), labels=c("Democratic Candidates", "Republican Candidates","Other"))
+
+mil_fig_attack_by_party_graph
+
+
+# partisan issues
+mil_fig_issues_by_party <- prom_figs_df %>% filter(vet_fam_out_issues==1) %>% ungroup() %>% select(year, party, vet_fam_out_issues) %>% group_by(year, party, vet_fam_out_issues) %>% mutate(count = n()) %>% distinct() %>% rename(value=count) %>%print()
+
+mil_fig_issues_by_party_graph <- ggplot(mil_fig_issues_by_party, aes(fill=party, x=year, y=value)) + geom_bar(position="dodge", stat="identity", width=.95) + theme_bw() + theme(legend.position=c(.5, .80)) + scale_x_continuous(breaks=seq(2000, 2016, by = 4)) + scale_y_continuous(limits=c(0, 6, by=2)) + labs(x="Election", y="Number") + scale_fill_grey(start=0.2, end=0.8, name="Military Figures Addressing Topics Outside\n of Military Expertise In Campaign Ads on Behalf of ", breaks=c("DEMOCRAT", "REPUBLICAN", "OTHER"), labels=c("Democratic Candidates", "Republican Candidates","Other"))
+
+mil_fig_issues_by_party_graph
+
+
+```
+
+```{r behavior-party, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE, error=FALSE, fig.cap="Military Figure A) Appearances, B) Endorsements, C) Attacks, and D) Addressing Topics that are Tangential to National Security in Presidential Campaign Television Ads, 2000 - 2016, By Party Affiliation of Sponsor of Ad", fig.height=10, fig.width=9}
+
+plot_grid(mil_fig_appear_by_party_graph, mil_fig_endorse_by_party_graph, mil_fig_attack_by_party_graph, mil_fig_issues_by_party_graph, labels = "AUTO")
+
+```
+
+In fact, Panels A and C of Figure \@ref(fig:behavior-party) show that the _only_ times that Democratic-affiliated military figure partisan activity during campaign ads did not outpace that of Republican-affiliated military figure appearances occurred in 2012, when the number of appearances were equal (Panel A), and when Republican-affiliated military figures attacked political candidates more than Democratic-affiliated military figures (Panel C). During all four of the other elections, and across all forms of activity, military figures who prominently appeared in advertisements sponsored by Democrats engaged in a greater number of overtly partisan behaviors than those military figures who featured prominently in ads sponsored by Republicans. Is this finding at odds with the conventional wisdom suggesting that the military is in fact more aligned with the Republican Party than with the Democrats? And should we care? 
+
+* answer the two questions above, here, using some of the below as a help/guide * 
+
+I suggest that in answering these important questions, a key distinction between the conventional literature regarding the military's ideological ties to the GOP and the results offered in this paper involves the vital difference between _non-visible ideological alignment_ and _visible partisan behavior_. The traditional view that the military is ideologically affiliated with the Republican Party morose than the Democratic Party relies on a thorough body of survey data in which researchers compared the attitudes of military officers in the late 1990s to a diverse set of civilian groups [@feaver_soldiers_2001].^[These surveys were spearheaded by the Triangle Institute for Security Studies (TISS), which is joint effort between researchers at Duke University and the University of North Carolina at Chapel-Hill.]. This survey data itself constitutes an impressive body of scholarship that was aimed at determining whether and the degree to which a gap existed between the military and civilians, and what form such a gap took [@feaver_soldiers_2001; see also @ricks_widening_1997; @golby_duty_2011; and @golby_thanks_2016]. 
+
+With respect to the issue of partisanship, the TISS survey data showed that the military overwhelmingly identified with the Republican Party, to the point that among military leaders, 63.9% identified with Republicans, compared to 8.1% with Democrats, 16.7% with Independents, and 11.3% with no or another political party [@holsti_chasms_2001, 28]. When asked to identify their own ideological affiliation in liberal or conservative terms, similar results emerged among the military: only 4.4% of military leaders identified as "very liberal" or "somewhat liberal," compared to 37.5% of civilian non-veteran leaders and 28.5% of the public who were not veterans [@holsti_chasms_2001, 33]. While these results were interpreted by scholars of civil-military relations with a considerable range of panic, a general concern nonetheless emerged that the ideological preferences of the military, especially among its leaders, varied too much from those of the American public. 
+
+However, the difference between unknown ideological preferences (which were revealed through survey data) and displayed partisan behaviors is immense, precisely because the latter comprises those activities that indicate to the public that the military is no longer apolitical and non-partisan. I am not suggesting here that there is no concern whatsoever with a military whose ideological preferences are not balanced, i.e. I acknowledge that there likely is a point at which unbalanced ideological preferences between the military and the public is worrisome, though determining when that line is crossed is difficult. However, I am also suggesting that the empirical record of actual instances of behavior that challenge or breach the military's non-partisan principle should be of greater concern than those involving the military's supposedly close alignment with one party over the other, especially when this data is based on information that military officers must reveal.
+
+A lot has changed in the more than two decades since the TISS survey data was collected. It is possible, and perhaps likely, that the military no longer shares as strong as an ideological connection to the Republican Party as it did in the late 1980s and 1990s. It could also be that military figures who are affiliated with the Democratic Party engage in more instances of attacking and endorsing presidential candidates than military figures affiliated with the Republican Party precisely because these Democratic-affiliated military figures want to convey to the American public that the Republican party does not have a monopoly on the military nor on national security issues, and that there are in fact military elites who prefer the Democratic candidate running for office and his or her policies, a possibility that ties into the "issue ownership" literature in American politics [@petrocik_issue_2003]. These possibilities pose the basis for significant fertile research in the future, especially as polarized politics in the US endure. 
+
+## Regression Analysis
+
+```{r reg data manipulation, include=FALSE, echo=FALSE, message=FALSE, error=FALSE}
+
+# read in the data (note - this is a new spreadsheet here)
+reg_df <- read_csv(here("data", "ch6_df_comb_reg_data.csv")) %>% select(year:aff_polar_total) %>% view() 
+
+# create a new variable, partisan_act, that takes a value of 1 if 
+# vet_fam_end ==1 or if vet_fam_atk ==1 or if vet_fam_out_issues ==1
+reg_df_regression <- reg_df %>% mutate(
+  partisan_act=case_when(vet_fam_end ==1 | vet_fam_atk ==1 | vet_fam_out_issues ==1 ~ 1, (vet_fam_end==0 & vet_fam_atk==0 & vet_fam_out_issues==0)~0),
+  prom_mil_fig=case_when(vet_fam != 0 ~1, vet_fam ==0 ~0)
+) %>% drop_na() %>% view()
+
+# including drop_na removes several rows of data for which some values are missing. 
+
+## Here I construct regression models (logit).
+
+# Model 1 has a DV of whether there is a "prominent appearance" of a military figure and includes
+# a measurement of congressional polarization (House)
+mod1 <- glm(prom_mil_fig ~ mil_p + house_polarization_dim1,
+    family=binomial(link="logit"),
+    data=reg_df_regression
+    )
+
+summary(mod1)
+tidy(mod1)
+glance(mod1)
+
+
+# Model 2 has a DV of whether there is a "prominent appearance" of a military figure and includes
+# a measurement of affective polarization (House)
+mod2 <- glm(prom_mil_fig ~ mil_p + aff_polar_total,
+    family=binomial(link="logit"),
+    data=reg_df_regression
+    )
+
+summary(mod2)
+tidy(mod2)
+glance(mod2)
+
+
+
+
+## DV now is a dichotomous indicator of whether a military figures conducts any of the 3 x partisan actions: endorsement, #attacking, or addressing outside issues
+# Model 3 includes a DV of whether an ad displays any one of the specific partisan behaviors and includes
+# a measurement of congressional polarization
+
+mod3 <- glm(partisan_act ~ mil_p + house_polarization_dim1,
+    family=binomial(link="logit"),
+    data=reg_df_regression
+    )
+
+summary(mod3)
+tidy(mod3)
+glance(mod3)
+
+# Model 4 includes a DV of whether an ad displays any one of the specific partisan behaviors and includes
+# a measurement of affective polarization
+
+mod4 <- glm(partisan_act ~ mil_p + aff_polar_total,
+    family=binomial(link="logit"),
+    data=reg_df_regression
+    )
+
+summary(mod4)
+tidy(mod4)
+glance(mod4)
+
+
+
+
+## DV now is the behavior of endorsement
+# Model 5 includes a DV of whether a military figure endorses a candidate and includes a measure of cong. polarization
+
+mod5 <- glm(vet_fam_end ~ mil_p + house_polarization_dim1,
+    family=binomial(link="logit"),
+    data=reg_df_regression
+    )
+
+summary(mod5)
+tidy(mod5)
+glance(mod5)
+
+# Model 6 includes a DV of whether a military figure endorses a candidate and includes a measure of aff. polarization
+
+mod6 <- glm(vet_fam_end ~ mil_p + aff_polar_total,
+    family=binomial(link="logit"),
+    data=reg_df_regression
+    )
+
+summary(mod6)
+tidy(mod6)
+glance(mod6)
+
+
+
+
+## DV now is the behavior of attacking a candidate
+# Model 7 includes a DV of whether a military figure attacks candidate and includes a measure of cong. polarization
+
+mod7 <- glm(vet_fam_atk ~ mil_p + house_polarization_dim1,
+    family=binomial(link="logit"),
+    data=reg_df_regression
+    )
+
+summary(mod7)
+tidy(mod7)
+glance(mod7)
+
+# Model 8 includes a DV of whether a military figure attacks candidate and includes a measure of aff. polarization
+
+mod8 <- glm(vet_fam_atk ~ mil_p + aff_polar_total,
+    family=binomial(link="logit"),
+    data=reg_df_regression
+    )
+
+summary(mod8)
+tidy(mod8)
+glance(mod8)
+
+## DV now is the behavior of addressing outside issues
+# Model 9 includes a measure of cong. polarization
+
+mod9 <- glm(vet_fam_out_issues ~ mil_p + house_polarization_dim1 + party,
+    family=binomial(link="logit"),
+    data=reg_df_regression
+    )
+
+summary(mod9)
+tidy(mod9)
+glance(mod9)
+
+# Model 10 is the behavior of addressing outside issues and includes a measure of aff. polarization. 
+
+mod10 <- glm(vet_fam_out_issues ~ mil_p + aff_polar_total + party,
+    family=binomial(link="logit"),
+    data=reg_df_regression
+    )
+
+summary(mod10)
+tidy(mod10)
+glance(mod10)
+```
+
+Table \@ref(tab:regression2) displays the results of eight logistic regressions. The dependent variables range from general to a specific forms of behavior by military figures appearing prominently in presidential campaign television advertisements, including appearing in a prominent way (models 1-2), engaging in any blatant partisan action such as endorsing or attacking a political candidate, or addressing a topic that is outside of military expertise (models 3-4), and explicitly endorsing (models 5-6) and/or attacking candidates running for office (models 7-8). I include controls for the level of military prestige, which uses a measure ranging from 0-100 of the percentage of the American public that placed a "great deal or quite a lot" of confidence in the US military according to Gallup Public Opinion Polling conducted over the past several decades [@noauthor_confidence_2020]. I also include two different controls for political polarization. The odd numbered models include a standard measure of congressional polarization (the difference between the ideologies of Republican and Democratic members of the US House of Representatives for each Congress, as measured by DW-NOMINATE scores) [see @lewis_voteview_nodate for more information]. The even numbered models include a measure of affective polarization, or how members of the US public who identify with one political party feel about those who identify with the other political party, as measured by "feeling thermometer" data from the American National Election Survey[@iyengar_affect_2012; @iyengar_strengthening_2018; @iyengar_origins_2019]. 
+
+The model specifications here are somewhat crude in that I do not control for other variables. It is also important to point out that the data used in the regression analysis here involve _all_ of the roughly 3800 campaign ads available from WiscAd and the WMP, and not only the 840 which were selected to examine for military imagery. This enables the researcher to truly identify how prevalent instances of the dependent variable are occurring relative to the entire universe of campaign ads that are produced during each election cycle, as opposed to relative to those that may contain various forms of military imagery. 
+
+\singlespace
+```{r Regression Results, include=TRUE, echo=FALSE, results="asis", warning=FALSE, message=FALSE}
+stargazer(mod1, mod2, mod3, mod4, mod5, mod6, mod7, mod8,
+          type="latex",
+          label="tab:regression2",
+          title="Regression Results", 
+          covariate.labels = c('Mil Prestige', 'Cong. Polar', 'Aff. Polar'),
+          dep.var.caption = "Odds (log) of Partisan Activity By Military Figures in Presidential Campaign TV Ads",
+          dep.var.labels = c('Appear', 'Any Partisan Action', 'Endorse','Attack'),
+          model.names=FALSE,
+          header=FALSE,
+          column.sep.width = "-11pt",
+          align=TRUE,
+          font.size="small"
+)
+         
+```
+\doublespace
+
+The regression results provide general support for the theory and hypotheses offered in this paper. When the dependent variable is the likelihood of a military figure appearing prominently in a campaign ad (models 1-2), the level of military prestige holds significant explanatory power, whereas either measure of polarization does not. Specifically, a one unit increase in the percentage of the population that places a great deal or quite a lot of confidence in the US military increases the odds of a military figure appearing prominently in a presidential campaign television ad by nearly 18 percent. From the perspective of civilian actors who are ultimately responsible for the content of presidential campaign television ads, the more prestigious a military is, the more likely civilian candidates and their campaign teams will seek out military figures to appear prominently in the ads that these civilians run. 
+
+When the dependent variable consists of a military figure committing any blatant partisan action (models 3-4), which I conceive of either attacking or endorsing a candidate, or addressing a topic that falls outside of military expertise, the level of military prestige remains statistically significant in both model specifications. Specifically, a one unit increase in the percentage of the population that places a great deal or quite a lot of confidence in the US military increases the odds of a military figure committing a blatant partisan action while appearing prominently in a presidential campaign ad by 17% (model 3) and 20% (model 4). Interestingly, congressional polarization (model3) is not statistically significant, but controlling for affective polarization is. A one unit increase in the total level of affective polarization in the United States increases the odds of a military figure committing a blatant partisan action while appearing prominently in a campaign ad by 4%.
+
+When the dependent variable becomes more narrowly focused on a specific form of partisan action, such as a military figure appearing prominently in a campaign ad who endorses or attacks a political candidate, both independent variables seem to matter more, in line with what the overall theory predicts. In models 5-8, military prestige and both measurements of polarization are statistically significant except for the measurement of congressional polarization in model 5. 
+
+In broad terms, the regression results suggest that the level of military prestige matters more than the level of polarization in terms of civilian candidates using the military to simply appear before the public. As the level of military prestige rises, civilian candidate are more likely to run campaign ads in which military figures appear in prominent ways. Simultaneously, the results indicate that the levels of military prestige and political polarization strongly impact the likelihood that military figures who appear prominently in campaign ads engage in blatantly partisan behavior, such as endorsing and attacking political candidates. In short, civilian candidates are more likely to use military figures to appear before the public in campaign ads the more prestigious the military becomes, but how partisan these figures behave when appearing before the public depends on how polarized the political environment is.  
+
+## Revisiting the Hypotheses
+
+Ultimately, this paper finds strong support for H4, strong support for H5, and mixed support for H6. H4 noted that when military prestige is high, civilian leaders will attempt to leverage or harness the military (either as an institution, or individual military figures who possess outsized levels of prestige/popularity) for their own political purposes and advantages relative to when military prestige is low. The data examined in this chapter spanned 2000 - 2016, a period in which military prestige remained relatively high and polarization rose starkly. Because the level of military prestige did not significantly vary across the time period examined, it is not possible to conclusively state that civilian leaders have definitively reacted to changes in the military's prestige by adjusting how often the military is featured during presidential campaign television advertisements. And yet, the regression results of the data that is available clearly showed that military prestige is the single greatest determinant of military figures appearing prominently in campaign ads. This result strongly indicates that the theory offered earlier in this paper is correct: when the military is popular and respected, civilian leaders are not afraid to harness the military, in a multitude of ways, to gain political support, including when running for office. 
+
+I also find strong support for H5, which stated that when polarization and military prestige are high, civilian actors will use the military in public ways to advocate for policies and/or partisan political candidates, and that when polarization is high and military prestige is low, civilian actors are less inclined to use the military to publicly advocate for policies and/or partisan political candidates. The empirical record clearly shows that the worse polarization becomes (i.e. when polarization is higher), military figures who appeared prominently during campaign advertisements engaged in blatantly partisan behavior more often, such as attacking and endorsing political candidates. While the mere correlation of higher polarization and increased partisan activity leaves the possibility of alternate explanations open, the theoretical linkages between polarization defined as the clash of fundamental values and worldviews and the partisan behaviors explored in this chapter are sound. 
+
+Finally, I find mixed support for H6, which stated that when polarization and prestige are high, there is increased public competition between the civilian political parties for the military institution relative to when polarization and military prestige are low. This chapter explored one narrow but important behavior: the military appearing in presidential campaign ads. The empirical record demonstrates that while Democratic-affiliated military figures engage in more instances of partisan behaviors than Republican-affiliated figures, behaviors conducted on behalf of both political parties by military figures are up over the time period examined (2000-2016). More research and statistical analysis would be required to determine if these results hold if the set of partisan activities were expanded to include, for instance, other forms of partisan activities and "political behaviors", such as providing written commentary and endorsing or attacking candidates in mediums other than presidential campaign television ads [@brooks_militaries_2009].  
+
+# Alternate Explanations
+
+What other factors other than the levels of military prestige and political polarization could be responsible for the trends uncovered in this paper, namely, the increasing use of military figures who appear prominently in presidential campaign television advertisements, and the increasing partisan behavior of these figures when they do appear prominently? 
+
+While conclusively answering this important question might be impossible, there are several possible answers that deserve some considerable thought. One potential answer is that the results uncovered in this paper were partially driven by poor or at least inconclusive combat outcomes in the United States' recent wars in Afghanistan and Iraq. Such an explanation would claim that polarization itself was not driving the way in which military figures committed blatantly partisan behavior while appearing in campaign ads, but that partisan behaviors were driven out of a concern for national security. Indeed, many military figures expressed precisely such a sentiment when attacking or endorsing candidates for office - the threat to national security is so great, so these military figures seemed to claim, that I must endorse a particular candidate and/or attack another! 
+
+There is some merit to such an explanation, and at the same time, this alternate explanation is not without problems. There may be some merit to the notion that military figures, especially in recent years, were more likely to engage in partisan behavior while appearing prominently in presidential campaign advertisements, because many of these military figures were (and perhaps are still) in the outcomes of the wars in Iraq and Afghanistan. Many of the retired generals and admirals who appeared in presidential campaign advertisements in prominent ways held significant positions of leadership and responsibility in overseeing the efforts in Iraq and Afghanistan, and thus, these figures may be more willing to endorse or criticize candidates based on their plans for handling these wars. But such an explanation is also problematic because it is also difficult, and perhaps impossible, to disentangle the plans a candidate has for ongoing combat operations and plans for national security in general from polarization more generally. Polarization is a broad concept, which has its advantages and disadvantages. Yet if we conceive of polarization as the starkness in the worldviews and values that are competing for political primacy in the state, as many scholars do [@marsden_twilight_2014; @deneen_why_2018; @abramowitz_great_2018; @mohler_jr_gathering_2020], these would include competing visions for the role of the United States in the world, which by necessity would include differences over national security issues, and thus, how to proceed in places such as Iraq and Afghanistan. 
+
+A second alternate explanation for the increased use of military figures in campaign ads and how these actors behave might point to differences in the political advertising world in general over the past several decades, rather than changes in the levels of political polarization and the military's prestige. One might claim that political advertising is simply more shrewd and calloused than it used to be. After all, political advertisements air on far more platforms than they used to. Political advertisements are aired today via radio, television, social media, billboard, and many others that simply did not exist several decades ago. Such an alternate explanation might hold some merit, but it is nearly impossible to once again disentangle changes in polarization from changes in the overall "shrewdness" or "competitiveness" of the political advertising world. The fact is that the world of politics is and always will be competitive. 
+
+## Conclusion
+
+This paper examined the use of military symbols, imagery, and figures across presidential campaign television advertisements across five elections from 2000-2016. Campaign advertisements are one type of political behavior ultimately committed by civilian actors (though they can involve military figures) that are a regular feature of the political landscape and the democratic process. Indeed, presidential campaign television advertisements occur every four years in an attempt to persuade voters to vote for a certain candidate over another, to support or oppose political initiatives, or to otherwise inform the public.
+
+While these advertisements do not necessarily have to feature the military at all, nor necessarily in ways that challenge one or more of the central principles of civil-military relations (civilian control, the military's non-partisan ethic, and a principle of "non-interference" by the military into certain state affairs), several alarming trends are present in the data, most of which involve the way in which civilian political campaigns use military figures to appear in a noteworthy or prominent way during campaign advertisements. First, the data show that a diverse cast of military figures are appearing prominently in campaign advertisements. This cast includes not only retired generals and admirals, whom me might expect to see featured in campaign advertisements, but an increasing number of average veterans and veteran family members. Second, the data show that each of these types of military figures are engaging in blatant partisan behaviors when they appear in prominent ways. These actions especially include endorsing and attacking political candidates, and in some cases, addressing topics that fall outside of their own military expertise or experience. Third, the data show that the military figures who appear in prominent ways during campaign ads, and who engage in blatantly partisan actions when they do appear, are committing these partisan behaviors more often on behalf of Democratic rather than Republican candidates for office - a finding that stands in contradistinction to a conventional strand of literature in US civil-military relations that argued that the military is more closely aligned with the Republican rather than Democratic Party [@ricks_widening_1997; @davis_attitudes_2001; @holsti_chasms_2001]. This last finding in particular is noteworthy for several reasons, the most notable of which is that it suggests that even if the military does in fact identify with the Republican Party (or once did, as the data that argue this is over two decades old), the opposite is true with respect to appearing in campaign advertisements, a very visible form of political behavior.
+
+This paper also sought to clarify the role of the levels of both military prestige and political polarization in the use of the military in campaign advertisements. In line with the theory presented earlier in this paper which argues that both variables must be considered when predicting the behavior of both military and civilian actors with respect to the military as an institution, the regression analysis conducted here determines that the level of military prestige drives how often civilians rely on military figures to appear in prominent ways during presidential campaign television advertisements. And yet, both the level of military prestige and the level of political polarization impact how these military figures will behave with respect to committing instances of partisan behavior. 
+
+This chapter makes several contributions to the scholarly literature on the topics of civil-military relations, American politics, and international relations. First, this chapter provides yet another data point to advance the scholarly understanding of how political behavior involving the military institution has deviated from the normative principles of civilian control, non-partisanship, and the "non-interference" of the military - principles that this dissertation has argued are critical to maintaining healthy civil-military relationships. By exploring campaign advertisements, military imagery, and the behavior of military figures who appear in campaign advertisements over time, this chapter demonstrates that civilian actors who are ultimately in charge of the content of campaign advertisements have been impacted by rising polarization. As polarization has increased, civilian actors are airing political ads involving military figures which deviate from the principles of civil-military relations, specifically the principle of a non-partisan military institution, out of a desire to win office. This finding broadens the scholarly understanding of how various actors are increasingly willing to overlook normative standards out of a desire to see his or her preferred candidate win office [see also @graham_democracy_2020]. 
+There are several ways in which future research can and should build off of the findings obtained in this paper. First, future scholarly efforts should better develop the reasons _why_ the overtly partisan behaviors of attacking and endorsing candidates occur more often on behalf of one political party over another. Tying into the American Politics literature on "issue ownership" [@petrocik_issue_2003; @sides_consequences_2007], future work should examine the basis (assuming such a basis exists) for why military figures who associate with the Democratic Party engage in certain forms of behavior more often than military figures who associate with the Republican Party. This research should examine the role of incumbent status in engaging in these behaviors (are military figures less inclined to criticize incumbents), and the degree to which perceived status of superiority plays a role (for instance, are Democratic-affiliated military figures inclined to engage in partisan behaviors against Republican candidates because they are aware that the public perceives the military to be more closely associated with the GOP).
+
+Future research should also examine in greater the detail the efficacy of using certain types of military figures in prominent ways, in camapign advertisements but in other mediums as well. Retired generals and admirals, for instance, are featured in campaign ads ostensibly because of the knowledge, experience, skills, and overall expertise that they convey to the public. On the other hand, veterans (not retired generals or admirals) are portrayed in most of the campaign advertisements examined in this paper as ordinary, simple Americans who served their country but are concerned with broader political issues, such as healthcare, the economy, and ensuring that their children have a high quality of life in the future. Future research is required to fully tease out why certain types of military figures are chosen to appear in campaign ads in prominent ways, and importantly, whether anything can conclusively be stated regarding the efficacy of these efforts. In other words, are civilians who are able to select a certain type of military figure achieving the intended effects?
+
+If polarization and military prestige hold the explanatory power consistent with the findings of this chapter, the future prospects of the US military institution with respect to political behavior committed by military figures are not optimistic. As polarization has worsened and as the US military has remained relatively popular, civilian candidates seeking office have been more willing to allow military figures to engage in blatantly partisan behavior while appearing prominently in campaign ads used to win office. Ultimately, this finding suggests that civilian actors, who have the final say in the content of campaign advertisements, must be more willing than they currently are to avoid using the military in ways that place the military's non-partisan ethic at further risk. The failure to do so, even if it does not result in physical harm to the United States in the short term, will lead to increasingly problematic civil-military relations in the long term. 
+
+\singlespace
+
+\pagebreak
+
+# Appendix
+
+## Confirmation of Data Selection Strategy
+
+To ensure that my data selection strategy is reliable, I watch a random sample of 200 advertisements that are in the category of being unlikely to feature the military. In short, I determine that the data selection strategy is good, but not perfect. Of the 200 ads viewed to confirm the data selection strategy, 3 contained glimpses of military military imagery, such as a fleeting glimpse of a veteran or military hardware. However, none of the ads viewed to confirm the data selection strategy involved the prominent featuring of a military figure, such as narrating an ad, or talking at length.
+
+I take these results to mean two important things. First, on a somewhat disappoingting front, the data that I have regarding the composition and distribution of the types of military imagery (active duty, veteran, combat, and military hardware imagery) may not be completely accurate. However, on a more positive note, I take the results of the screening of the data selection strategy to indicate that the breakdown of prominent military figures being featured in campaign ads is accurate. In short, I am not entirely confident that I caught all instances of ads that contained "simple" military imagery, such as a quick glimpse of a veteran, or a scene from combat.  I feel very confident, however, that I caught all instances of military figures being featured in a prominent manner in campaign ads.
+
+## Additional Figures 
+
+Figure \@ref(fig:def-theme) displaying for each election cycle the number of national security-themed ads, the number of ads that contained some form of military imagery, the number of non-national security themed ads, and the total number of advertisements. Although these statistics do not reflect challenges to the central principles of civil-military relations, they nonetheless provide a useful starting point regarding the general prominence of military and defense related issues during the five presidential elections from 2000 - 2016.
+
+```{r def-theme, include=TRUE, echo=FALSE, fig.cap="Presidential Campaign Advertisements Featuring Military Imagery, Separated by Ads that are Entirely Focused on National Security Topics", fig.height=4, fig.width=7}
+
+plots_data <- adj_df %>% select(year, Yrcount, sum_mil_img_cycle, sum_no_mil_img_cycle, sum_def_vet_ad_theme, sum_non_def_vet_ad_theme, sum_def_theme_and_mil_img, sum_not_def_theme_but_mil_img) %>% view()
+
+# now send this data frame to the pivot_longer function to make it more easily graphable
+# use the distinct () function to keep only pertinent values
+ graph_plot1_data <- plots_data %>% select(year, Yrcount, sum_def_vet_ad_theme, sum_non_def_vet_ad_theme, sum_mil_img_cycle) %>% pivot_longer(Yrcount:sum_mil_img_cycle, names_to = "statistic", values_to = "Number") %>% distinct () %>% view ()
+
+plot1 <- ggplot(data=graph_plot1_data, aes(fill=statistic, x=year, y=Number)) + geom_bar(position="dodge", stat="identity") + labs(x="Election", y="Number of Presidential Campaign Ads") + scale_fill_discrete(name="Value",
+                         breaks=c("sum_def_vet_ad_theme", "sum_mil_img_cycle", "sum_non_def_vet_ad_theme", "Yrcount"),
+                         labels=c("National Security-Themed Ads", "Ads that Featured Some Form of Military Imagery", "Non-National Security Themed Ads", "Total Number of Ads")) + theme(legend.position="bottom")
+
+plot1 
+
+```
+
+
+
+## To What Extent Is the Military an Enduring Campaign Issue?  
+
+It is worth examining the degree to which the military stands out in a general sense in campaign advertisements over time. In other words, while exogenous events such as wars and international crises are likely to drive changes in the agendas of political candidates, and thus, changes in national security-themed campaign advertisements that feature the military, there might also be some baseline level of attention that the military receives from political candidates that is separate from wars or prominent international crises in which the military plays a noteworthy role. 
+Figure \@ref(fig:mil-img) below displays the number of non-national security related advertisements in each election cycle that feature some form of military imagery. In these campaign advertisements, therefore, there were themes presented other than those that focus entirely on issues of national security, defense, or veterans issues, but military imagery nonetheless appeared in the advertisement. Of all of the various non-security related issues and themes that are raised during a campaign advertisement, the military nonetheless made the cut. 
+
+```{r mil-img, warning=FALSE, error=FALSE, include=TRUE, echo=FALSE, fig.height=4, fig.width=6, fig.cap= "Non-National Security Themed Campaign Ads that Featured Military Imagery"}
+
+graph_plot2_data <- plots_data %>% select(year, sum_not_def_theme_but_mil_img, sum_non_def_vet_ad_theme) %>% pivot_longer(sum_not_def_theme_but_mil_img:sum_non_def_vet_ad_theme, names_to = "statistic", values_to = "Number") %>% distinct () %>% view ()
+
+plot2 <- ggplot(data=graph_plot2_data, aes(fill=statistic, x=year, y=Number)) + geom_bar(position="dodge", stat="identity") + labs(x="Election", y="Number of Presidential Campaign Ads") + scale_fill_discrete(name="Value",
+                         breaks=c("sum_non_def_vet_ad_theme", "sum_not_def_theme_but_mil_img"),
+                         labels=c("Non-National Security Themed Ads", "Non-National Security Themed Ads That Contained Military Imagery")) + theme(legend.position="bottom")
+
+plot2
+
+```
+Note the relative consistency in the fact that from 2000 - 2016, military imagery featured in a healthy proportion of campaign advertisements that were not focused on issues of national security, defense, or veterans issues. These results suggest that at least for the past 20 years, American political candidates have conveyed to the public their desire to support and strengthen the military in a very general sense. Although the data examined do not extend far back enough in time to prove the following conclusion, a trend of political candidates appealing to the public by acknowledging and featuring the military - at least in a general way during campaign advertisements - reflects the relatively high level of military prestige that the US military has commanded since at least 2000.
+
+# Data Acknowledgement and Disclaimers 
+
+## 2000
+
+The data were obtained from a joint project of the Brennan Center for Justice at New York University School of Law and Professor Kenneth Goldstein of the University of Wisconsin-Madison, and includes media tracking data from the Campaign Media Analysis Group in Washington, D.C. The Brennan Center-Wisconsin project was sponsored by a grant from The Pew Charitable Trusts. The opinions expressed in this article are those of the author(s) and do not necessarily reflect the views of the Brennan Center, Professor Goldstein, or The Pew Charitable Trusts.
+
+## 2004
+
+The data were obtained from a project of the University of Wisconsin Advertising Project includes media tracking data from TNSMI/Campaign Media Analysis Group in Washington, D.C. The University of Wisconsin Advertising Project was sponsored by a grant from The Pew Charitable Trusts. The opinions expressed in this article are those of the author(s) and do not necessarily reflect the views of the University of Wisconsin Advertising Project or The Pew Charitable Trusts.
+
+## 2008
+
+The data were obtained from a project of the University of Wisconsin Advertising Project includes media tracking data from TNSMI/Campaign Media Analysis Group in Washington, D.C. The opinions expressed in this article are those of the author(s) and do not necessarily reflect the views of the University of Wisconsin Advertising Project.
+
+## 2012
+
+The data were obtained from the Wesleyan Media Project, a collaboration between Wesleyan University, Bowdoin College, and Washington State University, and includes media tracking data from Kantar/Campaign Media Analysis Group in Washington, D.C. The Wesleyan Media Project was sponsored in 2012 by grants from The John S. and James L. Knight Foundation and The John D. and Catherine T. MacArthur Foundation. The opinions expressed in this article are those of the author(s) and do not necessarily reflect the views of the Wesleyan Media Project, Knight Foundation, MacArthur Foundation or any of its affiliates.
+
+## 2016
+
+The data were obtained from the Wesleyan Media Project, a collaboration between Wesleyan University, Bowdoin College, and Washington State University, and includes media tracking data from Kantar/Campaign Media Analysis Group in Washington, D.C. The Wesleyan Media Project was sponsored in 2016 by a grant from The John S. and James L. Knight Foundation. The opinions expressed in this article are those of the author(s) and do not necessarily reflect the views of the Wesleyan Media Project, Knight Foundation, or any of its affiliates.
+
+\newpage
+
+
+
