@@ -642,7 +642,7 @@ regdata <- adjdataset %>% mutate(
   Sen_distance_dim1=abs(Sen_Dem_mean_nom1-Sen_Rep_mean_nom1)*100,
   House_distance_dim2=abs(House_Dem_mean_nom2-House_Rep_mean_nom2)*100,
   Sen_distance_dim2=abs(Sen_Dem_mean_nom2-Sen_Rep_mean_nom2)*100,
-  aff_polar=dem_diff_aff+`rep-diff_aff`
+  aff_polar=dem_diff_aff + rep_diff_aff
   ) %>% view()
 
 # create a variable decade
@@ -680,7 +680,7 @@ regdata %>%
 # then, where the DV is crit_part
 # model 1 
 
-mod1 <- glm(crit_part_interfere ~ Inst_Cred_Gallup + House_distance_dim1 + AuthRank,
+mod1 <- glm(crit_part_interfere ~ Inst_Cred_Gallup + party.mean.diff.d1.house + AuthRank,
     family=binomial(link="logit"),
     data=regdata
     )
@@ -690,7 +690,7 @@ glance(mod1)
 
 # model 2 - logit with different DV
 
-mod2 <- glm(crit_part ~ Inst_Cred_Gallup + House_distance_dim1 + AuthRank,
+mod2 <- glm(crit_part ~ Inst_Cred_Gallup + party.mean.diff.d1.house + AuthRank,
     family=binomial(link="logit"),
     data=regdata
     )
@@ -700,7 +700,7 @@ tidy(mod2)
 glance(mod2)
 
 #model 3 - logit using aff polar 
-mod3 <- glm(crit_part_interfere ~ Inst_Cred_Gallup + aff_polar_alt + AuthRank,
+mod3 <- glm(crit_part_interfere ~ Inst_Cred_Gallup + aff_polar + AuthRank,
     family=binomial(link="logit"),
     data=regdata
     )
@@ -709,7 +709,7 @@ summary(mod3)
 
 #model 4 - logit using aff polar with different DV
 
-mod4 <- glm(crit_part ~ Inst_Cred_Gallup + aff_polar_alt + AuthRank,
+mod4 <- glm(crit_part ~ Inst_Cred_Gallup + aff_polar + AuthRank,
     family=binomial(link="logit"),
     data=regdata
     )
@@ -719,26 +719,26 @@ summary(mod4)
 # models 5-8 include Source as an IV, but the standard error estimates are too large
 # likely because there is not enough variation within Sources (LA Times is the problem)
 
-mod5 <- glm(crit_part_interfere ~ Inst_Cred_Gallup + House_distance_dim1 + AuthRank + Source,
+mod5 <- glm(crit_part_interfere ~ Inst_Cred_Gallup + party.mean.diff.d1.house + AuthRank + Source,
     family=binomial(link="logit"),
     data=regdata
     )
 summary (mod5)
 
 
-mod6 <- glm(crit_part ~ Inst_Cred_Gallup + House_distance_dim1 + AuthRank + Source,
+mod6 <- glm(crit_part ~ Inst_Cred_Gallup + party.mean.diff.d1.house + AuthRank + Source,
     family=binomial(link="logit"),
     data=regdata
     )
 summary (mod6)
 
-mod7 <- glm(crit_part_interfere ~ Inst_Cred_Gallup + aff_polar_alt + AuthRank + Source,
+mod7 <- glm(crit_part_interfere ~ Inst_Cred_Gallup + aff_polar + AuthRank + Source,
     family=binomial(link="logit"),
     data=regdata
     )
 summary(mod7)
 
-mod8 <- glm(crit_part ~ Inst_Cred_Gallup + aff_polar_alt + AuthRank + Source,
+mod8 <- glm(crit_part ~ Inst_Cred_Gallup + aff_polar + AuthRank + Source,
     family=binomial(link="logit"),
     data=regdata
     )
@@ -763,46 +763,46 @@ slimdata %>% filter(crit_part ==1) %>% group_by(Author) %>% count(Author) %>%  a
 # Then conduct a mixed model where we include author random effects
 
 # DV is Crit_part_interfere, house_distance_dim1 is IV
-mod9 <- glm(crit_part_interfere ~ Inst_Cred_Gallup + House_distance_dim1 + AuthRank + Source, family=binomial(link="logit"), data=slimdata)
+mod9 <- glm(crit_part_interfere ~ Inst_Cred_Gallup + party.mean.diff.d1.house + AuthRank + Source, family=binomial(link="logit"), data=slimdata)
 summary(mod9)
 
 mod9robust <- robustify(mod9, cluster=Author)
 summary(mod9robust)
 
-mod9mixed <- glmer(crit_part_interfere ~ Inst_Cred_Gallup + House_distance_dim1 + AuthRank + Source + (1 | Author), family=binomial, data=slimdata)
+mod9mixed <- glmer(crit_part_interfere ~ Inst_Cred_Gallup + party.mean.diff.d1.house + AuthRank + Source + (1 | Author), family=binomial, data=slimdata)
 summary(mod9mixed)
 
-# DV is crit_part_interfere, aff_polar_alt is IV
+# DV is crit_part_interfere, aff_polar is IV
 
-mod11 <- glm(crit_part_interfere ~ Inst_Cred_Gallup + aff_polar_alt + AuthRank + Source, family=binomial(link="logit"), data=slimdata)
+mod11 <- glm(crit_part_interfere ~ Inst_Cred_Gallup + aff_polar + AuthRank + Source, family=binomial(link="logit"), data=slimdata)
 summary(mod11)
 
 mod11robust <- robustify(mod11, cluster=Author)
 summary(mod11robust)
 
-mod11mixed <- glmer(crit_part_interfere ~ Inst_Cred_Gallup + aff_polar_alt + AuthRank + Source + (1 | Author), family=binomial, data=slimdata)
+mod11mixed <- glmer(crit_part_interfere ~ Inst_Cred_Gallup + aff_polar + AuthRank + Source + (1 | Author), family=binomial, data=slimdata)
 summary(mod11mixed)
 
-# DV is crit_part, IV is house_distance_dim1
+# DV is crit_part, IV is party.mean.diff.d1.house
 
-mod10 <- glm(crit_part ~ Inst_Cred_Gallup + House_distance_dim1 + AuthRank + Source, family=binomial(link="logit"), data=slimdata)
+mod10 <- glm(crit_part ~ Inst_Cred_Gallup + party.mean.diff.d1.house + AuthRank + Source, family=binomial(link="logit"), data=slimdata)
 summary(mod10)
 
 mod10robust <- robustify(mod10, cluster=Author)
 summary(mod10robust)
 
-mod10mixed <- glmer(crit_part ~ Inst_Cred_Gallup + House_distance_dim1 + AuthRank + Source + (1 | Author), family=binomial, data=slimdata)
+mod10mixed <- glmer(crit_part ~ Inst_Cred_Gallup + party.mean.diff.d1.house + AuthRank + Source + (1 | Author), family=binomial, data=slimdata)
 summary(mod10mixed)
 
-# DV is crit_part, IV is aff_polar_alt
+# DV is crit_part, IV is aff_polar
 
-mod12 <- glm(crit_part ~ Inst_Cred_Gallup + aff_polar_alt + AuthRank + Source, family=binomial(link="logit"), data=slimdata)
+mod12 <- glm(crit_part ~ Inst_Cred_Gallup + aff_polar + AuthRank + Source, family=binomial(link="logit"), data=slimdata)
 summary(mod12)
 
 mod12robust <- robustify(mod12, cluster=Author)
 summary(mod12robust)
 
-mod12mixed <- glmer(crit_part ~ Inst_Cred_Gallup + aff_polar_alt + AuthRank + Source + (1 | Author), family=binomial, data=slimdata)
+mod12mixed <- glmer(crit_part ~ Inst_Cred_Gallup + aff_polar + AuthRank + Source + (1 | Author), family=binomial, data=slimdata)
 summary(mod12mixed)
 
 ```
