@@ -849,6 +849,8 @@ df_2000_split  <- df2000 %>% select(custitle, q3, q32, q33, q34, q35) %>%
   distinct() %>% view()
 # Coding to find the Total # of Presidential Ads: 344
 
+# ads coded as "Issue Advocacy"
+df_2000_issue <- df2000 %>% filter(q3 == 80) %>% select(custitle, q3, q32, q33, q34, q35) %>% distinct() %>% view()
 
 df_2000_split_watch <- df_2000_split %>% filter(q32 == 50 | q33 == 50 | q34 == 50 | q35 == 50 | q32 == 51 | q33 == 51 | q34 == 51 | q35 == 51 | q32 == 52 | q33 == 52 | q34 == 52 | q35 == 52 | q32 == 53 | q33 == 53 | q34 == 53 | q35 == 53 | q32 == 54 | q33 == 54 | q34 == 54 | q35 == 54 | q32 == 55 | q33 == 55 | q34 == 55 | q35 == 55 | q32 == 59 | q33 == 59 | q34 == 59 | q35 == 59) %>% view()
 #Ads to watch : 17
