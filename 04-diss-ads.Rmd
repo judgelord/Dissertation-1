@@ -1,76 +1,5 @@
----
-title: "True Colors? The Military Institution and Presidential Campaign Advertisements, 2000-2016"
-author: "Peter M. Erickson"
-date: |
-  `r format(Sys.time(), '%B %d, %Y')`
-abstract: |
-  
-  _Using data from the Wisconsin Advertising Project (WiscAd) and the Wesleyan Media Project (WMP) consisting of Presidential Campaign television advertisements used in the five Presidential Elections from 2000 -2016, this chapter examines variation in the use of military figures and symbols in presidential campaign television advertisements. The results of this large-N, quantitative analysis indicate that civilian political candidates are increasingly using military actors (to include retired military officers, veterans, and veteran family members) to undertake clearly partisan behaviors while appearing in television campaign advertisements. The statistical results suggest that variation in this type of political behavior undertaken primarily at the hands of civilian actors is the result of changes in the overall level of the military's prestige. These results provide support for the notion that increasing levels of military prestige provide an opportunity for civilian actors to involve the military in politics in ways that challenge the central principles of civil-military relations._  
-  
-geometry: margin = 1.15in              # margin widths
-fontsize: 12pt                         # text size
-bibliography: dissertation.bib         # bibliography file
-biblio-style: authoryear               # citation style
-urlcolor: blue                         # links to external URLs
-citecolor: black                       # links to bibliography
-linkcolor: magenta                     # internal figures, footnotes, etc.
-indent: true                          # paragraph format
-                                       # true for indented paragraphs
-                                       
-header-includes:
-    - \usepackage{setspace}
-    - \usepackage{multirow}
-    - \usepackage{indentfirst}
-    - \usepackage{caption}
-    - \usepackage{rotating, graphicx}
-   
-    
-output: 
-  bookdown::pdf_document2:
-    keep_tex: true
-    latex_engine: pdflatex
-    number_sections: false
-    toc: false
-    fig_caption: true
-    citation_package: biblatex
-    includes: 
-      in_header: 
-        - latex-preamble.tex
-  bookdown::htmldocument2: default
-  bookdown::word_document2:
-      toc: false
----
 
-\doublespacing 
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-```{r, include = FALSE, echo = FALSE}
-library("here")       # file paths
-library("tidyverse")  # workhorse package
-library("tidylog")
-library("kableExtra")
-library("knitr")
-library("ggdag")
-library("dagitty")
-library("gridExtra")
-library("broom")
-library("dplyr")
-library("reshape2")
-library("pacman")
-library("ggrepel")
-library("cowplot")
-library("stargazer")
-library("bucky")
-library("lme4")
-library("brglm")
-library("mice")
-library("miceadds")
-```
-
-\newpage
+# Chapter Four 
 
 # Introduction
 
@@ -112,15 +41,19 @@ In order to examine potential variation in the political behaviors undertaken by
 
 In this chapter, I examine all of the presidential campaign advertisements that aired on television in the five elections that occurred between 2000 and 2016, inclusively, which amount to roughly 3,600 campaign ads in total. During this period, the level of US military prestige, as measured by Gallup polling that tracks the percentage of the public that has a "great deal or quite a lot" of trust in the military, ranges from 64 (in 2000) to 82 (in 2003 and 2009) [@noauthor_confidence_2020].^[In the years that presidential elections occur, the lowest value is 64 (2000) and the highest is 75 (2004 and 2012), however.] 
 
-To be clear, this does not by itself constitute quite the degree of variation that a researcher hopes for, but there are other things that can and should be leveraged. First, from a qualitative perspective, this period captures (albeit barely) the significant change in the international environment marked by the attacks on the United States that occurred on September 11, 2001. These attacks were the proximate cause of two wars that the US military fought beginning that same year. Notwithstanding any debates about its effectiveness during these conflicts, the continual deployment of the US military to Iraq and Afghanistan likely increased the prestige of the military in a sense that may not be entirely captured by the Gallup polling data.
+To be clear, this does not constitute quite the degree of variation that a researcher hopes for, but there are other things that can and should be leveraged. First, from a qualitative perspective, this period captures (albeit barely) the significant change in the international environment marked by the attacks on the United States that occurred on September 11, 2001. These attacks were the proximate cause of two wars that the US military fought beginning that same year. Notwithstanding any debates about its effectiveness during these conflicts, the continual deployment of the US military to Iraq and Afghanistan likely increased the prestige of the military in a sense that may not be entirely captured by the Gallup polling data.
 
-Additionally, when we also factor in the credibility ratings of other predominant political institutions, a greater shift in what we might call "relative" military prestige becomes slightly more evident. For example, the gap between the percentage of Americans surveyed who expressed a "great deal or quite a lot" in the military compared to Congress was 40% (in favor of the military) in 2000 and 64% (also in favor of the military) in 2016. The percentage of surveyed Americans who placed a "great deal or quite a lot" of trust in the military, Congress, and the gap between these two measures (the "relative" level of military prestige) is displayed in Figure \@ref(fig:trust-ch4). 
+Additionally, when we also factor in the credibility ratings of other predominant political institutions, a greater shift in what we might call "relative" military prestige becomes slightly more evident. For example, the gap between the percentage of Americans surveyed who expressed a "great deal or quite a lot" in the military compared to Congress was 40% (in favor of the military) in 2000 and 64% (also in favor of the military) in 2016. At the very least, the period from 2000 to 2016 generally saw relative increases in the prestige of the military. These increases are small when we consider trust in the military in its raw form, but larger when viewed in relative terms compared to Congress. Both measurements may be useful when exploring the impact of military prestige on the civilian propensity to use the military in presidential campaign advertisements in ways that violate the central principles of civil-military relations.
+
+Polarization over the same period also generally increased, except for measurements of affective polarization that rely on measurements provided by American National Election Survey, which show a dip in affective polarization between 2016 [@jeffrey_b_lewis_voteview_2020; @noauthor_american_nodate; @iyengar_affect_2012]. In short, the time period examined in this chapter, 2000 - 2016, broadly reflects movement between a domestic environment characterized by moderate polarization and moderate military prestige to one marked by higher polarization and higher military prestige. Because both of the independent variables of polarization and military prestige are changing over this time period, the statistical analysis will enable us to better disentangle the relative impacts of these (and other) variables. 
+
+The level of trust Americans placed in Congress and the military as well as the level of congressional polarization between 2000 and 2016 is displayed in Figure \@ref(fig:trust-ch4). This figure also shows the relative prestige of the military. 
 
 ```{r trust-ch4-prep, include=FALSE, warning=FALSE, echo=FALSE}
 
 df_trust_polar_ch4 <- read_csv(here("data","polar-inst-trust-time.csv")) %>% view()
 
-df_trust_polar_ch4 <- df_trust_polar_ch4 %>% 
+df_trust_polar_ch4 <- df_trust_polar_ch4 %>% filter(Year<=2016 & Year >= 2000) %>% 
   mutate(
     Rel_Mil_Pres=Military-Congress,
     house_polar_dim1 = house_polar_dim1 *100,
@@ -128,15 +61,11 @@ df_trust_polar_ch4 <- df_trust_polar_ch4 %>%
     ) %>% pivot_longer(Congress:Rel_Mil_Pres, names_to = "value", values_to = "Score") %>% distinct() %>% view()
 ```
 
-```{r trust-ch4, include=T, warning=FALSE, fig.height=4, fig.width=6, fig.cap = "Public Trust (L) and Polarization (R), 1980-2021" }
-df_trust_polar_ch4 %>% ggplot(aes(x=Year, y=Score, color=value)) + geom_smooth(se=FALSE) + labs(x="Year", y="Trust in Institutions") + scale_color_discrete(name="Trust;\nPolarization",
+```{r trust-ch4, include=T, warning=FALSE, echo=F, message=F, fig.height=4, fig.width=6, fig.cap = "Public Trust (L) and Polarization (R), 1980-2021" }
+df_trust_polar_ch4 %>% ggplot(aes(x=Year, y=Score, color=value)) + geom_line() + geom_point(size=0.7) + labs(x="Year", y="Trust in Institutions") + scale_color_discrete(name="Trust;\nPolarization",
                          breaks=c("Congress", "Military",  "Rel_Mil_Pres", "house_polar_dim1", "sen_polar_dim1"),
                          labels=c("Congress", "Military","Relative\nPrestige", "House\nPolarization", "Senate\nPolarization")) + scale_y_continuous(sec.axis = sec_axis(~., name = "Polarization (Scaled)")) + theme(legend.position="bottom") + guides(color = guide_legend(ncol=3,nrow=2,byrow=TRUE))
 ```
-
-At the very least, the period from 2000 to 2016 generally saw relative increases in the prestige of the military. These increases are small when we consider trust in the military in its raw form, but larger when viewed in relative terms compared to Congress. Both measurements may be useful when exploring the impact of military prestige on the civilian propensity to use the military in presidential campaign advertisements in ways that violate the central principles of civil-military relations. 
-
-Polarization over the same period also generally increased, except for measurements of affective polarization that rely on measurements provided by American National Election Survey, which show a dip in affective polarization between 2016 [@jeffrey_b_lewis_voteview_2020; @noauthor_american_nodate; @iyengar_affect_2012]. In short, the time period examined in this chapter, 2000 - 2016, broadly reflects movement between a domestic environment characterized by moderate polarization and moderate military prestige to one marked by higher polarization and higher military prestige. Because both of the independent variables of polarization and military prestige are changing over this time period, the statistical analysis will enable us to better disentangle the relative impacts of these (and other) variables.
 
 ## Civilian Use of Military Imagery and Actors in Campaign Ads
 
@@ -172,7 +101,7 @@ In the statistical analysis portion of this chapter, I also rely on data coverin
 
 As a proxy for military prestige, I rely on Gallup public opinion data that captures the level of trust that Americans have placed in the military and a variety of other institutions over the past several decades [@noauthor_confidence_2020]. Finally, I use a variety of open source data sources from the Department of Defense regarding US military casualties to measure levels of hostile casualties sustained by US military forces over the past several decades.^[These sources include @department_of_defense_dcas_2011; @department_of_defense_dcas_2021; @department_of_defense_dcas_2021-1; @department_of_defense_dcas_2021-2; @department_of_defense_dcas_2021-3; @department_of_defense_dcas_2021-4; @department_of_defense_dcas_2021-5; @department_of_defense_dmdc_2021.]  
 
-After gathering the data, I implement an empirical strategy that at its root, looks to answer two major questions. The first question, does this particular advertisement have any type of military image or symbol featured in the advertisement? At a minimum, answering this first question will help paint a picture regarding how frequently military imagery generally appears in campaign advertisements. The second question I seek to answer is whether a particular advertisement features the military in some way that violates the principles of civil-military relations. Answering these two main questions and presenting the results in a meaningful way is the aim of th next section of this chapter. 
+After gathering the data, I implement an empirical strategy that at its root, looks to answer two major questions. The first question, does this particular advertisement have any type of military image or symbol featured in the advertisement? At a minimum, answering this first question will help paint a picture regarding how frequently military imagery generally appears in campaign advertisements. The second question I seek to answer is whether a particular advertisement features the military in some way that violates the principles of civil-military relations. Answering these two main questions and presenting the results in a meaningful way is the aim of the next section of this chapter. 
 
 # Analysis
 
@@ -267,9 +196,9 @@ df_campaign_ads_raw_mice <- df_campaign_ads_raw
 
 In this portion of the chapter, I analyze the data and present the results. First, I present and analyze the general frequency and type of military symbols and imagery that appear within and across the data. This first step is meant to serve as a more general overview of the ways in which the military appears - in some fashion - in campaign advertisements over time.  Second, I analyze the frequency with which particular campaign advertisements involve the military in ways that violate one or more of the principles of civil-military relations. This second step is the more substantive of the two in terms of examining which factors impact the degree to which civilian actors violate the principles of civil-military relations.     
 
-In total, the data consist of 3,666 advertisements across the five presidential elections that occurred from 2000 - 2016, inclusively. 89 of these observations (2.4%) are missing.^[After contacting WiscAd and WMP, there is no reason to suspect that the data is not missing at random. Later in the statistical analysis, I conduct multiple imputation to deal with the missing data, but want to first provide the "raw" or "as is" facts given the data that is available.] After cleaning and merging the data across the several data sets, I capture several variables that WiscAd and WMP have already coded for that may be helpful for the statistical analysis conducted later in this chapter. These variables, and a short description of each, are displayed in Table \@ref(tab:existing-variables). 
+In total, the data consist of 3,666 advertisements across the five presidential elections that occurred from 2000 - 2016, inclusively. 89 of these observations (2.4%) are missing.^[After contacting WiscAd and WMP, there is no reason to suspect that the data is not missing at random. Later in the statistical analysis, I conduct multiple imputation to deal with the missing data, but want to first provide the "raw" or "as is" facts given the data that is available.] After cleaning and merging the data across the several data sets, I capture several variables that WiscAd and WMP have already coded for that may be helpful for the statistical analysis conducted later in this chapter. These variables, and a short description of each, are displayed in Table \@ref(tab:existing-variables-ch4). 
 
-```{r existing-variables, include=TRUE, echo=FALSE}
+```{r existing-variables-ch4, include=TRUE, echo=FALSE}
 
 text_vars <- tribble(~"Variable Name", ~"Question", ~"Possible Values",
   "Creative",  "What is the title of the ad?", "varies by each ad",
@@ -304,9 +233,9 @@ The third indicator accounts for images of combat. This could include things suc
 
 I allow for the possibility that an advertisement portrays or includes more than one type of imagery. Again, the purpose of each of these four variables is to obtain a general idea for the prevalence of military imagery across the data. These four variables do not necessarily indicate that a campaign advertisement has violated any of the central principles of civil-military relations. 
 
-Finally, I develop four additional variables that measure several other items of interest. These include the overall purpose of the advertisement, whether the candidate is a veteran, whether the advertisement explicitly mentions or portrays that the featured candidate is a veteran, and whether the advertisement itself is entirely focused on military, defense, veteran, and/or or national security issues. These variables, the question they intend to answer, and the potential range of values these variables can take, are displayed in Table \@ref(tab:el-ads-additional).
+Finally, I develop four additional variables that measure several other items of interest. These include the overall purpose of the advertisement, whether the candidate is a veteran, whether the advertisement explicitly mentions or portrays that the featured candidate is a veteran, and whether the advertisement itself is entirely focused on military, defense, veteran, and/or or national security issues. These variables, the question they intend to answer, and the potential range of values these variables can take, are displayed in Table \@ref(tab:el-ads-additional-ch4).
 
-```{r el-ads-additional, include=TRUE, echo=FALSE}
+```{r el-ads-additional-ch4, include=TRUE, echo=FALSE}
 
 text_vars <- tribble(~"Variable Name", ~"Question", ~"Possible Values",
   "Act_Duty_Imagery", "Does the advertisement feature imagery of US troops in uniform?", "1 - Yes; 0 - No",
@@ -335,9 +264,9 @@ text_vars %>% kable(booktabs=T, caption="Additional Variables / Anticipated Codi
 
 ## Summary Statistics and Descriptive Data
 
-Table \@ref(tab:desc-stats) shows, for each election cycle, the total number of advertisements aired on the nation's top media markets, the number of advertisements missing from the data, the proportion of the data that is missing, the number of advertisements that featured some form of military imagery in each election, and the proportion of each election's ads that contained military imagery. 
+Table \@ref(tab:desc-stats-ch4) shows, for each election cycle, the total number of advertisements aired on the nation's top media markets, the number of advertisements missing from the data, the proportion of the data that is missing, the number of advertisements that featured some form of military imagery in each election, and the proportion of each election's ads that contained military imagery. 
 
-```{r initial-stats, include=F, echo=F, warning=F, message=F}
+```{r initial-stats-ch4, include=F, echo=F, warning=F, message=F}
 desc_stats <- tribble(
   ~'Election Cycle', ~'Total Ads (on hand and missing)', ~'# Ads Missing', ~'% Ads Missing', ~'# Ads on hand with Military Imagery', ~'% of Ads on hand with Military Imagery',
   "2000", "347", "39", "11.2", "20", "6.5",
@@ -348,7 +277,7 @@ desc_stats <- tribble(
   "2000-2016", "3666", "89", "2.4", "550", "15.0")
 ```
 
-```{r desc-stats, include=TRUE, echo=FALSE}
+```{r desc-stats-ch4, include=TRUE, echo=FALSE}
  
 kable(desc_stats, booktabs=T, caption="Summary Statistics, The Military in Presidential Campaign Advertisements, 2000-2016") %>%
   kable_styling(full_width = F, font_size=10.5, latex_options="striped") %>% 
@@ -361,7 +290,7 @@ kable(desc_stats, booktabs=T, caption="Summary Statistics, The Military in Presi
 
 ### The Prominence of Military Imagery in US Presidential Elections
 
-Table \@ref(tab:desc-stats) shows that 15 percent of the presidential campaign television ads featured military imagery of some kind. The least and most saturated elections in terms of military imagery, respectively, were the 2000 and 2004 elections, when 6.5% and 20.9% of advertisements featured some kind of military imagery.^[The 2000 Election contains the highest incidence of missing data, at 11.2%. Still, it is very unlikely that the 2000 Election is _not_ the least saturated with military imagery. For the 2000 Election to eclipse the second-least saturated election (2012), at least 18 of the 39 missing ads (46%) from the 2000 Election would have to contain military imagery. As the data is missing randomly, this is certainly possible, but very highly unlikely.] Following the 2004 Election, the percentage of campaign ads containing military imagery declined in the 2008 and 2012 Elections before rising sharply again in 2016.
+Table \@ref(tab:desc-stats-ch4) shows that 15 percent of the presidential campaign television ads featured military imagery of some kind. The least and most saturated elections in terms of military imagery, respectively, were the 2000 and 2004 elections, when 6.5% and 20.9% of advertisements featured some kind of military imagery.^[The 2000 Election contains the highest incidence of missing data, at 11.2%. Still, it is very unlikely that the 2000 Election is _not_ the least saturated with military imagery. For the 2000 Election to eclipse the second-least saturated election (2012), at least 18 of the 39 missing ads (46%) from the 2000 Election would have to contain military imagery. As the data is missing randomly, this is certainly possible, but very highly unlikely.] Following the 2004 Election, the percentage of campaign ads containing military imagery declined in the 2008 and 2012 Elections before rising sharply again in 2016.
 
 There are a number of possible explanations behind these broad trends. One involves the arc of American foreign policy, and the military's role in shaping it between 2000 and 2016. The September 11, 2001 attacks ushered in a distinct role for the military as the US conducted lengthy military operations, first in Afghanistan in 2001 and later in Iraq in 2003. That military imagery contained high relative proportions of military imagery during the 2004 and 2008 Elections is mostly unsurprising. The war in Iraq was a major theme in the 2004 Election, when the incumbent, George W. Bush, ran against the Democratic challenger, John Kerry, a decorated combat veteran of the Vietnam War. At the time of the 2008 election, the surge of US military forces in Iraq had shown signs that it was likely working to at least alleviate the level of sectarian violence in Iraq. Moreover, US casualties, after peaking in 2007, had also been declining steadily throughout 2008 [@us_department_of_defense_dcas_2021]. This is likely a major reason why the proportion of campaign ads featuring military imagery declined in 2008 relative to the proportion of ads featuring military imagery in the 2004 election. 
 
@@ -373,9 +302,9 @@ In many respects, Hillary Clinton, the Democratic Candidate for President in 201
 
 ### Specific Types of Military Imagery
 
-Moving beyond the general incidence of military imagery across presidential elections from 2000 - 2016, Figure \@ref(fig:img-type) displays the number of uses of military imagery by type. The figure shows that imagery of active duty troops and veterans are the most common forms of military imagery. 
+Moving beyond the general incidence of military imagery across presidential elections from 2000 - 2016, Figure \@ref(fig:img-type-ch4) displays the number of uses of military imagery by type. The figure shows that imagery of active duty troops and veterans are the most common forms of military imagery. 
 
-```{r data selection results, include=FALSE, echo=FALSE, warning=FALSE, message=FALSE}
+```{r data selection results, include=FALSE, echo=FALSE, warning=FALSE, message=FALSE, error=F}
 #create a variable called Yrcount that counts the number of ads per election cycle
 #create a variable called "mil_img" if there is any type of military imagery category in a 
 # given ad
@@ -397,7 +326,7 @@ df_campaign_ads_raw_on_hand <- df_campaign_ads_raw %>%
     ) 
 
 
-# create a new df called 'adj_df' that 
+# create a new df called 'adj_df_ch4' that 
 # takes the original df and adds additional variables 
 #(1) sum_mil_img, the total # of ads per election cycle containing military imagery 
 #(mil_img ==1); 
@@ -408,7 +337,7 @@ df_campaign_ads_raw_on_hand <- df_campaign_ads_raw %>%
 # sum_mil_fig_cycle
 #(5) sum_def_vet_ad_theme, the total # of ads per cycle that address entirely matters
 # of national security, defense, or veterans issues
-adj_df <- df_campaign_ads_raw_on_hand %>% group_by(year) %>% mutate(
+adj_df_ch4 <- df_campaign_ads_raw_on_hand %>% group_by(year) %>% mutate(
     sum_mil_img_cycle=sum(mil_img),
     sum_no_mil_img_cycle=sum(no_mil_img),
     prop_mil_img = sum_mil_img_cycle/Yrcount,
@@ -437,12 +366,12 @@ adj_df <- df_campaign_ads_raw_on_hand %>% group_by(year) %>% mutate(
 
 ```
 
-```{r img-type, include=T, echo=FALSE, error=FALSE, warning=FALSE, fig.height=4, fig.width=6, fig.cap="Number of Presidental Campaign TV Ads Displaying Military Imagery"}
+```{r img-type-ch4, include=T, echo=FALSE, error=FALSE, warning=FALSE, message=F, fig.height=4, fig.width=6, fig.cap="Number of Presidental Campaign TV Ads Displaying Military Imagery"}
 
 ## prepare a graph for raw counts of image type 
 
 # raw counts
-graphable_img_types_df <- adj_df %>% 
+graphable_img_types_df <- adj_df_ch4 %>% 
   select(year, act_duty_img_total, vet_img_total, us_cmbt_img_total, us_mil_hard_img_total) %>% pivot_longer(act_duty_img_total:us_mil_hard_img_total, names_to = "statistic", values_to = "Number") %>% distinct () %>% view ()
 
 plot_img_type_count <- ggplot(data=graphable_img_types_df, aes(fill=statistic, x=year, y=Number)) + geom_bar(position="dodge", stat="identity") + labs(x="Election", y="Number of Ads") + scale_fill_discrete(name="Military Imagery Type",
@@ -453,15 +382,15 @@ plot_img_type_count
 
 ```
 
-In 2004 and in 2008, combat imagery is more common than imagery containing military hardware, but in all other elections, more images of military hardware were evident than combat imagery. The most reasonable explanation for this difference is the fact that American combat operations in Iraq and Afghanistan loomed large over the 2004 and 2008 elections, respectively. It is also quite clear from Figure \@ref(fig:img-type) that the 2000 election contained far less military imagery - across all imagery types - than subsequent elections. This likely reflects the post-9/11 era increase in the general prominence or the centrality of the military as an institution in politics relative to the immediate elections held in the pre-9/11 era. 
+In 2004 and in 2008, combat imagery is more common than imagery containing military hardware, but in all other elections, more images of military hardware were evident than combat imagery. The most reasonable explanation for this difference is the fact that American combat operations in Iraq and Afghanistan loomed large over the 2004 and 2008 elections, respectively. It is also quite clear from Figure \@ref(fig:img-type-ch4) that the 2000 election contained far less military imagery - across all imagery types - than subsequent elections. This likely reflects the post-9/11 era increase in the general prominence or the centrality of the military as an institution in politics relative to the immediate elections held in the pre-9/11 era. 
 
-Finally, it is also clear that the relative gap between active duty military imagery and veteran imagery has widened, as veteran imagery has emerged as the most common form of imagery beginning in the 2012 election. These trends are also reflected when we plot the type of military imagery featured in election advertisements as proportions, as reflected in Figure \@ref(fig:img-type-prop). Note that the overall proportions of advertisements in the 2008 and 2012 elections that featured active duty military and veteran imagery were relatively low compared to the 2016 election. This is somewhat interesting in that during the 2012 election, and certainly during the 2016 election, wars in Iraq and Afghanistan were far less active on the whole than they had been in 2008. In other words, we might anticipate a decline in the proportion of advertisements featuring active military troops in 2016 relative to 2012, but instead, the data shows that the trend is increasing. 
+Finally, it is also clear that the relative gap between active duty military imagery and veteran imagery has widened, as veteran imagery has emerged as the most common form of imagery beginning in the 2012 election. These trends are also reflected when we plot the type of military imagery featured in election advertisements as proportions, as reflected in Figure \@ref(fig:img-type-prop-ch4). Note that the overall proportions of advertisements in the 2008 and 2012 elections that featured active duty military and veteran imagery were relatively low compared to the 2016 election. This is somewhat interesting in that during the 2012 election, and certainly during the 2016 election, wars in Iraq and Afghanistan were far less active on the whole than they had been in 2008. In other words, we might anticipate a decline in the proportion of advertisements featuring active military troops in 2016 relative to 2012, but instead, the data shows that the trend is increasing. 
 
-```{r img-type-prop, include=T, echo=FALSE, warning=FALSE, message=FALSE, fig.height=4, fig.width=6, fig.cap="Proportion of Presidental Campaign TV Ads Displaying Military Imagery"}
+```{r img-type-prop-ch4, include=T, echo=FALSE, warning=FALSE, message=FALSE, fig.height=4, fig.width=6, fig.cap="Proportion of Presidental Campaign TV Ads Displaying Military Imagery"}
 
 ## prepare a graph for proportion of image type 
 
-graphable_img_prop_df <- adj_df %>% 
+graphable_img_prop_df <- adj_df_ch4 %>% 
   select(year, prop_act_dty_img, prop_vet_img, prop_us_cmbt_img, prop_us_mil_hard_img) %>% pivot_longer(prop_act_dty_img:prop_us_mil_hard_img, names_to = "statistic", values_to = "Proportion") %>% distinct () %>% view ()
 
 # proportion graph military imagery type
@@ -481,9 +410,9 @@ Yet there is another way to gauge how civilian candidates choose to leverage the
 
 Figure \@ref(fig:non-def-theme-imagery) shows the proportion of advertisements in each election cycle that do not primarily address defense, veterans, or national security topics but include military imagery anyways. The smoothing line in blue clearly depicts an upward trend over time, suggesting that civilian candidates and their campaign teams have increasingly valued portraying the military in some way to the public, even in ads that do not directly address defense, veterans, or other national security topics. This trend seems to suggest that over time, civilian political candidates increasingly want the viewer to know that the military, in some way, has not been forgotten. 
 
-```{r non-def-theme-imagery, include=T, echo=FALSE, warning=FALSE, fig.height=4, fig.width=6, fig.cap="Military Imagery in non-Defense or non-Veteran Related Presidential Campaign Advertisements, 2000-1016"}
+```{r non-def-theme-imagery, include=T, echo=FALSE, warning=FALSE, message=F, fig.height=4, fig.width=6, fig.cap="Military Imagery in non-Defense or non-Veteran Related Presidential Campaign Advertisements, 2000-2016"}
 
-facet_wrap_nondef <- adj_df %>% select(year, Yrcount, sum_def_vet_ad_theme, sum_def_theme_and_mil_img, sum_not_def_theme_but_mil_img) %>% mutate(
+facet_wrap_nondef <- adj_df_ch4 %>% select(year, Yrcount, sum_def_vet_ad_theme, sum_def_theme_and_mil_img, sum_not_def_theme_but_mil_img) %>% mutate(
   prop_not_def_but_mil_img = sum_not_def_theme_but_mil_img/Yrcount
   ) %>% select(year, prop_not_def_but_mil_img) %>% 
   distinct()
@@ -506,7 +435,7 @@ A final orientation measure to the data involves the number and proportion of ad
 
 # create a df with the variables I will need.
 
-prom_figs_df <- adj_df %>% select (year, count, creative, party, sponsor, ad_purpose, can_vet, can_vet_mention, vet_fam, vet_fam_end, vet_fam_atk, vet_fam_out_issues, prom_mil_fig, Yrcount, dummy_04:prestige_gap) %>% group_by(year, party) %>% view()
+prom_figs_df <- adj_df_ch4 %>% select (year, count, creative, party, sponsor, ad_purpose, can_vet, can_vet_mention, vet_fam, vet_fam_end, vet_fam_atk, vet_fam_out_issues, prom_mil_fig, Yrcount, dummy_04:prestige_gap) %>% group_by(year, party) %>% view()
 
 # create counts and proportions of advertisements
 # denoting pertinent variables such as 
@@ -727,12 +656,12 @@ Our understanding of the picture is now much more clear: military-affiliated int
 
 # prep the data 
 
-reg_df <- violations_wrap %>%view()
+reg_df_ch4 <- violations_wrap %>%view()
 
 # also, use mutate function to include several control 
 # variables to the data frame.  
 
-reg_df <- reg_df %>% mutate(
+reg_df_ch4 <- reg_df_ch4 %>% mutate(
   can_vet = replace(can_vet, can_vet != 1, 0),
   partisan_act=case_when(
     vet_fam_end ==1 | vet_fam_atk ==1 | vet_fam_out_issues ==1 ~ 1, 
@@ -748,28 +677,28 @@ The next several pages reveal the results of a detailed regression analysis. The
 ## create an OLS data frame. Select only the proportions I am interested in 
 ## as my DV and drop any other variables I do not need. 
 
-reg_df_ols <- reg_df %>% select(house_polar:prestige_gap, violations_rate, prop_ads_violating) %>% distinct() %>% view()
+reg_df_ch4_ols <- reg_df_ch4 %>% select(house_polar:prestige_gap, violations_rate, prop_ads_violating) %>% distinct() %>% view()
 
 ## OLS Model 1: DV is prop_ads_violating
 
-mod_ols_prop_violating <- lm(prop_ads_violating ~ mil_prestige + house_polar + HostCasRateLagged, data=reg_df_ols)
+mod_ols_prop_violating <- lm(prop_ads_violating ~ mil_prestige + house_polar + HostCasRateLagged, data=reg_df_ch4_ols)
 summary(mod_ols_prop_violating)
 
-mod_ols_prop_violating_sen <- lm(prop_ads_violating ~ mil_prestige + sen_polar + HostCasRateLagged, data=reg_df_ols)
+mod_ols_prop_violating_sen <- lm(prop_ads_violating ~ mil_prestige + sen_polar + HostCasRateLagged, data=reg_df_ch4_ols)
 summary(mod_ols_prop_violating_sen)
 
-mod_ols_prop_violating_aff <- lm(prop_ads_violating ~ mil_prestige + aff_polar + HostCasRateLagged, data=reg_df_ols)
+mod_ols_prop_violating_aff <- lm(prop_ads_violating ~ mil_prestige + aff_polar + HostCasRateLagged, data=reg_df_ch4_ols)
 summary(mod_ols_prop_violating_aff)
 
 ## OLS Model 2: DV is violation rate
 
-mod_ols_violations_rate <- lm(violations_rate ~ mil_prestige + house_polar + HostCasRateLagged, data=reg_df_ols)
+mod_ols_violations_rate <- lm(violations_rate ~ mil_prestige + house_polar + HostCasRateLagged, data=reg_df_ch4_ols)
 summary(mod_ols_violations_rate)
 
-mod_ols_violations_rate_sen <- lm(violations_rate ~ mil_prestige + sen_polar + HostCasRateLagged, data=reg_df_ols)
+mod_ols_violations_rate_sen <- lm(violations_rate ~ mil_prestige + sen_polar + HostCasRateLagged, data=reg_df_ch4_ols)
 summary(mod_ols_violations_rate_sen)
 
-mod_ols_violations_rate_aff <- lm(violations_rate ~ mil_prestige + aff_polar + HostCasRateLagged, data=reg_df_ols)
+mod_ols_violations_rate_aff <- lm(violations_rate ~ mil_prestige + aff_polar + HostCasRateLagged, data=reg_df_ch4_ols)
 summary(mod_ols_violations_rate_aff)
 ```
 
@@ -780,32 +709,33 @@ I also include a measure of military casualties, and lag is measure by one year.
 These results are displayed in Table \@ref(tab:ch4regression1). 
 
 \singlespace
-```{r reg results, include=F, echo=FALSE, results="asis", warning=FALSE, message=FALSE}
+```{r reg results, include=T, echo=FALSE, results="asis", warning=FALSE, message=FALSE}
 stargazer(mod_ols_prop_violating, mod_ols_prop_violating_sen, mod_ols_prop_violating_aff, mod_ols_violations_rate, mod_ols_violations_rate_sen, mod_ols_violations_rate_aff,
           type="latex",
           label="tab:ch4regression1",
-          title="OLS Regression", 
-          covariate.labels = c('Trust in Military', 'House Polarization', 'Senate Polarization', 'Aff. Polarization', 'Hostile Casualty Rate (lagged)' ),
+          title="OLS Regression, Proportion/Rate of Presidential Election Ads that Violate Principles of Civil-Military Relations, 2000-2016", 
+          covariate.labels = c('Trust in Military', 'House Polarization', 'Senate Polarization', 'Aff. Polarization', 'Casualty Rate (lagged)'),
           dep.var.labels = c('Proportion of Ads Violating', 'Violation Rate'),
           model.names=TRUE,
           header=FALSE,
-          column.sep.width = "1pt",
+          column.sep.width = "-15pt",
           align=TRUE,
           font.size="small",
           no.space=TRUE,
-          omit.stat=c("f", "ser"),
-          float.env = "sidewaystable"
+          omit.stat=c("f", "ser")
           )
          
 ```
 
 \doublespace
 
-The macro level results contained shown in Table \@ref(tab:regression-set1) are mostly inconclusive. The coefficient for trust in the military is positive in all models, suggesting that there is a positive relationship, but the coefficient is small in scale and statistically significant in only two of the six models (models 3 and 6). There are also but a few instances of other variables seeming to matter across the model specifications. The coefficients for respective types of polarization and the lagged hostile casualty rate are negative across all model specifications, but statistically significant only on model 6. In short, the results contained in Table \@ref(tab:regression-set1) prevent us from concluding that there is a strong relationship between any of the control variables and the proportion (as well as violation rate) of presidential campaign ads that violate the principles of civil-military relations. 
+The macro level results contained shown in Table \@ref(tab:ch4regression1) are mostly inconclusive. The coefficient for trust in the military is positive in all models, suggesting that there is a positive relationship, but the coefficient is small in scale and statistically significant in only two of the six models (models 3 and 6). There are also but a few instances of other variables seeming to matter across the model specifications. The coefficients for respective types of polarization and the lagged hostile casualty rate are negative across all model specifications, but statistically significant only on model 6. In short, the results contained in Table \@ref(tab:ch4regression1) prevent us from concluding that there is a strong relationship between any of the control variables and the proportion (as well as violation rate) of presidential campaign ads that violate the principles of civil-military relations. 
 
 These results change, however, if we shift the unit of analysis to the individual advertisement and the likelihood that an advertisement violates one or more of the central principles of civil-military relations. The next series of regression models therefore incorporate logistic regression. In addition to the controls used in the previous set of models, I include a number of other controls. 
 
-First, I control for whether at least one candidate mentioned or pictured in the advertisement is a veteran. The reason for including this control is that perhaps civilian candidates who themselves are veterans may be more inclined to tout their own security credentials, and use military figures to do so in ways that violate the principles of civil-military relations. Additionally, civilian veteran candidates may likewise have the effect such that their political opponents who are not veterans may seek out military figures and to harness them in order to undermine the veteran candidate's service record or views regarding the use of force.  
+First, I add a control for the "prestige gap" between Congress and the Military instead of the raw level of military prestige. I include this control because perhaps it is not the level of trust in the military that shapes how civilians act, but rather the level of trust in the military relative to other mainstream political institutions. 
+
+I also control for whether at least one candidate mentioned or pictured in the advertisement is a veteran. The reason for including this control is that perhaps civilian candidates who themselves are veterans may be more inclined to tout their own security credentials, and use military figures to do so in ways that violate the principles of civil-military relations. Additionally, civilian veteran candidates may likewise have the effect such that their political opponents who are not veterans may seek out military figures and to harness them in order to undermine the veteran candidate's service record or views regarding the use of force.  
 
 I also include a control for the party of the political candidate supported in the advertisement. This variable is designed to capture any distinction between the major parties in terms of how each party is inclined to use military figures in campaign ads to begin with. Consistent with the "issue ownership" literature in American politics, it could be that Democratic candidates may be more inclined to employ a military figure in overtly partisan ways on the grounds that doing so may make the Democratic candidate appear to be strong on the issue of national security. Over the past several decades, Republicans have generally been perceived by the public as stronger than Democrats on defense issues and national security, and thus Democrats be more inclined (and Republicans less so) to engage in efforts to shore up their defense related credentials [@petrocik_issue_2003; @sides_consequences_2007].
 
@@ -815,119 +745,84 @@ I also include a control for the party of the political candidate supported in t
 
 mod_appearance <- glm(appearance ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(mod_appearance)
 
-mod_appearance_sen <- glm(appearance ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg, 
-    family=binomial(link="logit"),
-    data=reg_df
-    )
-summary(mod_appearance_sen)
 
-mod_appearance_04 <- glm(appearance ~ mil_prestige + aff_polar + HostCasRateLagged + dummy_04, 
+mod_appearance_gap <- glm(appearance ~ prestige_gap + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
-summary(mod_appearance_04)
+summary(mod_appearance_gap)
 
 # Logistic Regression Model 4: DV is Any Violation
 
 mod_anyviol_ch4 <- glm(partisan_act ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(mod_anyviol_ch4)
 
-mod_anyviol_ch4_house <- glm(partisan_act ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg,
+
+mod_anyviol_ch4_gap <- glm(partisan_act ~ prestige_gap + sen_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
-summary(mod_anyviol_ch4_house)
-
-
-mod_anyviol_ch4_04 <- glm(partisan_act ~ mil_prestige + aff_polar + HostCasRateLagged + dummy_04, 
-    family=binomial(link="logit"),
-    data=reg_df
-    )
-summary(mod_anyviol_ch4_04)
-
+summary(mod_anyviol_ch4_gap)
 
 # Logistic Regression Model 5: DV is Endorsement
 
 mod_endorse_ch4 <- glm(vet_fam_end ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(mod_endorse_ch4)
 
-mod_endorse_ch4_sen <- glm(vet_fam_end ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg,
+mod_endorse_ch4_gap <- glm(vet_fam_end ~ prestige_gap + sen_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
-summary(mod_endorse_ch4_sen)
-
-mod_endorse_ch4_04 <- glm(vet_fam_end ~ mil_prestige + sen_polar + HostCasRateLagged + dummy_04, 
-    family=binomial(link="logit"),
-    data=reg_df
-    )
-summary(mod_endorse_ch4_04)
-
+summary(mod_endorse_ch4_gap)
 
 # Logistic Regression Model 6: DV is attack
 
-mod_atk_ch4 <- glm(vet_fam_atk ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg, 
+mod_atk_ch4 <- glm(vet_fam_atk ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(mod_atk_ch4)
 
-mod_atk_ch4_sen <- glm(vet_fam_atk ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg,
+mod_atk_ch4_gap <- glm(vet_fam_atk ~ prestige_gap + sen_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
-summary(mod_atk_ch4_sen)
-
-mod_atk_ch4_04 <- glm(vet_fam_atk ~ mil_prestige + house_polar + HostCasRateLagged + dummy_04, 
-    family=binomial(link="logit"),
-    data=reg_df
-    )
-summary(mod_atk_ch4_04)
+summary(mod_atk_ch4_gap)
 
 
 # Logistic Regression Model 7: DV is non-int
 
 mod_int_ch4 <- glm(vet_fam_out_issues ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(mod_int_ch4)
 
-mod_int_ch4_sen <- glm(vet_fam_out_issues ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg,
+mod_int_ch4_gap <- glm(vet_fam_out_issues ~ prestige_gap + house_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
-summary(mod_atk_ch4_sen)
-
-mod_int_ch4_04 <- glm(vet_fam_out_issues ~ mil_prestige + sen_polar + HostCasRateLagged + dummy_04, 
-    family=binomial(link="logit"),
-    data=reg_df
-    )
-summary(mod_int_ch4_04)
+summary(mod_int_ch4_gap)
 
 ```
+The dependent variables also vary by specification. In models 1-2, the dependent variable is the log of the odds of a military figure prominently appearing. In models 3-4, the dependent variable is the log of the odds of a military figure engaging in _any_ of the three operationalized behaviors denoting violations to the principles of civil-military relations: endorsing a political candidate, attacking a political candidate, or speaking out on an issue that is tangential to the military expertise of the military actor. The dependent variable in models 5-9 is the log of the odds that an advertisement commits these three violations specifically: endorses a candidate running for office (models 5-6), attacks a political candidate (7-8), or addresses a topic that is tangential to one's military experiences (model 9). These results are displayed in Table \@ref(tab:ch4regression2).
 
-
-Finally, I include a control for the 2004 Election in some models because of what can be considered some of the unique aspects of that particular election that have already been discussed here. When I include this control, however, I drop the control for whether the candidate is a veteran on the basis that both of the general election candidates, John Kerry and the incumbent, George W. Bush, were technically both veterans.
-
-The dependent variables also vary by specification. In models 1-2, the dependent variable is the log of the odds of a military figure prominently appearing in a prominent way. In models 3-4, the dependent variable is the log of the odds of a military figure engaging in _any_ of the three operationalized behaviors denoting violations to the principles of civil-military relations: endorsing a political candidate, attacking a political candidate, or speaking out on an issue that is tangential to the military expertise of the military actor. The dependent variable in models 5-10 is the log of the odds that an advertisement commits these three violations specifically: endorses a candidate running for office (models 5-6), attacks a political candidate (7-8), or addresses a topic that is tangential to one's military experiences (models 9-10). These results are displayed in Table \@ref(tab:regression-set2).
-
-```{r reg-results-set2, include=F, echo=FALSE, results="asis", warning=FALSE, message=FALSE}
-stargazer(mod_appearance, mod_appearance_sen, mod_anyviol_ch4, mod_anyviol_ch4_house, mod_endorse_ch4_sen, mod_endorse_ch4_04, mod_atk_ch4_sen, mod_atk_ch4_04, mod_int_ch4, mod_int_ch4_04,
-          type="text",
-          label="tab:regression-set2",
-          title="Regression Results", 
-          covariate.labels = c('Trust in Military', 'House Polarization', 'Senate Polarization',  'Casualty Rate (lagged)', 'Candidate-Veteran', 'Party-Other', 'Party-GOP', '2004 Election'),
+```{r reg-results-set2, include=T, echo=FALSE, results="asis", warning=FALSE, message=FALSE}
+stargazer(mod_appearance, mod_appearance_gap, mod_anyviol_ch4, mod_anyviol_ch4_gap, mod_endorse_ch4, mod_endorse_ch4_gap, mod_atk_ch4, mod_atk_ch4_gap, mod_int_ch4,
+          type="latex",
+          label="tab:ch4regression2",
+          title="Log Odds of a Presidential Campaign TV Ad Featuring Prominent Military Actors Engaging in Political Behaviors", 
+          covariate.labels = c('Trust in Military', 'Prestige Gap', 'House Polarization', 'Senate Polarization',  'Casualty Rate (lagged)', 'Candidate-Veteran', 'Party-Other', 'Party-GOP'),
           dep.var.labels = c('Appear', 'Any Viol.', 'Endorse', 'Attack', 'Topic'),
           model.names = FALSE,
           header=FALSE,
@@ -941,19 +836,17 @@ stargazer(mod_appearance, mod_appearance_sen, mod_anyviol_ch4, mod_anyviol_ch4_h
          
 ```
 
-In Table \@ref(tab:regression-set2), the coefficient for trust in the military is positive and statistically significant in six of the ten models. With the exception of when the dependent variable relates to addressing in outside topic, moreover, the coefficient for trust in the military is positive and statistically significant in all model specifications _except_ for when we include a control for the 2004 Election. 
+In Table \@ref(tab:ch4regression2), the coefficient for trust in the military is positive and statistically significant in six of the ten models. More importantly, with the exception of when the dependent variable relates to addressing in outside topic, moreover, the coefficient for trust in the military is positive and statistically significant in all model specifications _except_ for when we include a control for the 2004 Election. 
 
 A candidate's veteran status also seems to be important, as the coefficient for candidate-veteran is positive and statistically significant in most of model specifications when it is included. The results also show that advertisements that support GOP candidates are consistently less likely to use military figures to appear as well as violate the principles of civil-military relations, as the coefficient for Party-GOP is negative and highly statistically significant across most model specifications when it is included. When the 2004 Election control is included (models 6, 8, and 10), note that no coefficients are statistically significant.
 
-As a whole, the results of Table \@ref(tab:regression-set2) nonetheless suggest that the level of the public's trust in the military matters moderately for how military figures behave in campaign advertisements. In particular, the positive and statistically significant coefficient for trust in the military in models 1-4 indicate that the level of trust in the military shapes the likelihood that military figures appear and that they violate the principles of civil-military relations in some way when they do appear. 
+As a whole, the results of Table \@ref(tab:ch4regression2) nonetheless suggest that the level of the public's trust in the military matters moderately for how military figures behave in campaign advertisements. In particular, the positive and statistically significant coefficient for trust in the military in models 1-4 indicate that the level of trust in the military shapes the likelihood that military figures appear and that they violate the principles of civil-military relations in some way when they do appear. 
 
-These violations seem to be driven, furthermore, by instances of endorsing and attacking candidates rather than by speaking out on topics that are tangential to defense or national security. The coefficient for trust in the military is not statistically significant in either model 9 or model 10, but it is positive and statistically significant in models 5 and 7, when the dependent variable is endorse or attack, respectively, depending on model specification. These results seem to suggest, then, at least to a moderate extent, that as the level of trust in the military rises, there is a greater likelihood that a campaign ad will feature a military figure who appears in an advertisement and who either endorses or attacks a political candidate.  
+These violations seem to be driven, furthermore, by instances of endorsing and attacking candidates rather than by speaking out on topics that are tangential to defense or national security. The coefficient for trust in the military is not statistically significant in either model 9 or model 10, but it is positive and statistically significant in models 5 and 7, when the dependent variable is endorse or attack, respectively. These results seem to suggest, then, at least to a moderate extent, that as the level of trust in the military rises, there is a greater likelihood that a campaign ad will feature a military figure who appears in an advertisement and who either endorses or attacks a political candidate.  
 
 ### Parties and Candidates Only
 
-In this section, I conduct a similar set of regression analyses, but I focus only on those advertisements that were sponsored by political parties and or political candidates, and drop ads produced by interest groups. I drop these ads on the basis that perhaps interest groups that are predominantly affiliated with the military in some way are responsible for variation in how military figures are behaving in campaign ads. In short, dropping ads produced by interest groups may provide a better glimpse into how truly civilian actors - candidates and the political parties - are behaving.
-
-I include the very same controls as in the previous regression with a couple of exceptions. First, I add a control for the "prestige gap" between Congress and the Military. I include this control because perhaps it is not the level of trust in the military that shapes how civilians act, but rather the level of trust in the military relative to other mainstream political institutions. I also drop the control for the 2004 Election. The previous statistical analysis already firmly established that the 2004 Election was incredibly unique, and I am more interested here in comparing the strict level of military trust to the relative level of trust in order to see if strictly civilian actors (parties and candidates only) react to one measure more clearly than another. 
+In this section, I conduct a similar set of regression analyses, but I focus only on those advertisements that were sponsored by political parties and or political candidates, and drop ads produced by interest groups. I drop these ads on the basis that perhaps interest groups that are predominantly affiliated with the military in some way are responsible for variation in how military figures are behaving in campaign ads. In short, dropping ads produced by interest groups may provide a better glimpse into how truly civilian actors - candidates and the political parties - are behaving. I include the very same controls as in the previous regression.  
 
 ```{r party-can-data prep, include=FALSE, echo=FALSE, warning=FALSE}
 
@@ -982,58 +875,58 @@ summary(no_ig_ols_violations_rate_gap)
 
 ## Now prep advertisement-level data
 
-no_ig_reg_df <- reg_df %>% filter(sponsor!=4) %>% view()
+no_ig_reg_df_ch4 <- reg_df_ch4 %>% filter(sponsor!=4) %>% view()
 
 # Logistic Regression Model: DV is Prominent Appearance
 noig_appearance <- glm(appearance ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=no_ig_reg_df
+    data=no_ig_reg_df_ch4
     )
 summary(noig_appearance)
 
 noig_appearance_gap <- glm(appearance ~ prestige_gap + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=no_ig_reg_df
+    data=no_ig_reg_df_ch4
     )
 summary(noig_appearance_gap)
 
 # Logistic Regression Model: DV is Any Violation
 noig_anyviol_ch4 <- glm(partisan_act ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=no_ig_reg_df
+    data=no_ig_reg_df_ch4
     )
 summary(noig_anyviol_ch4)
 
 noig_anyviol_ch4_gap <- glm(partisan_act ~ prestige_gap + sen_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=no_ig_reg_df
+    data=no_ig_reg_df_ch4
     )
 summary(noig_anyviol_ch4_gap)
 
 # Logistic Regression Model: DV is Endorsement
 noig_endorse_ch4 <- glm(vet_fam_end ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=no_ig_reg_df
+    data=no_ig_reg_df_ch4
     )
 summary(noig_endorse_ch4)
 
 
 noig_endorse_ch4_gap <- glm(vet_fam_end ~ prestige_gap + house_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=no_ig_reg_df
+    data=no_ig_reg_df_ch4
     )
 summary(noig_endorse_ch4_gap)
 
 # Logistic Regression Model: DV is attack
 noig_atk_ch4 <- glm(vet_fam_atk ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=no_ig_reg_df
+    data=no_ig_reg_df_ch4
     )
 summary(noig_atk_ch4)
 
 noig_atk_ch4_gap <- glm(vet_fam_atk ~ prestige_gap + sen_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=no_ig_reg_df
+    data=no_ig_reg_df_ch4
     )
 summary(noig_atk_ch4_gap)
 
@@ -1041,26 +934,26 @@ summary(noig_atk_ch4_gap)
 # Logistic Regression Model 7: DV is non-int
 noig_int_ch4 <- glm(vet_fam_out_issues ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=no_ig_reg_df
+    data=no_ig_reg_df_ch4
     )
 summary(noig_int_ch4)
 
 noig_int_ch4_sen <- glm(vet_fam_out_issues ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=no_ig_reg_df
+    data=no_ig_reg_df_ch4
     )
 summary(noig_int_ch4_sen)
 
 ```
 
-The results of this series of regressions is displayed in Table \@ref(tab:regression-set3).
+The results of this series of regressions is displayed in Table \@ref(tab:ch4regression3).
 
 \singlespace
-```{r reg-results-set3, include=F, echo=FALSE, results="asis", warning=FALSE, message=FALSE}
+```{r reg-results-set3, include=T, echo=FALSE, results="asis", warning=FALSE, message=FALSE}
 stargazer(noig_appearance, noig_appearance_gap, noig_anyviol_ch4, noig_anyviol_ch4_gap, noig_endorse_ch4, noig_endorse_ch4_gap, noig_atk_ch4, noig_atk_ch4_gap,
-          type="text",
-          label="tab:regression-set3",
-          title="Regression Results", 
+          type="latex",
+          label="tab:ch4regression3",
+          title="Log Odds of a Presidential Campaign TV Ad Sponsored by Parties/Candidates Featuring Prominent Military Actors Engaging in Political Behaviors", 
           covariate.labels = c('Trust in Military', 'Prestige Gap', 'House Polarization', 'Senate Polarization',  'Casualty Rate (lagged)', 'Candidate-Veteran', 'Party-Other', 'Party-GOP'),
           dep.var.labels = c('Appear', 'Any Viol', 'Endorse', 'Attack', 'Topic'),
           model.names=FALSE,
@@ -1076,7 +969,7 @@ stargazer(noig_appearance, noig_appearance_gap, noig_anyviol_ch4, noig_anyviol_c
 ```
 \doublespace
 
-Table \@ref(tab:regression-set3) contains a couple of interesting findings. Note that the coefficients for trust in the military and the prestige gap are both positive and statistically significant in models 1 and 2, when the dependent variable is the log of the odds that a military figure prominently appears in a campaign advertisement. However, the coefficient for trust in the military seems to retain moderately greater staying power than the coefficient for the prestige gap. For example, where the dependent variable is the log of the odds of a military figure undertaking any violation (models 3-4), the coefficient for trust in the military is positive and statistically significant (model 3) and the coefficient for the prestige gap is not (model 4). The same is true when the dependent variable is the log of the odds that a military figure endorses a political candidate in a campaign advertisement (models 5-6). 
+Table \@ref(tab:ch4regression3) contains a couple of interesting findings. Note that the coefficients for trust in the military and the prestige gap are both positive and statistically significant in models 1 and 2, when the dependent variable is the log of the odds that a military figure prominently appears in a campaign advertisement. However, the coefficient for trust in the military seems to retain moderately greater staying power than the coefficient for the prestige gap. For example, where the dependent variable is the log of the odds of a military figure undertaking any violation (models 3-4), the coefficient for trust in the military is positive and statistically significant (model 3) and the coefficient for the prestige gap is not (model 4). The same is true when the dependent variable is the log of the odds that a military figure endorses a political candidate in a campaign advertisement (models 5-6). 
 
 However, neither the coefficient for trust in the military nor the prestige gap is positive or statistically significant once the dependent variable becomes attack (models 7-8) or non-interference (not shown). Additionally, the coefficient for the prestige gap switches directionality across the models in several places.  
 
@@ -1084,7 +977,7 @@ These results provide some evidence, then, that civilian candidates and politica
 
 ### Interest Groups (Including Military-Affiliated Interest Groups)
 
-I conduct a final set of logistic regressions on only those advertisements sponsored by interest groups, which would include those produced by veteran specific interest groups. I conduct this analysis to determine whether these actors, which would include those who could reasonably be considered to be closer to a military rather than civilian actor, respond differently than the truly civilian entities of parties and candidates previously examined. I include the very same set of controls as in the preceding set of regression models. The results are displayed in Table \@ref(tab:regression-set4).
+I conduct a final set of logistic regressions on only those advertisements sponsored by interest groups, which would include those produced by veteran specific interest groups. I conduct this analysis to determine whether these actors, which would include those who could reasonably be considered to be closer to a military rather than civilian actor, respond differently than the truly civilian entities of parties and candidates previously examined. I include the very same set of controls as in the preceding set of regression models. The results are displayed in Table \@ref(tab:ch4regression4).
 
 ```{r int-groups-only, include=FALSE, echo=FALSE, warning=FALSE}
 
@@ -1113,58 +1006,58 @@ summary(ig_ols_violations_rate_gap)
 
 ## Now prep advertisement-level data
 
-ig_reg_df <- reg_df %>% filter(sponsor==4) %>% view()
+ig_reg_df_ch4 <- reg_df_ch4 %>% filter(sponsor==4) %>% view()
 
 # Logistic Regression Model: DV is Prominent Appearance
 ig_appearance <- glm(appearance ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=ig_reg_df
+    data=ig_reg_df_ch4
     )
 summary(ig_appearance)
 
 ig_appearance_gap <- glm(appearance ~ prestige_gap + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=ig_reg_df
+    data=ig_reg_df_ch4
     )
 summary(ig_appearance_gap)
 
 # Logistic Regression Model: DV is Any Violation
 ig_anyviol_ch4 <- glm(partisan_act ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=ig_reg_df
+    data=ig_reg_df_ch4
     )
 summary(ig_anyviol_ch4)
 
 ig_anyviol_ch4_gap <- glm(partisan_act ~ prestige_gap + sen_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=ig_reg_df
+    data=ig_reg_df_ch4
     )
 summary(ig_anyviol_ch4_gap)
 
 # Logistic Regression Model: DV is Endorsement
 ig_endorse_ch4 <- glm(vet_fam_end ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=ig_reg_df
+    data=ig_reg_df_ch4
     )
 summary(ig_endorse_ch4)
 
 
 ig_endorse_ch4_gap <- glm(vet_fam_end ~ prestige_gap + house_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=ig_reg_df
+    data=ig_reg_df_ch4
     )
 summary(ig_endorse_ch4_gap)
 
 # Logistic Regression Model: DV is attack
 ig_atk_ch4 <- glm(vet_fam_atk ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=ig_reg_df
+    data=ig_reg_df_ch4
     )
 summary(ig_atk_ch4)
 
 ig_atk_ch4_gap <- glm(vet_fam_atk ~ prestige_gap + sen_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=ig_reg_df
+    data=ig_reg_df_ch4
     )
 summary(ig_atk_ch4_gap)
 
@@ -1172,13 +1065,13 @@ summary(ig_atk_ch4_gap)
 # Logistic Regression Model 7: DV is non-int
 ig_int_ch4 <- glm(vet_fam_out_issues ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=ig_reg_df
+    data=ig_reg_df_ch4
     )
 summary(ig_int_ch4)
 
 ig_int_ch4_sen <- glm(vet_fam_out_issues ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=ig_reg_df
+    data=ig_reg_df_ch4
     )
 summary(ig_int_ch4_sen)
 
@@ -1188,9 +1081,9 @@ summary(ig_int_ch4_sen)
 \singlespace
 ```{r reg-results-set4, include=F, echo=FALSE, results="asis", warning=FALSE, message=FALSE}
 stargazer(ig_appearance, ig_appearance_gap, ig_anyviol_ch4, ig_anyviol_ch4_gap, ig_endorse_ch4, ig_endorse_ch4_gap, ig_atk_ch4, ig_atk_ch4_gap,
-          type="text",
-          label="tab:regression-set4",
-          title="Regression Results", 
+          type="latex",
+          label="tab:ch4regression4",
+          title="Log Odds of a Presidential Campaign TV Ad Sponsored by Interest Groups Featuring Prominent Military Actors Engaging in Political Behaviors", 
           covariate.labels = c('Trust in Military', 'Prestige Gap', 'House Polarization', 'Senate Polarization',  'Casualty Rate (lagged)', 'Candidate-Veteran', 'Party-Other', 'Party-GOP'),
           dep.var.labels = c('Appear', 'Any Viol', 'Endorse', 'Attack', 'Topic'),
           model.names=FALSE,
@@ -1206,13 +1099,13 @@ stargazer(ig_appearance, ig_appearance_gap, ig_anyviol_ch4, ig_anyviol_ch4_gap, 
 ```
 \doublespace
 
-Table \@ref(tab:regression-set4) shows a couple of brief but interesting findings. The most important is that the prestige gap does not appear to impact interest groups in any meaningful way. The level of trust in the military also does not appear to have significant importance. The coefficient for trust in the military is positive and statistically significant in models 1 and 7, but negative in model 5 and statistically insignificant in both models 3 and 5. 
+Table \@ref(tab:ch4regression4) shows a couple of brief but interesting findings. The most important is that the prestige gap does not appear to impact interest groups in any meaningful way. The level of trust in the military also does not appear to have significant importance. The coefficient for trust in the military is positive and statistically significant in models 1 and 7, but negative in model 5 and statistically insignificant in both models 3 and 5. 
 
 Additionally, in this particular set of regression models, the coefficient for candidate-veteran is positive and statistically significant only in models 7 and 8, suggesting that interest groups are particularly prone to feature military figures who attack candidates when the candidate is a veteran. Additionally, the coefficient for Party-GOP is strong and statistically significant only in models 3 and 4 here, whereas the same coefficient was negative and statistically significant across all model specifications in the previous set of regressions when we examined advertisements produced by candidates and political parties only. This difference suggests that the distinction between how interest groups affiliated with the two major parties employ military figures to engage in behaviors that violate the principles of civil-military relations is less pronounced than civilian candidates and political parties, strictly speaking. In other words, to the extent that the interest group population in the data is dominated by veteran affiliated interest groups (a statement we cannot make conclusively given how the data is coded; we can only infer), it appears that veteran affiliated interest groups are less likely to be marked by any distinction between those that endorse or attack political candidates while supporting Republican versus Democrat candidates. In other words, veteran affiliated interest groups appear to be less distinct in the party affiliation of whom they endorse or criticize.
 
 ## Predicted Probability
 
-In order to gauge the substantive importance of the level of trust in the military and how it impacts the likelihood that campaign advertisements feature military figures who in some way violate the principles of civil-military relations when they appear in these advertisements, we can transform the logistic regression results from Table \@ref(tab:regression-set2) into predicted probabilities. Figure \@ref(fig:pred-prob-ch4-sen) plots the predicted probability of a presidential campaign television ad featuring a military figure who engages in any behavior that undermines the principles of civil-military relations. I fix the level of polarization in the Senate and the lagged hostile troop casualty rate at their respective means over the period from 2000 - 2016. I hold the value of candidate-veteran at 0, denoting that the candidates portrayed in a hypothetical ad are not veterans, and hold the value of the party that the advertisement supports as the Republican Party. The vertical colored lines indicate the level of military prestige as measured by public opinion polling in certain points of time in contemporary US history [@noauthor_confidence_2020]. The color of the line indicates the party of the President who was in office at the time. 
+In order to gauge the substantive importance of the level of trust in the military and how it impacts the likelihood that campaign advertisements feature military figures who in some way violate the principles of civil-military relations when they appear in these advertisements, we can transform the logistic regression results from Table \@ref(tab:ch4regression2) into predicted probabilities. Figure \@ref(fig:pred-prob-ch4-sen) plots the predicted probability of a presidential campaign television ad featuring a military figure who engages in any behavior that undermines the principles of civil-military relations. I fix the level of polarization in the Senate and the lagged hostile troop casualty rate at their respective means over the period from 2000 - 2016. I hold the value of candidate-veteran at 0, denoting that the candidates portrayed in a hypothetical ad are not veterans, and hold the value of the party that the advertisement supports as the Republican Party. The vertical colored lines indicate the level of military prestige as measured by public opinion polling in certain points of time in contemporary US history [@noauthor_confidence_2020]. The color of the line indicates the party of the President who was in office at the time. 
 
 ```{r pred-prob-ch4-prep, include=FALSE, warning=FALSE, message=FALSE, error=FALSE}
 
@@ -1225,23 +1118,23 @@ In order to gauge the substantive importance of the level of trust in the milita
 
 ch4_pp_sen_anyviol <- glm(partisan_act ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg_numeric, 
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(ch4_pp_sen_anyviol)
 
 ch4_pp_house_anyviol <- glm(partisan_act ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg_numeric,
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(ch4_pp_house_anyviol)
 
 # using senate polar and party = GOP
-pp_data_ch4_sen <- tibble(mil_prestige=seq(55, 85, by=1), sen_polar = mean(reg_df$sen_polar), HostCasRateLagged=mean(reg_df$HostCasRateLagged), party_reg_numeric=0, can_vet=0) %>% crossing(partisan_act = c(0,1)) %>% view()
+pp_data_ch4_sen <- tibble(mil_prestige=seq(55, 85, by=1), sen_polar = mean(reg_df_ch4$sen_polar), HostCasRateLagged=mean(reg_df_ch4$HostCasRateLagged), party_reg_numeric=0, can_vet=0) %>% crossing(partisan_act = c(0,1)) %>% view()
 
 augment(ch4_pp_sen_anyviol, newdata = pp_data_ch4_sen, se_fit=TRUE)
 
 # using house polar and party = DEM/Other
-pp_data_ch4_house <- tibble(mil_prestige=seq(55, 85, by=1), house_polar = mean(reg_df$sen_polar), HostCasRateLagged=mean(reg_df$HostCasRateLagged), party_reg_numeric=1, can_vet=1) %>% crossing(partisan_act = c(0,1)) 
+pp_data_ch4_house <- tibble(mil_prestige=seq(55, 85, by=1), house_polar = mean(reg_df_ch4$sen_polar), HostCasRateLagged=mean(reg_df_ch4$HostCasRateLagged), party_reg_numeric=1, can_vet=1) %>% crossing(partisan_act = c(0,1)) 
 
 augment(ch4_pp_house_anyviol, newdata = pp_data_ch4_house, se_fit=TRUE)
 
@@ -1349,12 +1242,12 @@ predictions_ch4_house%>%
     x="Level of Military Prestige",
     y="Predicted Probability", caption="House Polarization Held Constant\nVeteran Candidate(s) Portrayed\nAd Supports Democratic Party") + 
   scale_y_continuous(breaks=seq(-.1, .5, .1)) + 
-  geom_vline(xintercept=85, size=.2, colour="tomato") + 
+  geom_vline(xintercept=85, size=.3, colour="tomato") + 
   geom_vline(xintercept=64, size=.2, colour="dodgerblue") + 
   geom_vline(xintercept=82, size=.2, colour="dodgerblue") +
   geom_vline(xintercept=58, size=.2, colour="tomato") +
   geom_vline(xintercept=69, size=.2, colour="dodgerblue") +
-  geom_text(aes(x=85, label="Feb 1991",y=.2), colour="tomato", angle=90, vjust=1, text=element_text(size=9)) + 
+  geom_text(aes(x=85, label="Feb 1991",y=.3), colour="tomato", angle=90, vjust=1, text=element_text(size=9)) + 
   geom_text(aes(x=64, label="1994",y=.2), colour="dodgerblue", angle=90, vjust=1, text=element_text(size=9)) + 
   geom_text(aes(x=82, label="2003",y=.2), colour="tomato", angle=90, vjust=-.2, text=element_text(size=9)) + 
   geom_text(aes(x=58, label="1975",y=.2), colour="dodgerblue", angle=90, vjust=-.2, text=element_text(size=9))  + 
@@ -1415,7 +1308,3 @@ All regression tables used in chapter three were produced with the help of the S
 
 \pagebreak
 \singlespace
-
-
-
-

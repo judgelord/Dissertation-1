@@ -52,149 +52,23 @@ Finally, the previous chapter argued that a total of four broad types of domesti
 
 This chapter systematically investigates one type of behavior that is primarily committed by one type of actor. Specifically, this chapter investigates the political behavior of authoring opinion commentary by retired military officers, a type of military actor that I describe in greater detail below. The data cover the time period from 1979 - 2020. 
 
-The time range of the data is important. Over this period of time, the level of military prestige changes from one that was relatively low or moderate, to one that was relatively high. Simultaneously, the level of political polarization changes from one that was also relatively low or moderate, to one that is relatively high. To better grasp these changes, consider that in 1979, only 54% of Americans surveyed expressed either a "great deal" or "quite a lot" of trust in the nation's military [@noauthor_confidence_2020]. In 2020, 72% of those surveyed expressed the same [@noauthor_confidence_2020]. Since public opinion data has been kept on this question going back to 1975, the lowest and highest percentage of the American population expressing these levels of confidence in the nation's military were 50% (1981) and 82% (2009)[@noauthor_confidence_2020].^[The data showed that 85% of those surveyed expressed either a "great deal" or "quite a lot" of trust in February of 1991. I do not include that data point here, because in October of that same year, the level dropped down to 69%. Moreover, in the entire data set of public opinion, 1991 is the only year in which two data points are given.]
+The time range of the data is important. Over this period of time, the level of military prestige changes from one that was moderate to one that was relatively high. Simultaneously, the level of political polarization changes from one that was also relatively moderate to one that is relatively high. To better grasp these changes, consider that in 1979, only 54% of Americans surveyed expressed either a "great deal" or "quite a lot" of trust in the nation's military [@noauthor_confidence_2020]. In 2020, 72% of those surveyed expressed the same [@noauthor_confidence_2020]. Since public opinion data has been kept on this question going back to 1975, the lowest and highest percentage of the American population expressing these levels of confidence in the nation's military were 50% (1981) and 85% (February of 1991)[@noauthor_confidence_2020].^[1991 is the only year in which two data points are given. The level of confidence dropped to 69% by October of the same year, suggesting that the February data point captured an effect related to the Gulf War, which ended in early 1991.] The levels of trust in the military and polarization from 1979 - 2020 are displayed in Figure \@ref(fig:polar-trust-oped). 
 
-Changes in polarization are more easily shown than described. Figure \@ref(fig:polar-chamber-oped) shows that Congressional polarization in the United States (measured using roll call voting data) was relatively low in the years immediately before and after World War Two, and that the level of polarization remained low until roughly the mid 1970s. Polarization began to rise in the late 1970s, but it still remained at relatively moderate levels until the early - mid 1990s, when the level of polarization accelerated rapidly. Figure \@ref(fig:polar-chamber-oped) shows that especially after approximately 2008, the level of polarization has been very high, in fact exceeding those levels that existed in the late 1870s, when American Reconstruction ended.
+```{r trust-ch3-prep, include=FALSE, warning=FALSE, echo=FALSE}
 
-```{r polar-measurement-oped, include=FALSE, echo=FALSE, warning=FALSE}
-nom_dat <- read_csv("https://voteview.com/static/data/out/members/HSall_members.csv")
+df_trust_polar_ch3 <- read_csv(here("data","polar-inst-trust-time.csv"))
 
-south <- c(40:49,51,53)
-polar_dat <- nom_dat %>% 
-    filter(congress>45 & 
-           chamber != "President") %>%
-    mutate( 
-      year = 2*(congress-1) + 1789,
-    ) %>%
-    group_by(chamber,congress,year) %>% 
-    summarize(
-      party.mean.diff.d1 = mean(nominate_dim1[party_code==200],na.rm=T) - 
-                           mean(nominate_dim1[party_code==100],na.rm=T),
-      prop.moderate.d1 = mean(abs(nominate_dim1)<0.25,na.rm=T),
-      prop.moderate.dem.d1 = mean(abs(nominate_dim1[party_code==100])<0.25,na.rm=T),
-      prop.moderate.rep.d1 = mean(abs(nominate_dim1[party_code==200])<0.25,na.rm=T),
-      overlap = (sum(nominate_dim1[party_code==200] <
-                       max(nominate_dim1[party_code==100],na.rm=T),na.rm=T)  +
-                 sum(nominate_dim1[party_code==100] >
-                       min(nominate_dim1[party_code==200],na.rm=T),na.rm=T))/
-                 (sum(!is.na(nominate_dim1[party_code==100]))+
-                  sum(!is.na(nominate_dim1[party_code==200]))),
-      chamber.mean.d1 = mean(nominate_dim1,na.rm=T),
-      chamber.mean.d2 = mean(nominate_dim2,na.rm=T),
-      dem.mean.d1 = mean(nominate_dim1[party_code==100],na.rm=T),
-      dem.mean.d2 = mean(nominate_dim2[party_code==100],na.rm=T),
-      rep.mean.d1 = mean(nominate_dim1[party_code==200],na.rm=T),
-      rep.mean.d2 = mean(nominate_dim2[party_code==200],na.rm=T),
-      north.rep.mean.d1 = mean(nominate_dim1[party_code==200 & 
-                                             !(state_icpsr %in% south)],na.rm=T),    
-      north.rep.mean.d2 = mean(nominate_dim2[party_code==200 & 
-                                             !(state_icpsr %in% south)],na.rm=T),    
-      south.rep.mean.d1 = mean(nominate_dim1[party_code==200 & 
-                                              (state_icpsr %in% south)],na.rm=T),    
-      south.rep.mean.d2 = mean(nominate_dim2[party_code==200 & 
-                                             (state_icpsr %in% south)],na.rm=T),    
-      north.dem.mean.d1 = mean(nominate_dim1[party_code==100 & 
-                                              !(state_icpsr %in% south)],na.rm=T),    
-      north.dem.mean.d2 = mean(nominate_dim2[party_code==100 & 
-                                              !(state_icpsr %in% south)],na.rm=T),    
-      south.dem.mean.d1 = mean(nominate_dim1[party_code==100 & 
-                                              (state_icpsr %in% south)],na.rm=T),    
-      south.dem.mean.d2 = mean(nominate_dim2[party_code==100 & 
-                                              (state_icpsr %in% south)],na.rm=T),    
-    ) 
-
-head(polar_dat)
-write_csv(polar_dat,path="voteview_polarization_data.csv")
-
-polar_dat %>% write_xlsx(here("data", "cong_polarization.xlsx"))
-
+df_trust_polar_ch3 <- df_trust_polar_ch3 %>% select(-Congress) %>% filter(Year<=2020) %>% 
+  mutate(
+    house_polar_dim1 = house_polar_dim1 *100,
+    sen_polar_dim1 = sen_polar_dim1 *100,
+    ) %>% pivot_longer(Military:sen_polar_dim1, names_to = "value", values_to = "Score") %>% distinct() %>% na.omit() %>% view()
 ```
 
-
-```{r include=FALSE, echo=FALSE, warning=FALSE}
-# Here are up to date versions of the famous party means over time plots for each chamber:
-polar_dat_long <- polar_dat %>% gather(score,value,-chamber,-year,-congress)
-labels <- c("dem.mean.d1"="DEM",
-            "rep.mean.d1"="REP",
-            "north.dem.mean.d1"="N. DEM",
-            "south.dem.mean.d1"="S. DEM")
-
-polarized_plot <- function(chamb) {
-  pdatl <- polar_dat_long %>% 
-                filter(chamber==chamb,
-                       score %in% c("dem.mean.d1","rep.mean.d1",
-                                    "north.dem.mean.d1","south.dem.mean.d1")) %>%
-                mutate(party=labels[score]) %>%
-                ungroup()
-  
-  gg <- ggplot(data=pdatl,
-               aes(x=year,y=value,group=party,col=party)) +
-               scale_x_continuous(expand = c(0.15, 0), 
-                                 breaks=seq(1880, max(pdatl$year), by=8)) +
-               geom_line() + geom_point(size=0.7) + 
-               xlab("Year") + ylab("Liberal-Conservative") + 
-               geom_text_repel(data=pdatl %>%
-                    filter(year == min(year)),
-                  aes(label = party, color = party),
-                  size = 3,
-                  nudge_x = -8,
-                  point.padding = 0.1,
-                  segment.color = NA,
-                  show.legend = FALSE) +
-              theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-              scale_color_manual(values=c("REP"="#c70828","DEM"="#1372ad",
-                                         "N. DEM"="#6194F4",
-                                         "S. DEM"="#81c4e4"),guide="none") +
-              theme_bw()
-  gg
-}
-```
-
-```{r include= FALSE, echo=FALSE, warning=FALSE}
-# House Polarization Plot
-gg1 <- polarized_plot("House")
-ggsave("voteview_house_party_means.png", plot=gg1, device="png", 
-       width=7, height=4, dpi=300)
-ggsave("voteview_house_party_means.pdf", plot=gg1, device="pdf", 
-       width=7, height=4)
-gg1
-```
-
-
-```{r include = FALSE, echo=FALSE, warning=FALSE}
-# Senate Plot
-gg2 <- polarized_plot("Senate")
-ggsave("voteview_senate_party_means.png", plot=gg2, device="png", 
-       width=7, height=4, dpi=300)
-ggsave("voteview_senate_party_means.pdf", plot=gg2, device="pdf", 
-       width=7, height=4)
-gg2
-
-```
-
-```{r polar-chamber-oped, include=TRUE, echo=FALSE, warning=FALSE, message=FALSE, fig.align='center', fig.cap="Liberal-Conservative Partisan\nPolarization by Chamber, 1880-Present"}
-# liberal-conservative polarization by chamber
-gg3 <- ggplot(polar_dat_long %>% 
-              filter(score == "party.mean.diff.d1"),
-              aes(x=year,y=value,group=chamber,col=chamber)) +
-              scale_x_continuous(expand = c(0.10, 0), breaks=seq(1880,max(polar_dat_long$year),by=8)) +
-              geom_line() + geom_point(size=0.5) + 
-              xlab("Year") + ylab("Distance between party means") + 
-              geom_text_repel(data=polar_dat_long %>%
-                    ungroup() %>%
-                    filter(year == min(year) & score=="party.mean.diff.d1"),
-                  aes(label = chamber, color = chamber),
-                  size = 3,
-                  nudge_x = -10,
-                  point.padding = 0.1,
-                  segment.color = NA,
-                  show.legend = FALSE) +
-              theme(axis.text.x = element_text(angle = 60, hjust = 1), plot.title=element_text(hjust=.5), plot.subtitle=element_text(hjust=.5)) + scale_color_manual(values=c("House"="#c70828","Senate"="#1372ad"), guide="none") +
-               labs(subtitle="Data Available from Lewis et. al. (2020) at Voteview.com")
-
-
-gg3
-
+```{r polar-trust-oped, include=T, echo=F, warning=FALSE, message=F, fig.height=4, fig.width=6, fig.cap = "Public Trust (L) and Polarization (R), 1979-2020" }
+df_trust_polar_ch3 %>% ggplot(aes(x=Year, y=Score, color=value)) + geom_line() + geom_point(size=0.7) + labs(x="Year", y="Trust in Institutions") + scale_color_discrete(name="Trust;\nPolarization",
+                         breaks=c("Military",  "house_polar_dim1", "sen_polar_dim1"),
+                         labels=c("Trust In\nMilitary","House\nPolarization", "Senate\nPolarization")) + scale_y_continuous(sec.axis = sec_axis(~., name = "Polarization (Scaled)")) + theme(legend.position="bottom") 
 ```
 
 Because both of the independent variables change during the time period examined in this chapter (and in the same direction!), and because the theory offered in the previous chapter predicts that military actors will increasingly violate the central principles of civil-military relations as both variables increase, a systematic investigation of the data will help disentangle the relative impacts of both the levels of polarization and military prestige on opinion commentary written by military actors. In general terms, the theory offered in the previous chapter predicts that because polarization and military prestige both increase over the time period examined in this chapter, there should be an increasing frequency with which military actors violate one or more of the central principles of civil-military relations through the opinion commentary they publish. 
@@ -653,6 +527,7 @@ We should certainly expect some variance in the topics retired military officers
 But the variance we see occur in Figure \@ref(fig:topics-time) after 2010 seems to suggest that something deeper than some sort of cycle of war and peace are at play. For instance, Figure \@ref(fig:topics-time) shows that prior to Donald Trump assuming the Presidency in 2017, the highest relative proportion of commentary authored by retired military officers in a given year addressed topics related to warfighting/operations and foreign policy, even as the proportion of commentary addressing topics related to domestic policy was rising. Throughout the Trump Presidency, however, the topic that retired military officers have addressed most has been domestic policy. For better or for worse, retired military officers have become first and foremost domestic commentators, rather than experts who address topics related to foreign policy and warfighting.
 
 To be clear, the variance in topics addressed over time by retired military officer commentary does not, by itself, indicate the degree to which retired military officer commentary has violated the central principles of civil-military relations. This task is taken up in the following section of this chapter. Yet already, the stark change in topics addressed by retired military officers over time suggests that retired military officers are no longer focused on presenting and addressing the same types of topics that they once did with the American public. 
+
 ## Is Retired Military Officer Opinion Commentary Violating the Principles of Civil-Military Relations?
 
 To measure variation in adherence to the principles of civilian control, non-partisanship, and non-interference of the military institution into certain realms of state policy, I develop three dichotomous indicator variables that each capture a potential violation of each principle. I operationalize violations of the principle of civilian control by coding instances in which a retired military officer blatantly criticizes or excoriates a civilian leader. Because the observations are all opinion pieces, and thus somewhat argumentative in nature, my goal is not to simply identify publications which point out shortcomings of policy, or make recommendations for civilian leaders to implement. We would expect most published opinion commentary pieces to do these things. 
@@ -741,7 +616,7 @@ violation_prop_year_graph <- violationdf_by_year_prop %>%
 
 ## now graph raw counts of violations by year
 
-violationdf_by_year_graph %>% ggplot(aes(x=PubYr, y=Violation_Count)) + geom_point(aes(shape=Violation_Type, color=Violation_Type), position=position_jitter(width=.1, height=.1), alpha=.6, size=5) + scale_color_manual(values=c("tomato","dodgerblue2", "seagreen", "black"))+ labs(x="Publishing Year", y="Number of Violations By Type", shape="Violation Type", color="Violation Type") + theme(legend.position="bottom", axis.text.x=element_text(angle=90)) + scale_x_continuous(breaks=seq(1979, 2020, 1)) 
+violationdf_by_year_graph %>% ggplot(aes(x=PubYr, y=Violation_Count)) + geom_point(aes(shape=Violation_Type, color=Violation_Type), position=position_jitter(width=.1, height=.1), alpha=.6, size=5) + scale_color_manual(values=c("tomato","dodgerblue2", "seagreen", "black"))+ labs(x="Publishing Year", y="Number of Violations By Type", shape="Violation\nType", color="Violation\nType") + theme(legend.position="bottom", axis.text.x=element_text(angle=90)) + scale_x_continuous(breaks=seq(1979, 2020, 1)) + guides(color = guide_legend(ncol=2,nrow=2,byrow=TRUE)) 
 ```
 
 To account for the fact that the volume of commentary written by retired military officers has also increased over time, I expressed these violations to the principles of civil-military relations as a proportion of the commentary by year. This is shown in Figure \@ref(fig:norms-challenged-prop). 
@@ -750,7 +625,7 @@ When the proportion of commentary that violates the central principles is expres
 
 ```{r norms-challenged-prop, include=TRUE, warning=FALSE, message=FALSE, echo=FALSE, fig.cap="Proportion of Annual Retired Military Officer Commentary that Violates the Central Principles of Civil-Military Relations, 1979-2020"}
 
-violation_prop_year_graph %>% ggplot(aes(x=PubYr, y=Proportion)) + geom_point(aes(shape=Violation_Types, color=Violation_Types), position=position_jitter(width=.01, height=.001), alpha=.6, size=5) + scale_color_manual(values=c("tomato","dodgerblue2", "seagreen", "black"))+ labs(x="Publishing Year", y="Proportion of Violations By Type", shape="Violation Types", color="Violation Types") + theme(legend.position="bottom", axis.text.x=element_text(angle=90)) + scale_x_continuous(breaks=seq(1979, 2020, 1)) + scale_y_continuous(breaks=seq(0, 1, .1))
+violation_prop_year_graph %>% ggplot(aes(x=PubYr, y=Proportion)) + geom_point(aes(shape=Violation_Types, color=Violation_Types), position=position_jitter(width=.01, height=.001), alpha=.6, size=5) + scale_color_manual(values=c("tomato","dodgerblue2", "seagreen", "black"))+ labs(x="Publishing Year", y="Proportion of Violations By Type", shape="Violation\nTypes", color="Violation\nTypes") + theme(legend.position="bottom", axis.text.x=element_text(angle=90)) + scale_x_continuous(breaks=seq(1979, 2020, 1)) + scale_y_continuous(breaks=seq(0, 1, .1)) + guides(color = guide_legend(ncol=2,nrow=2,byrow=TRUE)) 
 
 ```
 
@@ -760,9 +635,9 @@ The final cluster begins in 2013, though the proportion of commentary violating 
 
 Figure \@ref(fig:prop-violate-norms) depicts the proportion of annual commentary published by retired military officers that violates at least one of the central principles of civil-military relations. This graph largely reflects the trends enunciated by the previous figures: retired military officers strongly adhered to the principles of civil-military relations throughout the 1980s before deviating from these standards throughout the 1990s. After violating the central principles of civil-military relations in the early 2000s, retired military officer commentary returned to adhering to the standards of civil-military relations, until 2012. Since 2013, however, there has been a sharp increase in the proportion of retired military officer commentary that violates the either the principle of civilian control, non-partisanship, or non-interference of the military.  
 
-```{r prop-violate-norms, include = TRUE, echo=FALSE, warning = FALSE, error=FALSE, message=FALSE, fig.cap="Proportion of Op-Eds Which Violate Principles of Civil-Military Relations, 1979-2020"}
+```{r prop-violate-norms, include = TRUE, echo=FALSE, warning = FALSE, error=FALSE, message=FALSE, fig.cap="Proportion of Op-Eds Authored by Retired Military Officers That Violate Any Principles of Civil-Military Relations, 1979-2020"}
 
-ggplot(data=violation_reg_df, mapping=aes(x=PubYr, y=Prop_Pubs_Viol)) + geom_point() + geom_smooth() + labs(x="Year", y="Annual Proportion Violating At Least\n One Principle of Civil-Military Relations", color=NULL) + geom_vline(xintercept = 1981, size=.2, colour="tomato") + 
+ggplot(data=violation_reg_df, mapping=aes(x=PubYr, y=Prop_Pubs_Viol)) + geom_point() + geom_smooth() + labs(x="Year", y="Proportion", color=NULL) + geom_vline(xintercept = 1981, size=.2, colour="tomato") + 
   geom_vline(xintercept=1989, size=.2, colour="tomato") + 
   geom_vline(xintercept=1993, size=.2, colour="dodgerblue") + geom_vline(xintercept=2001, size=.2, colour="tomato") + 
   geom_vline(xintercept=2009, size=.2, colour="dodgerblue") +
@@ -1047,7 +922,6 @@ melted_df %>% ggplot(aes(x=Year, y=value, color=variable)) + geom_point() +
 For example, retired military officers were relatively active during the particular five year window including the years 2012 through 2016. In fact, 105 (27%) of the 390 total observations in the dataset were authored during these years. The majority of these observations thus take the relatively low of affective polarization that existed at 2012.^[To be clear, I assigned _all_ observations written between a particular time period its corresponding _known_ value of polarization, whether congressional or affective. For example, a piece written in October of 2016 took a value of affective polarization that was measured by the ANES in November of 2012, at the time of the previous presidential election, rather than the value of affective polarization that became known a month later, in November 2016, at the time of the 2016 Presidential Election. A piece published in January of 2017, on the other hand, takes the value of affective polarization measured by the November 2016 ANES. I assigned values for congressional polarization in a similar way. In other words, the assigned level of polarization to each observation aligns with the level of polarization in either the House or Senate that existed at the time of the publication, even if that level of polarization changed shortly before or after the date of the publication. This method is perhaps not perfect, but it is consistent in that it assumes no changes in any levels of polarization until these changes are officially measured and calculated.] Thus, controlling for affective rather than congressional polarization corresponds to a relative downturn rather than increase in polarization from 2012 - 2016 for a significant portion of the dataset. 
 
 A third important result evident in Table \@ref(tab:regression1) is the importance that a presidential election year plays in shaping both the level and content of retired military officer commentary. In all but two models, the coefficient for election year is positive and statistically significant at either the 5 or 10 percent level, strongly indicating that during years in which a presidential election is held, retired military officers write more opinion commentary altogether (model 1) and increasingly challenge the principles of civilian control, non-partisanship, or non-interference of the military when they do (models 3, 4, and 6). In the mixed model (model 5), the coefficient for election year is longer statistically significant, which suggests that at least in that particular model, we cannot rule out the possibility that individual retired military officer characteristics, rather than the occurrence of a presidential election, shape the likelihood that a piece of opinion commentary violates one or more of the central principles of civil-military relations.  
-
 Fourth, Table \@ref(tab:regression1) shows that other control variables, to include the level of casualties sustained by hostile action in the year prior, the author's rank achieved during his or her time on active duty, and the source in which a particular opinion piece is published, impact retired military officer commentary minimally, if at all. The coefficient for the lagged hostile casualty rate is statistically significant and negative only in model 1 (at the 5% level), and consistently negative but statistically insignificant across all other model specifications. Model 1 therefore suggests that higher US casualties sustained in hostile action in the previous year correspond with retired military officers publishing fewer commentary pieces altogether, which further suggests that in the presence of rising casualties, retired military officers take on a diminished rather than an increased role in the press. 
 
 Furthermore, the coefficients for author rank and newspaper source, when included (models 3 - 6), are statistically insignificant across all but one of the model specifications (model 5). The results suggest that higher ranking military officers are not increasingly likely to violate the principles of civil-military relations when they author opinion commentary. Model 5 suggests that relative to commentary published in _The New York Times_, retired officer commentary published in the _Washington Post_ is less likely to violate the principles of civil-military relations. In model 6, however, all three major US newspapers are statistically indistinguishable in terms of featuring retired military officer commentary that violates the principles of civilian control, non-partisanship, or non-interference. 
@@ -1312,14 +1186,14 @@ predictionshouse %>%
 
 ```
 
-```{r pred-prob-sen, include=TRUE, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Predicted Probability of Senate Polarization\n on Retired Military Elite Opinion Publications", fig.height=4.5, fig.width=6}
+```{r pred-prob-sen, include=TRUE, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Predicted Probability of Senate Polarization\n on Retired Military Elite Opinion Publications Violating Principles of Civil-Military Relations", fig.height=4.5, fig.width=6}
 predictions%>%
   ggplot() +
   aes(x = senate_polar, y = .prob) +
   geom_pointrange(aes(ymin = conf.low, ymax = conf.high)) +
   geom_smooth() + labs(
     x="Level of Polarization in the Senate (Scaled)",
-    y="Predicted Probability of Retired Military\n Officer Commentary Violating Central\n Civil-Military Relations Principles"
+    y="Predicted Probability"
   ) + scale_y_continuous(breaks=seq(-.1, 1.1, .1)) + 
   geom_vline(xintercept = 58.94, size=.2, colour="dodgerblue") + 
   geom_vline(xintercept=66.31, size=.2, colour="tomato") + 
@@ -1337,25 +1211,27 @@ predictions%>%
 
 Using the results of the logistic regression used in model 4 from Table \@ref(tab:regression1), I fix the year in which a piece is published as an election year and hold all other values at their means.^[The mean of trust in the military over the time period examined here is 71.1; the mean author rank is 8.39, which corresponds to a 2 star general or admiral; and the mean hostile casualty rate is 11.40. For comparison, the hostile casualty rate (not lagged) in 2007, at the height of the surge to Iraq, was 61.9, and in 2013, it was 8.67.] The vertical colored lines cross the x-axis at the scaled level of polarization in the US Senate during a particular year as a Congress session began, and the color of the line indicates the party of the President at the time Congress was seated in a particular year, or, in the case of an inaugural year, which party the incoming President belonged to.  
 
-```{r pred-prob-house, include=TRUE, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Predicted Probability of House Polarization\n on Retired Military Elite Opinion Publications", fig.height=4.5, fig.width=6}
+```{r pred-prob-house, include=TRUE, echo=FALSE, warning=FALSE, message=FALSE, fig.cap="Predicted Probability of House Polarization\n on Retired Military Elite Opinion Publications Violating Principles of Civil-Military Relations", fig.height=4.5, fig.width=6}
 predictionshouse%>%
   ggplot() +
   aes(x = house_polar, y = .prob) +
   geom_pointrange(aes(ymin = conf.low, ymax = conf.high)) +
   geom_smooth() + labs(
     x="Level of Polarization in the US House of Representatives (Scaled)",
-    y="Predicted Probability of Retired Military\n Officer Commentary Violating Central\n Civil-Military Relations Principles"
+    y="Predicted Probability"
   ) + scale_y_continuous(breaks=seq(-.1, 1.1, .1)) + 
   geom_vline(xintercept = 59.6, size=.2, colour="dodgerblue") + 
+  geom_vline(xintercept=70.43, size=.2, colour="dodgerblue") +
   geom_vline(xintercept=78.66, size=.2, colour="tomato") + 
   geom_vline(xintercept=80.45, size=.2, colour="dodgerblue") +
-  geom_vline(xintercept=88.15, size=.2, colour="tomato") +
-  geom_vline(xintercept=87.26, size=.2, colour="dodgerblue") +
+  geom_vline(xintercept=86.14, size=.2, colour="dodgerblue") +
+  geom_vline(xintercept=88.37, size=.2, colour="dodgerblue") +
   geom_text(aes(x=59.6, label="1979",y=.5), colour="dodgerblue", angle=90, vjust=1, text=element_text(size=9)) + 
+  geom_text(aes(x=70.43, label="1993",y=.5), colour="dodgerblue", angle=90, vjust=1, text=element_text(size=9)) + 
   geom_text(aes(x=78.66, label="2001",y=.5), colour="tomato", angle=90, vjust=-.3, text=element_text(size=9)) + 
   geom_text(aes(x=80.45, label="2009",y=.5), colour="dodgerblue", angle=90, vjust=1.1, text=element_text(size=9)) + 
-  geom_text(aes(x=88.15, label="2017",y=.65), colour="tomato", angle=90, vjust=1.2, text=element_text(size=9))  + 
-  geom_text(aes(x=87.26, label="2021", y=.65), colour="dodgerblue", angle=90, vjust=-.3, text=element_text(size=9))
+  geom_text(aes(x=86.14, label="2011",y=.65), colour="dodgerblue", angle=90, vjust=-.3, text=element_text(size=9))  + 
+  geom_text(aes(x=88.37, label="2021", y=.65), colour="dodgerblue", angle=90, vjust=1.1, text=element_text(size=9))
 ```
 
 If we use values of house polarization instead, we see a similar picture emerge, as shown in Figure \@ref(fig:pred-prob-house). The overall trajectories of the curve are similar in both figures, but there are a couple of distinct points of comparison to make. 
@@ -1403,7 +1279,6 @@ This chapter found no support, however, for H2, which stated that military actor
 Although the majority of opinion commentary authored by retired military officers upholds the principles of civilian control, non-partisanship, and non-interference of the military, the empirical record clearly demonstrates worrisome trends of late. There is no doubt that written opinion commentary published in major US newspapers and authored by retired military officers has increasingly violated one or more of the central principles of civilian control of the military, non-partisanship of the military institution, and a norm of "non-interference" of the military into certain realms of state policy. It remains to be seen whether and the extent to which the retired military officer community as a whole can reverse or at least slow these trends. If polarization continues to deepen, the outlook is not sanguine with respect to retired military officer adherence to the central principles of civil-military relations. 
 
 Having completed a chapter that looks at one form of political behavior by a military actor, the next chapter changes gears and examines a behavior primarily engaged in by civilians: using military actors in campaign advertisements. 
-\singlespace
 
 \pagebreak
 
