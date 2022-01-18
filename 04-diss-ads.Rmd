@@ -1,3 +1,4 @@
+\newpage
 
 # Chapter Four 
 
@@ -669,14 +670,17 @@ reg_df_ch4 <- reg_df_ch4 %>% mutate(
 
 ```
 
-The next several pages reveal the results of a detailed regression analysis. The first set of regressions (models 1-6) all use OLS regression. The dependent variable in models 1-3 is the proportion of ads aired in an election cycle that violate at least one of the central principles of civil-military relations, and the dependent variable in models 4-6 is the overall violation rate; that is, the number of total violations that occur expressed as a rate of the number of ads that air in an election cycle. Thus, the unit of analysis in this first series of regressions is the election cycles that occur over the date range (2000 - 2016). 
+The next several pages reveal the results of a detailed regression analysis. The first set of regressions all use OLS regression, where the dependent variables are the proportion of ads aired in each election cycle that violate at least one of the central principles of civil-military relations and the overall violation rate of advertisements in each election cycle. This first set of regressions should thus be viewed as a macro level view of each election cycle. The units of analysis in this first series of regressions are the five separate election cycles that occur over the date range 2000 - 2016. 
 
 ```{r ch4-initreg, include=FALSE, echo=FALSE, warning=FALSE, message=FALSE}
 
 ### Here I construct my regression models. Begin with OLS and then move towards logit models. 
-## create an OLS data frame. Select only the proportions I am interested in 
+## create OLS data frames for all advertisements, ads
+## produced by political parties, and ads produced by Int Groups. 
+## Select only the proportions I am interested in 
 ## as my DV and drop any other variables I do not need. 
 
+# all ad df
 reg_df_ch4_ols <- reg_df_ch4 %>% select(house_polar:prestige_gap, violations_rate, prop_ads_violating) %>% distinct() %>% view()
 
 ## OLS Model 1: DV is prop_ads_violating
@@ -684,60 +688,90 @@ reg_df_ch4_ols <- reg_df_ch4 %>% select(house_polar:prestige_gap, violations_rat
 mod_ols_prop_violating <- lm(prop_ads_violating ~ mil_prestige + house_polar + HostCasRateLagged, data=reg_df_ch4_ols)
 summary(mod_ols_prop_violating)
 
-mod_ols_prop_violating_sen <- lm(prop_ads_violating ~ mil_prestige + sen_polar + HostCasRateLagged, data=reg_df_ch4_ols)
-summary(mod_ols_prop_violating_sen)
-
-mod_ols_prop_violating_aff <- lm(prop_ads_violating ~ mil_prestige + aff_polar + HostCasRateLagged, data=reg_df_ch4_ols)
-summary(mod_ols_prop_violating_aff)
+mod_ols_prop_violating_gap <- lm(prop_ads_violating ~ prestige_gap + house_polar + HostCasRateLagged, data=reg_df_ch4_ols)
+summary(mod_ols_prop_violating_gap)
 
 ## OLS Model 2: DV is violation rate
 
 mod_ols_violations_rate <- lm(violations_rate ~ mil_prestige + house_polar + HostCasRateLagged, data=reg_df_ch4_ols)
 summary(mod_ols_violations_rate)
 
-mod_ols_violations_rate_sen <- lm(violations_rate ~ mil_prestige + sen_polar + HostCasRateLagged, data=reg_df_ch4_ols)
-summary(mod_ols_violations_rate_sen)
+## Now Create a df only for ads sponsored by 
+## parties, candidates, or a combination of the two. 
+drop_igs_violations_wrap_ols <- drop_igs_violations_wrap %>% select(house_polar:prestige_gap, violations_rate, prop_ads_violating) %>% distinct() %>% view()
 
-mod_ols_violations_rate_aff <- lm(violations_rate ~ mil_prestige + aff_polar + HostCasRateLagged, data=reg_df_ch4_ols)
-summary(mod_ols_violations_rate_aff)
+## OLS Model 1: DV is prop_ads_violating
+
+no_ig_ols_prop_violating <- lm(prop_ads_violating ~ mil_prestige + sen_polar + HostCasRateLagged, data=drop_igs_violations_wrap_ols)
+summary(no_ig_ols_prop_violating)
+
+no_ig_ols_prop_violating_gap <- lm(prop_ads_violating ~ prestige_gap + sen_polar + HostCasRateLagged, data=drop_igs_violations_wrap_ols)
+summary(no_ig_ols_prop_violating_gap)
+
+## OLS Model 2: DV is violation rate
+
+no_ig_ols_violations_rate <- lm(violations_rate ~ mil_prestige + sen_polar + HostCasRateLagged, data=drop_igs_violations_wrap_ols)
+summary(no_ig_ols_violations_rate)
+
+## No Statistical Significance for these models
+
+## Now Create a df only for ads sponsored by 
+## interest groups 
+
+igs_violations_wrap_ols <- igs_violations_wrap %>% select(house_polar:prestige_gap, violations_rate, prop_ads_violating) %>% distinct() %>% view()
+
+## OLS Model 1: DV is prop_ads_violating
+
+ig_ols_prop_violating <- lm(prop_ads_violating ~ mil_prestige + house_polar + HostCasRateLagged, data=igs_violations_wrap_ols)
+summary(ig_ols_prop_violating)
+
+ig_ols_prop_violating_gap <- lm(prop_ads_violating ~ prestige_gap + house_polar + HostCasRateLagged, data=igs_violations_wrap_ols)
+summary(ig_ols_prop_violating_gap)
+
+## OLS Model 2: DV is violation rate
+
+ig_ols_violations_rate <- lm(violations_rate ~ mil_prestige + house_polar + HostCasRateLagged, data=igs_violations_wrap_ols)
+summary(ig_ols_violations_rate_gap)
 ```
 
-I therefore only control for broad, macro level factors in this first set of regressions. These include the level of military prestige as well as several different measurements of polarization. I proxy the level of military prestige using a measure of public trust in the military, which comes from Gallup public opinion polling regarding trust in American institutions [@noauthor_confidence_2020]. This control variable is intended to capture the theoretical expectation that civilians are more likely to use the military for their own partisan gain and purposes as military prestige rises. Data on polarization comes from a measure of ideology based off of roll-call voting data from the US House and Senate [@jeffrey_b_lewis_voteview_2020], as well as a measure of affective polarization, which measures how partisans feel about political parties and/or those Americans who hold differing political views, as reported in data from the American National Election Studies (ANES) [@iyengar_affect_2012; @iyengar_strengthening_2018; @iyengar_origins_2019]. Polarization is included as a control because it changes over the time horizon examined, and one might suspect that civilians likewise react to changing levels in polarization by becoming increasingly willing to engage in overtly partisan behaviors as polarization rises. 
+I therefore only control for broad, macro level factors in this first set of regressions. These include, first, the level of military prestige, which is proxied using a measure of public trust in the military that comes from Gallup public opinion polling regarding trust in American institutions [@noauthor_confidence_2020]. This control variable is intended to capture the theoretical expectation that civilians are more likely to use the military for their own partisan gain and purposes as the level of military prestige rises. In some models, I instead use a control for the prestige gap, which uses the same data to create a measure of the gap between the level of public trust in the military versus that of Congress. I include this measure instead of the level of public trust in the military in some models because, as the beginning of this chapter described, the level of trust in the military does not significantly vary over the time horizon of the data explored in this chapter. The prestige gap between the military and Congress varies more, and while the two measures are not the same theoretically, perhaps the prestige gap will intimate what the raw level of military prestige may not.  
 
-I also include a measure of military casualties, and lag is measure by one year. I lag the level of casualties  because election advertisements run over a period of months before an election actually takes place. Although general elections occur near the end of the year in November, the data include advertisements that ran during the primary campaign of each election, which in many cases begin the calendar year prior to an election. The previous year's casualty levels may thus be partly responsible for spurring the decision made by civilian candidates to design advertisements that feature military actors behaving in a particular manner.^[This variable is constructed from a number of sources, and consists of the number of hostile US casualties sustained in a given calendar year per 100,000 Active Duty military forces. I include in this measurement those casualties that are the result of what the Department of Defense classifies as either "hostile action" or a "terrorist attack." Annual data is provided from the Department of Defense from 1980-2010. I then used data from the Department of Defense regarding the wars in Iraq and Afghanistan to construct a measurement for years outside of this time range. See @department_of_defense_dcas_2011; @department_of_defense_dcas_2021; @department_of_defense_dcas_2021-1; @department_of_defense_dcas_2021-2; @department_of_defense_dcas_2021-3; @department_of_defense_dcas_2021-4; @department_of_defense_dcas_2021-5; @department_of_defense_dmdc_2021 for more details.]
+I also include levels of congressional polarization in the US House and Senate, which come from a measure of ideology based off of roll-call voting data over time [@jeffrey_b_lewis_voteview_2020].^[In these models, I do not include a measure of affective polarization, which measures how partisans feel about political parties and/or those Americans who hold differing political views, as reported in data from the American National Election Studies (ANES) [@iyengar_affect_2012; @iyengar_strengthening_2018; @iyengar_origins_2019. The reason that I do not include them is because the measure of the level of affective polarization between 2012 and 2016 shows a decline, as I described previously in chapter three of this dissertation. I am not ignoring this reality, but the focus of this particular chapter is on the level of military prestige, and it is more consistent, in my view, to use the two congressional polarization measurements, each of which reflects increases over the date range examined]. Polarization is included as a control because it changes over the time horizon examined, and because one might suspect that civilians likewise react to changing levels in polarization by becoming increasingly willing to engage in overtly partisan behaviors as polarization rises. 
+
+I also include a measure of military casualties, and lag the measure by one year. I lag the level of casualties because election advertisements run over a period of months before an election actually takes place. Although general elections occur near the end of the year in November, the data include advertisements that ran during the primary campaign of each election, which in many cases begin the calendar year prior to an election. The previous year's casualty levels may thus be partly responsible for spurring the decision made by civilian candidates to design advertisements that feature military actors behaving in a particular manner.^[This variable is constructed from a number of sources, and consists of the number of hostile US casualties sustained in a given calendar year per 100,000 Active Duty military forces. I include in this measurement those casualties that are the result of what the Department of Defense classifies as either "hostile action" or a "terrorist attack." Annual data is provided from the Department of Defense from 1980-2010. I then used data from the Department of Defense regarding the wars in Iraq and Afghanistan to construct a measurement for years outside of this time range. See @department_of_defense_dcas_2011; @department_of_defense_dcas_2021; @department_of_defense_dcas_2021-1; @department_of_defense_dcas_2021-2; @department_of_defense_dcas_2021-3; @department_of_defense_dcas_2021-4; @department_of_defense_dcas_2021-5; @department_of_defense_dmdc_2021 for more details.]
+
+In models 1-3, the dependent variable is the proportion of ads (models 1-2) and the violation rate (model 3) of all advertisements aired in an election cycle. In models 4-6, the dependent variables are the same, respectively, but for advertisements sponsored strictly by political parties and/or political candidates (no interest groups). In models 7-9, the dependent variables are the same as well, but only for advertisements produced by interest groups, which would ostensibly include those produced by veteran-affiliated interest groups. 
 
 These results are displayed in Table \@ref(tab:ch4regression1). 
-
 \singlespace
 ```{r reg results, include=T, echo=FALSE, results="asis", warning=FALSE, message=FALSE}
-stargazer(mod_ols_prop_violating, mod_ols_prop_violating_sen, mod_ols_prop_violating_aff, mod_ols_violations_rate, mod_ols_violations_rate_sen, mod_ols_violations_rate_aff,
+stargazer(mod_ols_prop_violating, mod_ols_prop_violating_gap, mod_ols_violations_rate, no_ig_ols_prop_violating, no_ig_ols_prop_violating_gap, no_ig_ols_violations_rate, ig_ols_prop_violating, ig_ols_prop_violating_gap, ig_ols_violations_rate,
           type="latex",
           label="tab:ch4regression1",
-          title="OLS Regression, Proportion/Rate of Presidential Election Ads that Violate Principles of Civil-Military Relations, 2000-2016", 
-          covariate.labels = c('Trust in Military', 'House Polarization', 'Senate Polarization', 'Aff. Polarization', 'Casualty Rate (lagged)'),
-          dep.var.labels = c('Proportion of Ads Violating', 'Violation Rate'),
-          model.names=TRUE,
+          title="OLS Regression Results, Proportion/Rate of Presidential Election Ads Violating Principles of Civil-Military Relations", 
+          covariate.labels = c('Trust in Military', 'Prestige Gap', 'House Polarization', 'Senate Polarization', 'Casualty Rate (lagged)'),
+          dep.var.labels = c('Proportion', 'Rate', 'Proportion', 'Rate', 'Proportion', 'Rate'),
+          model.names=F,
           header=FALSE,
           column.sep.width = "-15pt",
           align=TRUE,
           font.size="small",
           no.space=TRUE,
-          omit.stat=c("f", "ser")
+          omit.stat=c("f", "ser"),
+          float.env = "sidewaystable"
           )
-         
 ```
-
 \doublespace
 
-The macro level results contained shown in Table \@ref(tab:ch4regression1) are mostly inconclusive. The coefficient for trust in the military is positive in all models, suggesting that there is a positive relationship, but the coefficient is small in scale and statistically significant in only two of the six models (models 3 and 6). There are also but a few instances of other variables seeming to matter across the model specifications. The coefficients for respective types of polarization and the lagged hostile casualty rate are negative across all model specifications, but statistically significant only on model 6. In short, the results contained in Table \@ref(tab:ch4regression1) prevent us from concluding that there is a strong relationship between any of the control variables and the proportion (as well as violation rate) of presidential campaign ads that violate the principles of civil-military relations. 
+The results shown in Table \@ref(tab:ch4regression1) indicate that none of the variables have much, if any, explanatory power in shaping the proportion of ads or the rate at which ads aired in each election that violate the principles of civil-military relations. Across all model specifications, the coefficient for trust in the military is positive, suggesting that there is a positive relationship, but the coefficient is small in scale and statistically insignificant in each model.
 
-These results change, however, if we shift the unit of analysis to the individual advertisement and the likelihood that an advertisement violates one or more of the central principles of civil-military relations. The next series of regression models therefore incorporate logistic regression. In addition to the controls used in the previous set of models, I include a number of other controls. 
+Furthermore, all other variables likewise seem to reflect little importance. The coefficients for the prestige gap, types of polarization and the lagged casualty rate are statistically insignificant in every model. This is true regardless of whether we analyze the levels and rates of all advertisements aired in each election cycle (models 1-3), or strictly those produced by political parties and candidates (models 4-6) or interest groups (models 7-9). In short, the results of Table \@ref(tab:ch4regression1) prevent us from concluding that there is a strong relationship between any of the control variables and either the proportion or the violation rate of presidential campaign ads that violate the principles of civil-military relations.
 
-First, I add a control for the "prestige gap" between Congress and the Military instead of the raw level of military prestige. I include this control because perhaps it is not the level of trust in the military that shapes how civilians act, but rather the level of trust in the military relative to other mainstream political institutions. 
+These results change, however, when we shift the unit of analysis from the election cycle to the individual advertisement. As was shown in the earlier figures of this chapter describing the data, the five election cycles covered in the data are different in many ways. The 2004 Election witnessed a significant level of partisan activity at the hands of military figures, and so did the 2016 Election. This, combined with the fact that the 2000 Election, at least insofar as the data is concerned, showed very little partisan activity by military figures in campaign ads, renders an analysis of the election cycle only somewhat incomplete. The next series of regression models therefore incorporate logistic regression, where the dependent variable is the likelihood that an individual advertisement violates one or more of the central principles of civil-military relations, or features a prominent appearance by a military figure.  
 
-I also control for whether at least one candidate mentioned or pictured in the advertisement is a veteran. The reason for including this control is that perhaps civilian candidates who themselves are veterans may be more inclined to tout their own security credentials, and use military figures to do so in ways that violate the principles of civil-military relations. Additionally, civilian veteran candidates may likewise have the effect such that their political opponents who are not veterans may seek out military figures and to harness them in order to undermine the veteran candidate's service record or views regarding the use of force.  
+In addition to the controls used in the previous set of models, I control for whether at least one candidate mentioned or pictured in the advertisement is a veteran. The reason for including this control is that perhaps civilian candidates who themselves are veterans may be more inclined to tout their own security credentials, and to use military figures to do so in ways that violate the principles of civil-military relations. Additionally, civilian veteran candidates may likewise have the effect such that their political opponents who are not veterans may seek out military figures to undermine the veteran candidate's service record or views regarding the use of force.  
 
-I also include a control for the party of the political candidate supported in the advertisement. This variable is designed to capture any distinction between the major parties in terms of how each party is inclined to use military figures in campaign ads to begin with. Consistent with the "issue ownership" literature in American politics, it could be that Democratic candidates may be more inclined to employ a military figure in overtly partisan ways on the grounds that doing so may make the Democratic candidate appear to be strong on the issue of national security. Over the past several decades, Republicans have generally been perceived by the public as stronger than Democrats on defense issues and national security, and thus Democrats be more inclined (and Republicans less so) to engage in efforts to shore up their defense related credentials [@petrocik_issue_2003; @sides_consequences_2007].
+I also include a control for the party of the political candidate supported in each advertisement. This variable is designed to capture any distinction between the major parties in terms of how each party is inclined to use military figures in campaign ads to begin with. Consistent with the "issue ownership" literature in American politics, it could be that Democratic candidates may be more inclined to employ a military figure in overtly partisan ways on the grounds that doing so may make the Democratic candidate appear to be strong on national security issues. Over the past several decades, Republicans have generally been perceived by the public as stronger than Democrats on defense issues and national security, and thus Democrats be more inclined (and Republicans less so) to engage in efforts to shore up their defense credentials [@petrocik_issue_2003; @sides_consequences_2007].
 
 ```{r reg-models2, include=FALSE, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -815,7 +849,7 @@ mod_int_ch4_gap <- glm(vet_fam_out_issues ~ prestige_gap + house_polar + HostCas
 summary(mod_int_ch4_gap)
 
 ```
-The dependent variables also vary by specification. In models 1-2, the dependent variable is the log of the odds of a military figure prominently appearing. In models 3-4, the dependent variable is the log of the odds of a military figure engaging in _any_ of the three operationalized behaviors denoting violations to the principles of civil-military relations: endorsing a political candidate, attacking a political candidate, or speaking out on an issue that is tangential to the military expertise of the military actor. The dependent variable in models 5-9 is the log of the odds that an advertisement commits these three violations specifically: endorses a candidate running for office (models 5-6), attacks a political candidate (7-8), or addresses a topic that is tangential to one's military experiences (model 9). These results are displayed in Table \@ref(tab:ch4regression2).
+The specific dependent variables vary by model specification. In models 1-2, the dependent variable is the log of the odds of a military figure prominently appearing in an advertisement. In models 3-4, the dependent variable is the log of the odds of a military figure engaging in _any_ of the three operationalized behaviors denoting violations to the principles of civil-military relations: endorsing a political candidate, attacking a political candidate, or speaking out on an issue that is tangential to the expertise of the military actor. In models 5-9, the dependent variable is the log of the odds that an advertisement features a military actor who commits each of these three violations separately: endorsing a candidate (models 5-6), attacking a political candidate (models 7-8), or addressing a topic that is tangential to one's military experiences (model 9).^[For readability, I only include one model in this table where the dependent variable denotes a military figure addressing an outside topic because all control variables, regardless of model specification, yield statistically insignificant results.] These results, for all advertisements in the data, are displayed in Table \@ref(tab:ch4regression2).
 
 ```{r reg-results-set2, include=T, echo=FALSE, results="asis", warning=FALSE, message=FALSE}
 stargazer(mod_appearance, mod_appearance_gap, mod_anyviol_ch4, mod_anyviol_ch4_gap, mod_endorse_ch4, mod_endorse_ch4_gap, mod_atk_ch4, mod_atk_ch4_gap, mod_int_ch4,
@@ -836,44 +870,20 @@ stargazer(mod_appearance, mod_appearance_gap, mod_anyviol_ch4, mod_anyviol_ch4_g
          
 ```
 
-In Table \@ref(tab:ch4regression2), the coefficient for trust in the military is positive and statistically significant in six of the ten models. More importantly, with the exception of when the dependent variable relates to addressing in outside topic, moreover, the coefficient for trust in the military is positive and statistically significant in all model specifications _except_ for when we include a control for the 2004 Election. 
+In Table \@ref(tab:ch4regression2), the coefficient for trust in the military is positive and statistically significant in three of the five models in which it is used, including when the dependent variable is a military figure appearing prominently (model 1), engaging in any violation (model 3), and attacking a political candidate (model 7). Somewhat interestingly, the prestige gap does not seem to matter, at least not consistently, as the coefficient for the prestige gap changes directions across model specifications and is only statistically significant in one model.  
 
-A candidate's veteran status also seems to be important, as the coefficient for candidate-veteran is positive and statistically significant in most of model specifications when it is included. The results also show that advertisements that support GOP candidates are consistently less likely to use military figures to appear as well as violate the principles of civil-military relations, as the coefficient for Party-GOP is negative and highly statistically significant across most model specifications when it is included. When the 2004 Election control is included (models 6, 8, and 10), note that no coefficients are statistically significant.
+However, a candidate's veteran status seems to be important. The coefficient for candidate-veteran is positive and statistically significant in all but the two model specifications in which the dependent variable indicates a military figure endorsing a political candidate. The results also show that advertisements that support GOP candidates are consistently less likely to use military figures to appear as well as violate the principles of civil-military relations. The coefficient for Party-GOP is negative and highly statistically significant across all model specifications except in model 9, when the dependent variable indicates a military figure is violating the principle of non-interference by addressing a topic that is tangential or outside of one's military expertise. 
 
-As a whole, the results of Table \@ref(tab:ch4regression2) nonetheless suggest that the level of the public's trust in the military matters moderately for how military figures behave in campaign advertisements. In particular, the positive and statistically significant coefficient for trust in the military in models 1-4 indicate that the level of trust in the military shapes the likelihood that military figures appear and that they violate the principles of civil-military relations in some way when they do appear. 
-
-These violations seem to be driven, furthermore, by instances of endorsing and attacking candidates rather than by speaking out on topics that are tangential to defense or national security. The coefficient for trust in the military is not statistically significant in either model 9 or model 10, but it is positive and statistically significant in models 5 and 7, when the dependent variable is endorse or attack, respectively. These results seem to suggest, then, at least to a moderate extent, that as the level of trust in the military rises, there is a greater likelihood that a campaign ad will feature a military figure who appears in an advertisement and who either endorses or attacks a political candidate.  
+As a whole, the results of Table \@ref(tab:ch4regression2) suggest that the level of public trust in the military moderately shapes the degree to which military figures appear in campaign advertisements as well as how these figures act when they appear. In particular, the results seem to suggest that as the level of military prestige rises, presidential campaign television advertisements are increasingly likely to feature military actors and that these actors are increasingly likely to violate at least one of the principles of civil-military relations when they appear. Furthermore, the principle that these actors are most likely to violate is that of attacking a political candidate running for office. 
 
 ### Parties and Candidates Only
 
-In this section, I conduct a similar set of regression analyses, but I focus only on those advertisements that were sponsored by political parties and or political candidates, and drop ads produced by interest groups. I drop these ads on the basis that perhaps interest groups that are predominantly affiliated with the military in some way are responsible for variation in how military figures are behaving in campaign ads. In short, dropping ads produced by interest groups may provide a better glimpse into how truly civilian actors - candidates and the political parties - are behaving. I include the very same controls as in the previous regression.  
+In this section, I focus only on those advertisements in the data sponsored by political parties and or political candidates. This will enable perhaps what can be considered a more precise glimpse into how truly civilian actors - candidates and the political parties - are behaving. I include the very same controls as in the previous regression table.   
 
 ```{r party-can-data prep, include=FALSE, echo=FALSE, warning=FALSE}
 
-## First prep the data. Create a df consisting only of ads
-## created by parties, candidates, or a combination of the two. 
-
-drop_igs_violations_wrap_ols <- drop_igs_violations_wrap %>% select(house_polar:prestige_gap, violations_rate, prop_ads_violating) %>% distinct() %>% view()
-
-## OLS Model 1: DV is prop_ads_violating
-
-no_ig_ols_prop_violating <- lm(prop_ads_violating ~ mil_prestige + house_polar + HostCasRateLagged, data=drop_igs_violations_wrap_ols)
-summary(no_ig_ols_prop_violating)
-
-no_ig_ols_prop_violating_gap <- lm(prop_ads_violating ~ prestige_gap + sen_polar + HostCasRateLagged, data=drop_igs_violations_wrap_ols)
-summary(no_ig_ols_prop_violating_gap)
-
-## OLS Model 2: DV is violation rate
-
-no_ig_ols_violations_rate <- lm(violations_rate ~ mil_prestige + sen_polar + HostCasRateLagged, data=drop_igs_violations_wrap_ols)
-summary(no_ig_ols_violations_rate)
-
-no_ig_ols_violations_rate_gap <- lm(violations_rate ~ prestige_gap + house_polar + HostCasRateLagged, data=drop_igs_violations_wrap_ols)
-summary(no_ig_ols_violations_rate_gap)
-
-## No Macro Level Statistical Significance for OLS models
-
-## Now prep advertisement-level data
+## Advertisement-level data for ads 
+## produced by parties/candidates only
 
 no_ig_reg_df_ch4 <- reg_df_ch4 %>% filter(sponsor!=4) %>% view()
 
@@ -882,47 +892,63 @@ noig_appearance <- glm(appearance ~ mil_prestige + house_polar + HostCasRateLagg
     family=binomial(link="logit"),
     data=no_ig_reg_df_ch4
     )
-summary(noig_appearance)
+
+noig_appearance_robust<-robustify(noig_appearance, cluster=year)
+summary(noig_appearance_robust)
 
 noig_appearance_gap <- glm(appearance ~ prestige_gap + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
     data=no_ig_reg_df_ch4
     )
-summary(noig_appearance_gap)
+
+noig_appearance_gap_robust <-robustify(noig_appearance_gap, cluster=year)
+summary(noig_appearance_gap_robust)
+
 
 # Logistic Regression Model: DV is Any Violation
 noig_anyviol_ch4 <- glm(partisan_act ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
     data=no_ig_reg_df_ch4
     )
-summary(noig_anyviol_ch4)
+
+noig_anyviol_ch4_robust <- robustify(noig_anyviol_ch4, cluster = year)
+summary(noig_anyviol_ch4_robust)
 
 noig_anyviol_ch4_gap <- glm(partisan_act ~ prestige_gap + sen_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
     data=no_ig_reg_df_ch4
     )
-summary(noig_anyviol_ch4_gap)
+
+noig_anyviol_ch4_gap_robust <- robustify(noig_anyviol_ch4_gap, cluster=year)
+summary(noig_anyviol_ch4_gap_robust)
+
 
 # Logistic Regression Model: DV is Endorsement
 noig_endorse_ch4 <- glm(vet_fam_end ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
     data=no_ig_reg_df_ch4
     )
-summary(noig_endorse_ch4)
+
+noig_endorse_ch4_robust <- robustify(noig_endorse_ch4, cluster=year)
+summary(noig_endorse_ch4_robust)
 
 
 noig_endorse_ch4_gap <- glm(vet_fam_end ~ prestige_gap + house_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
     data=no_ig_reg_df_ch4
     )
-summary(noig_endorse_ch4_gap)
+
+noig_endorse_ch4_gap_robust <- robustify(noig_endorse_ch4_gap, cluster=year)
+summary(noig_endorse_ch4_gap_robust)
 
 # Logistic Regression Model: DV is attack
 noig_atk_ch4 <- glm(vet_fam_atk ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
     data=no_ig_reg_df_ch4
     )
-summary(noig_atk_ch4)
+
+noig_atk_ch4_robust <- robustify(noig_atk_ch4, cluster=year)
+summary(noig_atk_ch4_robust)
 
 noig_atk_ch4_gap <- glm(vet_fam_atk ~ prestige_gap + sen_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
@@ -950,10 +976,10 @@ The results of this series of regressions is displayed in Table \@ref(tab:ch4reg
 
 \singlespace
 ```{r reg-results-set3, include=T, echo=FALSE, results="asis", warning=FALSE, message=FALSE}
-stargazer(noig_appearance, noig_appearance_gap, noig_anyviol_ch4, noig_anyviol_ch4_gap, noig_endorse_ch4, noig_endorse_ch4_gap, noig_atk_ch4, noig_atk_ch4_gap,
+stargazer(noig_appearance, noig_appearance_gap, noig_anyviol_ch4, noig_anyviol_ch4_gap, noig_endorse_ch4, noig_endorse_ch4_gap, noig_atk_ch4, noig_atk_ch4_gap, noig_int_ch4,
           type="latex",
           label="tab:ch4regression3",
-          title="Log Odds of a Presidential Campaign TV Ad Sponsored by Parties/Candidates Featuring Prominent Military Actors Engaging in Political Behaviors", 
+          title="Log Odds of a Presidential Campaign TV Ad Sponsored by Parties and/or Candidates Featuring Prominent Military Actors Engaging in Political Behaviors", 
           covariate.labels = c('Trust in Military', 'Prestige Gap', 'House Polarization', 'Senate Polarization',  'Casualty Rate (lagged)', 'Candidate-Veteran', 'Party-Other', 'Party-GOP'),
           dep.var.labels = c('Appear', 'Any Viol', 'Endorse', 'Attack', 'Topic'),
           model.names=FALSE,
@@ -969,38 +995,19 @@ stargazer(noig_appearance, noig_appearance_gap, noig_anyviol_ch4, noig_anyviol_c
 ```
 \doublespace
 
-Table \@ref(tab:ch4regression3) contains a couple of interesting findings. Note that the coefficients for trust in the military and the prestige gap are both positive and statistically significant in models 1 and 2, when the dependent variable is the log of the odds that a military figure prominently appears in a campaign advertisement. However, the coefficient for trust in the military seems to retain moderately greater staying power than the coefficient for the prestige gap. For example, where the dependent variable is the log of the odds of a military figure undertaking any violation (models 3-4), the coefficient for trust in the military is positive and statistically significant (model 3) and the coefficient for the prestige gap is not (model 4). The same is true when the dependent variable is the log of the odds that a military figure endorses a political candidate in a campaign advertisement (models 5-6). 
+Table \@ref(tab:ch4regression3) contains a couple of interesting findings. Note that the coefficient for trust in the military remains positive and statistically significant for whether a military figure appears in a prominent way (model 1) or commits any violation (model 3), but is now positive and statistically strong when the dependent variable indicates a military figure endorsing a political candidate (model 5). However, the coefficient for trust in the military is not statistically significant when the dependent variable is the log of the odds that a military figure attacks a political candidate (model 7). This is a change from the previous set of regression models, which analyzed all advertisements and not just those produced strictly by political parties and/or candidates.  
 
-However, neither the coefficient for trust in the military nor the prestige gap is positive or statistically significant once the dependent variable becomes attack (models 7-8) or non-interference (not shown). Additionally, the coefficient for the prestige gap switches directionality across the models in several places.  
+In this set of models, the prestige gap seems to become entirely unimportant in that the coefficient for the prestige gap is statistically insignificant in all model specifications and changes sign in two of the four models in which it is used. There is some very mild evidence to suggest that civilian leaders in these models respond to growing polarization by choosing to feature military actors in campaign advertisements and to employ these actors in ways that violate the principles of civil-military relations, but this evidence is inconsistent. Indeed, the coefficient for polarization is statistically significant and positive in three of the nine models used, and in none of the models in which the dependent variable is a specific violation of the principles of civil-military relations. This suggests that the main driver of the choice by parties and candidates to employ military figures in the ads that they produce is not the level of polarization itself. 
 
-These results provide some evidence, then, that civilian candidates and political parties are in fact sensitive to the level of trust society places in the military, but only insofar as candidates appear and endorse other political candidates. Parties and candidates, the results seem to suggest, react more to the raw level of trust society places in the military rather than to a relative level compared with other civilian institutions. 
+However, the a candidate's veteran status again appears to matter significantly. The coefficient for candidate-veteran is positive and statistically significant in seven of nine models, including in models which cover two of the three specific instances of behaviors that violate the principles of civil-military relations (endorse and attack; see models 5, 6, and 8). Additionally, the coefficient for Party-GOP remains negative and statistically significant across eight of the nine model specifications, suggesting that GOP parties and candidates are less likely than Democrats to employ military figures in campaign ads in ways that violate the principles of civil-military relations. 
+
+In short, Table \@ref(tab:ch4regression3) shoes results which are only slightly rather than significantly different from the results displayed in Table \@ref(tab:ch4regression2). 
 
 ### Interest Groups (Including Military-Affiliated Interest Groups)
 
-I conduct a final set of logistic regressions on only those advertisements sponsored by interest groups, which would include those produced by veteran specific interest groups. I conduct this analysis to determine whether these actors, which would include those who could reasonably be considered to be closer to a military rather than civilian actor, respond differently than the truly civilian entities of parties and candidates previously examined. I include the very same set of controls as in the preceding set of regression models. The results are displayed in Table \@ref(tab:ch4regression4).
+I conduct a final set of logistic regressions on only those advertisements sponsored by interest groups, which would include those ads produced by veteran specific interest groups. I conduct this analysis to determine whether these actors, which could reasonably be considered to more approximate a military rather than civilian actor, respond differently than the truly civilian entities of parties and candidates previously examined.^[Further research is required to determine if this is in fact the case.]I include the very same set of controls as in the preceding set of regression models. The results are displayed in Table \@ref(tab:ch4regression4).
 
 ```{r int-groups-only, include=FALSE, echo=FALSE, warning=FALSE}
-
-## First prep the data. Create a df consisting only of ads
-## created by interest groups. 
-
-igs_violations_wrap_ols <- igs_violations_wrap %>% select(house_polar:prestige_gap, violations_rate, prop_ads_violating) %>% distinct() %>% view()
-
-## OLS Model 1: DV is prop_ads_violating
-
-ig_ols_prop_violating <- lm(prop_ads_violating ~ mil_prestige + house_polar + HostCasRateLagged, data=igs_violations_wrap_ols)
-summary(ig_ols_prop_violating)
-
-ig_ols_prop_violating_gap <- lm(prop_ads_violating ~ prestige_gap + sen_polar + HostCasRateLagged, data=igs_violations_wrap_ols)
-summary(ig_ols_prop_violating_gap)
-
-## OLS Model 2: DV is violation rate
-
-ig_ols_violations_rate <- lm(violations_rate ~ mil_prestige + sen_polar + HostCasRateLagged, data=igs_violations_wrap_ols)
-summary(ig_ols_violations_rate)
-
-ig_ols_violations_rate_gap <- lm(violations_rate ~ prestige_gap + house_polar + HostCasRateLagged, data=igs_violations_wrap_ols)
-summary(ig_ols_violations_rate_gap)
 
 ## No Macro Level Statistical Significance for OLS models
 
@@ -1079,8 +1086,8 @@ summary(ig_int_ch4_sen)
 
 
 \singlespace
-```{r reg-results-set4, include=F, echo=FALSE, results="asis", warning=FALSE, message=FALSE}
-stargazer(ig_appearance, ig_appearance_gap, ig_anyviol_ch4, ig_anyviol_ch4_gap, ig_endorse_ch4, ig_endorse_ch4_gap, ig_atk_ch4, ig_atk_ch4_gap,
+```{r reg-results-set4, include=T, echo=FALSE, results="asis", warning=FALSE, message=FALSE}
+stargazer(ig_appearance, ig_appearance_gap, ig_anyviol_ch4, ig_anyviol_ch4_gap, ig_endorse_ch4, ig_endorse_ch4_gap, ig_atk_ch4, ig_atk_ch4_gap, ig_int_ch4,
           type="latex",
           label="tab:ch4regression4",
           title="Log Odds of a Presidential Campaign TV Ad Sponsored by Interest Groups Featuring Prominent Military Actors Engaging in Political Behaviors", 
@@ -1099,9 +1106,9 @@ stargazer(ig_appearance, ig_appearance_gap, ig_anyviol_ch4, ig_anyviol_ch4_gap, 
 ```
 \doublespace
 
-Table \@ref(tab:ch4regression4) shows a couple of brief but interesting findings. The most important is that the prestige gap does not appear to impact interest groups in any meaningful way. The level of trust in the military also does not appear to have significant importance. The coefficient for trust in the military is positive and statistically significant in models 1 and 7, but negative in model 5 and statistically insignificant in both models 3 and 5. 
+Table \@ref(tab:ch4regression4) shows a couple of brief but somewhat interesting findings. The prestige gap does not appear to impact interest groups in any meaningful way. The level of trust in the military, on the other hand, does appear to be important, but it is not conclusive how or why it is important. The coefficient for trust in the military is positive and statistically significant in models 1 and 7, which denote prominently appearing and attacking candidates, respectively, but negative in model 5 and statistically insignificant in both models 3 and 5. 
 
-Additionally, in this particular set of regression models, the coefficient for candidate-veteran is positive and statistically significant only in models 7 and 8, suggesting that interest groups are particularly prone to feature military figures who attack candidates when the candidate is a veteran. Additionally, the coefficient for Party-GOP is strong and statistically significant only in models 3 and 4 here, whereas the same coefficient was negative and statistically significant across all model specifications in the previous set of regressions when we examined advertisements produced by candidates and political parties only. This difference suggests that the distinction between how interest groups affiliated with the two major parties employ military figures to engage in behaviors that violate the principles of civil-military relations is less pronounced than civilian candidates and political parties, strictly speaking. In other words, to the extent that the interest group population in the data is dominated by veteran affiliated interest groups (a statement we cannot make conclusively given how the data is coded; we can only infer), it appears that veteran affiliated interest groups are less likely to be marked by any distinction between those that endorse or attack political candidates while supporting Republican versus Democrat candidates. In other words, veteran affiliated interest groups appear to be less distinct in the party affiliation of whom they endorse or criticize.
+Additionally, in this particular set of regression models, the coefficient for candidate-veteran is positive and statistically significant only in models 7 and 8, suggesting that interest groups are particularly prone to feature military figures who attack candidates when the candidate is a veteran. Additionally, the coefficient for Party-GOP is strong and statistically significant only in models 3 and 4 here, whereas the same coefficient was negative and statistically significant across all bot one of the model specifications in the previous two sets of regressions. This difference suggests that the distinction between how interest groups affiliated with the two major parties employ military figures to engage in behaviors that violate the principles of civil-military relations is less pronounced than civilian candidates and political parties, strictly speaking.^[To the extent that the interest group population in the data is dominated by veteran affiliated interest groups (a statement we cannot make conclusively given how the data is coded for interest groups), it appears, then, that veteran affiliated interest groups are less likely to be marked by party distinctions. In other words, veteran affiliated interest groups appear to be less distinct in the party affiliation of whom they endorse or criticize.]
 
 ## Predicted Probability
 
@@ -1262,49 +1269,32 @@ Furthermore, the significant size of the standard error intervals, especially at
 
 ## Summary of Statistical Results
 
-Overall, there is moderate evidence based on the descriptive data, the regression analysis, and an examination of predicted probabilities to suggest that the level of military prestige shapes the way in which civilian candidates employ military figures in campaign ads. This was especially true, the regression analysis indicated, as it pertains to the likelihood that individual advertisements will harness military figures to appear in the first place, and to engage either in an endorsement or an attack of a political candidate when these military figures appear.
+Overall, this chapter has shown moderate evidence to suggest that the level of military prestige shapes the way in which civilian actors employ military figures in campaign ads. This evidence was strongest based on the regression results of Table \@ref(tab:ch4regression2) and Table \@ref(tab:ch4regression3). Whether we examine all presidential campaign ads or even only those sponsored strictly by political candidates or parties, the statistical analysis showed that as the level of military prestige rises, there is an increased likelihood that campaign ads will feature military actors who appear in prominent ways and engage in behaviors that violate the principles of civil-military relations when they do appear. The statistical results further narrowed the  violations that military actors will engage in presidential advertisements either to attacks (when we consider all advertisements as shown in Table \@ref(tab:ch4regression2)) or endorsements (when we consider only those ads sponsored by candidates and parties as shown in Table \@ref(tab:ch4regression4)). 
 
-However, the statistical results were nonetheless fuzzy in many places. The OLS regression models, for instance, showed no evidence that broad trends in either the military's prestige nor its relative prestige shape the overall proportion of ads that violate the principles of civil-military relations nor the overall violation rate of advertisements in a given election cycle. This could be driven by the fact that only five elections overall were examined in this analysis, despite the fact that these five elections encompassed more than 3600 individual advertisements. 
+However, the statistical results remain nonetheless fuzzy in many places. The OLS regression models, for instance, showed no evidence that broad trends in either the military's raw level of prestige nor the level of relative military prestige shape the overall proportion of ads that violate the principles of civil-military relations,  nor the overall violation rate of advertisements in a given election cycle. This is likely the result of the fact that only five total elections were examined in this analysis. 
+
+The results also showed that military prestige is not the only variable that shapes the ways in which military figures behave while featured in presidential campaign advertisements. The statistical analysis demonstrated that the veteran status of candidates portrayed in advertisements matters a great deal, as does whether the advertisement supports Democratic versus Republican candidates. This is likely, but not definitively, the case insofar as it is consistent with an explanation that is rooted in the "issue ownership" literature [@petrocik_issue_2003]. Over the period examined in this chapter especially, Republican candidates were perceived to be stronger on defense and national security issues than Democrats.^[According to recent Gallup polling from October 2021, 54% of surveyed Americans currently believe that the Republican Party "will do a better job of protecting the country from international terrorism and military threats," compared to 39% who believe the Democratic Party will. Since 2002, Republicans have always led Democrats on this question, with the exception of 2007, when Democrats enjoyed a 5% lead, and 2012, when the parties were tied. See @jones_gop_2021 for more details.]
 
 ## Alternate Explanations
 
-Before concluding, it is worth briefly thinking about alternate explanations that could be responsible for driving the variation in partisan acts committed by military figures who appear prominently in campaign advertisements. 
+Before concluding, it is worth briefly thinking about alternate explanations that could be responsible for driving the variation in political behaviors that challenge civil-military relations principles committed by military figures who appear prominently in campaign advertisements. 
 
-In my view, the most compelling alternate explanation is not necessarily an altogether alternate explanation, but rather a more precise definition of the components that shape military prestige. I noted in chapter two that military prestige is a comprehensive and multi-faceted concept, and likely shaped by several components, to include the degree that the military is esteemed by the public. But esteem is likewise shaped by subcomponents, including including the degree of felt separation between those who serve and those who do not (one of "the gaps" between the military and the public), and the perceived performance of the military in recent events, such as wars [@feaver_soldiers_2001;@schake_warriors_2016]. The point in revisiting the composition of what makes up the concept of military prestige is simply to argue that it is _possible_ that one or more of these subcomponents - institutional influence, societal esteem, and/or performance in recent wars or conflicts - is more responsible for shaping variation in the dependent variables examined in this chapter more than the other subcomponents. 
+In my view, the most compelling alternate explanation is not necessarily an altogether alternate explanation, but rather a more precise definition of the components that shape military prestige. I noted in chapter two that military prestige is a comprehensive and multi-faceted concept, and likely shaped by several components, to include the degree to which the military is esteemed by the public. But esteem is likewise shaped by multiple subcomponents, including the degree of felt separation between those who serve and those who do not (one of "the gaps" between the military and the public), and the perceived performance of the military in recent events, such as wars [@feaver_soldiers_2001;@schake_warriors_2016]. The point in revisiting the composition of military prestige is simply to argue that it is _possible_ that one or more of these subcomponents - institutional influence, societal esteem, and/or performance in recent wars or conflicts - is more responsible for shaping variation in the level of military prestige than others. 
 
-However, it is difficult, if not impossible, to disentangle some of these subcomponents of military prestige, or at least to do so reliably. For example, did the United States lose in Iraq and in Afghanistan? The answer to this question is not crystal clear, and even if it were, the perceived answer to this question might very well have been different if we had asked the same question at the height of these conflicts, say in 2004 or in 2008.^[Future scholarship, with the benefit of hindsight and the passage of time, may render more definitively whether such wars ought to be coded dichotomously, but applying such a measurement scheme to these wars, in this chapter, would be irresponsible, in my view.] 
+However, it is difficult, if not impossible, to disentangle some of these subcomponents of military prestige, or at least to do so reliably. For example, did the United States lose in Iraq and in Afghanistan, two conflicts that occurred nearly across the entire time range of the data examined in this chapter? The answer to this question is not clear, and even if it were, the perceived answer to this question might very well have been different if we had asked the same question at the height of these conflicts, say in 2004 or in 2008.^[Future scholarship, with the benefit of hindsight and the passage of time, may render more definitively whether such wars ought to be coded dichotomously, but applying such a measurement scheme to these wars, in this chapter, would be irresponsible, in my view.] 
 
-It could also be that civilian candidates and their campaign teams have simply increasingly adopted the behavior of using the military - images, symbols, and military figures - in campaign ads. But this too is a difficult explanation to definitively prove. Even if the norms are changing, so is the level of military prestige, and thus, it remains hard to disentangle the impact of changing norms and changing levels of military prestige. Future research should also examine the ways in which veteran affiliated interest groups influence (or not) political parties and civilian candidates. This chapter did not find any significant differences between the two entities, but the way that interest groups were coded in the data prevented a precise analysis. An important question remains the degree to which civilian candidates and political parties feed into veteran groups who are willing to engage in overtly partisan behaviors. When this occurs, as was the case during the 2004 Election, civilian candidates may have plausible deniability in that they can state that these veteran affiliated interest groups are the actors who are violating civil-military relations rather than the candidates or the parties, but a full accounting of what occurs behind the scenes may shed light on the ways in which this groups, to the degree that they do, interact.  
+It could also be that civilian candidates and their campaign teams have simply increasingly adopted the behavior of using the military - images, symbols, and military figures - in campaign ads. But this too is a difficult explanation to prove. Even if norms regarding the use of military symbols and military figures in ads altogether are changing, so is the level of military prestige, and thus, it remains hard to disentangle the impact of simultaneously changing norms and changing levels of military prestige. 
 
-# Conclusion
+Future research should also examine the ways in which veteran affiliated interest groups influence (or do not) political parties and civilian candidates. This chapter did not find any significant differences between the two entities, but the way that interest groups are coded in the data prevented a precise analysis of the types of interest groups. Furthermore, another important but difficult question then becomes not just whether, but how these entities interact. For example, do parties and candidates feed off of, or "follow" the lead of veteran affiliated groups, as reportedly was the case during the 2004 Election and the Swiftboat Veterans for Truth, or do parties and civilian candidates spur these groups to initiate certain activities in the first place? Obtaining a clear answer may not be possible, but if such an answer exists, such an answer would better inform our understanding of which actor - civilian or military - is responsible for initiating what might be considered the first steps of behaviors that violate the principles of civil-military relations.   
 
-Write your conclusion here, and then conclude. 
+# Conclusion and Way Forward
 
-## Data Acknowledgement and Disclaimers 
+This chapter found moderate support for H3, which stated that civilian actors increasingly violate the central principles of civil-military relations when military prestige is high relative to periods of low military prestige. The previous chapter, which examined opinion commentary authored by retired military officers, found moderate support for H2, which stated that military actors increasingly violate the central principles of civil-military relations when polarization is high relative to periods of low polarization. 
 
-## 2000
+This chapter, as well as the preceding chapter, arrived at these results by conducting large-N analyses in which the dependent variable in each chapter consists of one type of a political behavior that is primarily engaged in by one type of actor. Furthermore, these results are important because they establish a connection between each type of actor, military and civilian, and a particular form of political behavior that each engages in involving the military: broadly speaking, increasing levels of polarization drives military actors to author opinion commentary in ways that violate the principles of civil-military relations, and increasing levels of military prestige drives civilian actors to use military figures in ways during campaign ads that violate the principles of civil-military relations. 
 
-The data were obtained from a joint project of the Brennan Center for Justice at New York University School of Law and Professor Kenneth Goldstein of the University of Wisconsin-Madison, and includes media tracking data from the Campaign Media Analysis Group in Washington, D.C. The Brennan Center-Wisconsin project was sponsored by a grant from The Pew Charitable Trusts. The opinions expressed in this article are those of the author(s) and do not necessarily reflect the views of the Brennan Center, Professor Goldstein, or The Pew Charitable Trusts.
+Still, there is much of the theory offered in chapter two that remains unknown. In particular, the results have not clearly indicated whether and to what degree military actors are also sensitive to changes in the level of military prestige, as the theory predicts they are. Additionally, because the previous chapters explored only one type of political behavior in depth, conclusions could not be reached about the other types of political behavior that each actor can engage in at the same time, or the broad characteristics of the political behaviors that shape the civil-military relationship in a particular era. 
 
-## 2004
-
-The data were obtained from a project of the University of Wisconsin Advertising Project includes media tracking data from TNSMI/Campaign Media Analysis Group in Washington, D.C. The University of Wisconsin Advertising Project was sponsored by a grant from The Pew Charitable Trusts. The opinions expressed in this article are those of the author(s) and do not necessarily reflect the views of the University of Wisconsin Advertising Project or The Pew Charitable Trusts.
-
-## 2008
-
-The data were obtained from a project of the University of Wisconsin Advertising Project includes media tracking data from TNSMI/Campaign Media Analysis Group in Washington, D.C. The opinions expressed in this article are those of the author(s) and do not necessarily reflect the views of the University of Wisconsin Advertising Project.
-
-## 2012
-
-The data were obtained from the Wesleyan Media Project, a collaboration between Wesleyan University, Bowdoin College, and Washington State University, and includes media tracking data from Kantar/Campaign Media Analysis Group in Washington, D.C. The Wesleyan Media Project was sponsored in 2012 by grants from The John S. and James L. Knight Foundation and The John D. and Catherine T. MacArthur Foundation. The opinions expressed in this article are those of the author(s) and do not necessarily reflect the views of the Wesleyan Media Project, Knight Foundation, MacArthur Foundation or any of its affiliates.
-
-## 2016
-
-The data were obtained from the Wesleyan Media Project, a collaboration between Wesleyan University, Bowdoin College, and Washington State University, and includes media tracking data from Kantar/Campaign Media Analysis Group in Washington, D.C. The Wesleyan Media Project was sponsored in 2016 by a grant from The John S. and James L. Knight Foundation. The opinions expressed in this article are those of the author(s) and do not necessarily reflect the views of the Wesleyan Media Project, Knight Foundation, or any of its affiliates.
-
-## Other Acknowledgements
-
-All regression tables used in chapter three were produced with the help of the Stargazer package, designed by Marek Hlavac [@hlavac_stargazer_2018].
+The dissertation now moves to examine two different historical periods. Each of these case studies will focus on the tenor, tone, and characteristics of the political behaviors that occur in a particular time period rather than on one particular form of behavior. This methodological shift into eras other than those which have been examined here will help establish the overall patterns of political behaviors that occur in a given period of time, which then enable the researcher to employ process tracing to determine why these patterns have occurred. This is particularly important because, as the US experience proves and as this dissertation has noted, the levels of polarization and military prestige vary over time. 
 
 \pagebreak
-\singlespace

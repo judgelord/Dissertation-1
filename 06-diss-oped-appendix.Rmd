@@ -3,8 +3,6 @@
 
 # Appendix to Chapter Three 
 
-\doublespace
-
 This chapter Appendix roughly aligns with the chronological order of the chapter.   
 
 ## Word and Data-Base Searches to Obtain Data

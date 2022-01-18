@@ -128,7 +128,7 @@ df_trust_polar_ch4 <- df_trust_polar_ch4 %>%
     ) %>% pivot_longer(Congress:Rel_Mil_Pres, names_to = "value", values_to = "Score") %>% distinct() %>% view()
 ```
 
-```{r trust-ch4, include=T, warning=FALSE, fig.height=4, fig.width=6, fig.cap = "Public Trust (L) and Polarization (R), 1980-2021" }
+```{r trust-ch4, include=T, warning=FALSE, message=F, fig.height=4, fig.width=6, fig.cap = "Public Trust (L) and Polarization (R), 1980-2021" }
 df_trust_polar_ch4 %>% ggplot(aes(x=Year, y=Score, color=value)) + geom_smooth(se=FALSE) + labs(x="Year", y="Trust in Institutions") + scale_color_discrete(name="Trust;\nPolarization",
                          breaks=c("Congress", "Military",  "Rel_Mil_Pres", "house_polar_dim1", "sen_polar_dim1"),
                          labels=c("Congress", "Military","Relative\nPrestige", "House\nPolarization", "Senate\nPolarization")) + scale_y_continuous(sec.axis = sec_axis(~., name = "Polarization (Scaled)")) + theme(legend.position="bottom") + guides(color = guide_legend(ncol=3,nrow=2,byrow=TRUE))
@@ -172,7 +172,7 @@ In the statistical analysis portion of this chapter, I also rely on data coverin
 
 As a proxy for military prestige, I rely on Gallup public opinion data that captures the level of trust that Americans have placed in the military and a variety of other institutions over the past several decades [@noauthor_confidence_2020]. Finally, I use a variety of open source data sources from the Department of Defense regarding US military casualties to measure levels of hostile casualties sustained by US military forces over the past several decades.^[These sources include @department_of_defense_dcas_2011; @department_of_defense_dcas_2021; @department_of_defense_dcas_2021-1; @department_of_defense_dcas_2021-2; @department_of_defense_dcas_2021-3; @department_of_defense_dcas_2021-4; @department_of_defense_dcas_2021-5; @department_of_defense_dmdc_2021.]  
 
-After gathering the data, I implement an empirical strategy that at its root, looks to answer two major questions. The first question, does this particular advertisement have any type of military image or symbol featured in the advertisement? At a minimum, answering this first question will help paint a picture regarding how frequently military imagery generally appears in campaign advertisements. The second question I seek to answer is whether a particular advertisement features the military in some way that violates the principles of civil-military relations. Answering these two main questions and presenting the results in a meaningful way is the aim of th next section of this chapter. 
+After gathering the data, I implement an empirical strategy that at its root, looks to answer two major questions. The first question, does this particular advertisement have any type of military image or symbol featured in the advertisement? At a minimum, answering this first question will help paint a picture regarding how frequently military imagery generally appears in campaign advertisements. The second question I seek to answer is whether a particular advertisement features the military in some way that violates the principles of civil-military relations. Answering these two main questions and presenting the results in a meaningful way is the aim of the next section of this chapter. 
 
 # Analysis
 
@@ -481,7 +481,7 @@ Yet there is another way to gauge how civilian candidates choose to leverage the
 
 Figure \@ref(fig:non-def-theme-imagery) shows the proportion of advertisements in each election cycle that do not primarily address defense, veterans, or national security topics but include military imagery anyways. The smoothing line in blue clearly depicts an upward trend over time, suggesting that civilian candidates and their campaign teams have increasingly valued portraying the military in some way to the public, even in ads that do not directly address defense, veterans, or other national security topics. This trend seems to suggest that over time, civilian political candidates increasingly want the viewer to know that the military, in some way, has not been forgotten. 
 
-```{r non-def-theme-imagery, include=T, echo=FALSE, warning=FALSE, fig.height=4, fig.width=6, fig.cap="Military Imagery in non-Defense or non-Veteran Related Presidential Campaign Advertisements, 2000-1016"}
+```{r non-def-theme-imagery, include=T, echo=FALSE, warning=FALSE, message=F, fig.height=4, fig.width=6, fig.cap="Military Imagery in non-Defense or non-Veteran Related Presidential Campaign Advertisements, 2000-1016"}
 
 facet_wrap_nondef <- adj_df %>% select(year, Yrcount, sum_def_vet_ad_theme, sum_def_theme_and_mil_img, sum_not_def_theme_but_mil_img) %>% mutate(
   prop_not_def_but_mil_img = sum_not_def_theme_but_mil_img/Yrcount
@@ -727,12 +727,12 @@ Our understanding of the picture is now much more clear: military-affiliated int
 
 # prep the data 
 
-reg_df <- violations_wrap %>%view()
+reg_df_ch4 <- violations_wrap %>%view()
 
 # also, use mutate function to include several control 
 # variables to the data frame.  
 
-reg_df <- reg_df %>% mutate(
+reg_df_ch4 <- reg_df_ch4 %>% mutate(
   can_vet = replace(can_vet, can_vet != 1, 0),
   partisan_act=case_when(
     vet_fam_end ==1 | vet_fam_atk ==1 | vet_fam_out_issues ==1 ~ 1, 
@@ -748,28 +748,28 @@ The next several pages reveal the results of a detailed regression analysis. The
 ## create an OLS data frame. Select only the proportions I am interested in 
 ## as my DV and drop any other variables I do not need. 
 
-reg_df_ols <- reg_df %>% select(house_polar:prestige_gap, violations_rate, prop_ads_violating) %>% distinct() %>% view()
+reg_df_ch4_ols <- reg_df_ch4 %>% select(house_polar:prestige_gap, violations_rate, prop_ads_violating) %>% distinct() %>% view()
 
 ## OLS Model 1: DV is prop_ads_violating
 
-mod_ols_prop_violating <- lm(prop_ads_violating ~ mil_prestige + house_polar + HostCasRateLagged, data=reg_df_ols)
+mod_ols_prop_violating <- lm(prop_ads_violating ~ mil_prestige + house_polar + HostCasRateLagged, data=reg_df_ch4_ols)
 summary(mod_ols_prop_violating)
 
-mod_ols_prop_violating_sen <- lm(prop_ads_violating ~ mil_prestige + sen_polar + HostCasRateLagged, data=reg_df_ols)
+mod_ols_prop_violating_sen <- lm(prop_ads_violating ~ mil_prestige + sen_polar + HostCasRateLagged, data=reg_df_ch4_ols)
 summary(mod_ols_prop_violating_sen)
 
-mod_ols_prop_violating_aff <- lm(prop_ads_violating ~ mil_prestige + aff_polar + HostCasRateLagged, data=reg_df_ols)
+mod_ols_prop_violating_aff <- lm(prop_ads_violating ~ mil_prestige + aff_polar + HostCasRateLagged, data=reg_df_ch4_ols)
 summary(mod_ols_prop_violating_aff)
 
 ## OLS Model 2: DV is violation rate
 
-mod_ols_violations_rate <- lm(violations_rate ~ mil_prestige + house_polar + HostCasRateLagged, data=reg_df_ols)
+mod_ols_violations_rate <- lm(violations_rate ~ mil_prestige + house_polar + HostCasRateLagged, data=reg_df_ch4_ols)
 summary(mod_ols_violations_rate)
 
-mod_ols_violations_rate_sen <- lm(violations_rate ~ mil_prestige + sen_polar + HostCasRateLagged, data=reg_df_ols)
+mod_ols_violations_rate_sen <- lm(violations_rate ~ mil_prestige + sen_polar + HostCasRateLagged, data=reg_df_ch4_ols)
 summary(mod_ols_violations_rate_sen)
 
-mod_ols_violations_rate_aff <- lm(violations_rate ~ mil_prestige + aff_polar + HostCasRateLagged, data=reg_df_ols)
+mod_ols_violations_rate_aff <- lm(violations_rate ~ mil_prestige + aff_polar + HostCasRateLagged, data=reg_df_ch4_ols)
 summary(mod_ols_violations_rate_aff)
 ```
 
@@ -815,19 +815,19 @@ I also include a control for the party of the political candidate supported in t
 
 mod_appearance <- glm(appearance ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(mod_appearance)
 
 mod_appearance_sen <- glm(appearance ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(mod_appearance_sen)
 
 mod_appearance_04 <- glm(appearance ~ mil_prestige + aff_polar + HostCasRateLagged + dummy_04, 
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(mod_appearance_04)
 
@@ -835,20 +835,20 @@ summary(mod_appearance_04)
 
 mod_anyviol_ch4 <- glm(partisan_act ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(mod_anyviol_ch4)
 
 mod_anyviol_ch4_house <- glm(partisan_act ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(mod_anyviol_ch4_house)
 
 
 mod_anyviol_ch4_04 <- glm(partisan_act ~ mil_prestige + aff_polar + HostCasRateLagged + dummy_04, 
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(mod_anyviol_ch4_04)
 
@@ -857,19 +857,19 @@ summary(mod_anyviol_ch4_04)
 
 mod_endorse_ch4 <- glm(vet_fam_end ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(mod_endorse_ch4)
 
 mod_endorse_ch4_sen <- glm(vet_fam_end ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(mod_endorse_ch4_sen)
 
 mod_endorse_ch4_04 <- glm(vet_fam_end ~ mil_prestige + sen_polar + HostCasRateLagged + dummy_04, 
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(mod_endorse_ch4_04)
 
@@ -878,19 +878,19 @@ summary(mod_endorse_ch4_04)
 
 mod_atk_ch4 <- glm(vet_fam_atk ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(mod_atk_ch4)
 
 mod_atk_ch4_sen <- glm(vet_fam_atk ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(mod_atk_ch4_sen)
 
 mod_atk_ch4_04 <- glm(vet_fam_atk ~ mil_prestige + house_polar + HostCasRateLagged + dummy_04, 
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(mod_atk_ch4_04)
 
@@ -899,19 +899,19 @@ summary(mod_atk_ch4_04)
 
 mod_int_ch4 <- glm(vet_fam_out_issues ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(mod_int_ch4)
 
 mod_int_ch4_sen <- glm(vet_fam_out_issues ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(mod_atk_ch4_sen)
 
 mod_int_ch4_04 <- glm(vet_fam_out_issues ~ mil_prestige + sen_polar + HostCasRateLagged + dummy_04, 
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(mod_int_ch4_04)
 
@@ -982,58 +982,58 @@ summary(no_ig_ols_violations_rate_gap)
 
 ## Now prep advertisement-level data
 
-no_ig_reg_df <- reg_df %>% filter(sponsor!=4) %>% view()
+no_ig_reg_df_ch4 <- reg_df_ch4 %>% filter(sponsor!=4) %>% view()
 
 # Logistic Regression Model: DV is Prominent Appearance
 noig_appearance <- glm(appearance ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=no_ig_reg_df
+    data=no_ig_reg_df_ch4
     )
 summary(noig_appearance)
 
 noig_appearance_gap <- glm(appearance ~ prestige_gap + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=no_ig_reg_df
+    data=no_ig_reg_df_ch4
     )
 summary(noig_appearance_gap)
 
 # Logistic Regression Model: DV is Any Violation
 noig_anyviol_ch4 <- glm(partisan_act ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=no_ig_reg_df
+    data=no_ig_reg_df_ch4
     )
 summary(noig_anyviol_ch4)
 
 noig_anyviol_ch4_gap <- glm(partisan_act ~ prestige_gap + sen_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=no_ig_reg_df
+    data=no_ig_reg_df_ch4
     )
 summary(noig_anyviol_ch4_gap)
 
 # Logistic Regression Model: DV is Endorsement
 noig_endorse_ch4 <- glm(vet_fam_end ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=no_ig_reg_df
+    data=no_ig_reg_df_ch4
     )
 summary(noig_endorse_ch4)
 
 
 noig_endorse_ch4_gap <- glm(vet_fam_end ~ prestige_gap + house_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=no_ig_reg_df
+    data=no_ig_reg_df_ch4
     )
 summary(noig_endorse_ch4_gap)
 
 # Logistic Regression Model: DV is attack
 noig_atk_ch4 <- glm(vet_fam_atk ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=no_ig_reg_df
+    data=no_ig_reg_df_ch4
     )
 summary(noig_atk_ch4)
 
 noig_atk_ch4_gap <- glm(vet_fam_atk ~ prestige_gap + sen_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=no_ig_reg_df
+    data=no_ig_reg_df_ch4
     )
 summary(noig_atk_ch4_gap)
 
@@ -1041,13 +1041,13 @@ summary(noig_atk_ch4_gap)
 # Logistic Regression Model 7: DV is non-int
 noig_int_ch4 <- glm(vet_fam_out_issues ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=no_ig_reg_df
+    data=no_ig_reg_df_ch4
     )
 summary(noig_int_ch4)
 
 noig_int_ch4_sen <- glm(vet_fam_out_issues ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=no_ig_reg_df
+    data=no_ig_reg_df_ch4
     )
 summary(noig_int_ch4_sen)
 
@@ -1113,58 +1113,58 @@ summary(ig_ols_violations_rate_gap)
 
 ## Now prep advertisement-level data
 
-ig_reg_df <- reg_df %>% filter(sponsor==4) %>% view()
+ig_reg_df_ch4 <- reg_df_ch4 %>% filter(sponsor==4) %>% view()
 
 # Logistic Regression Model: DV is Prominent Appearance
 ig_appearance <- glm(appearance ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=ig_reg_df
+    data=ig_reg_df_ch4
     )
 summary(ig_appearance)
 
 ig_appearance_gap <- glm(appearance ~ prestige_gap + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=ig_reg_df
+    data=ig_reg_df_ch4
     )
 summary(ig_appearance_gap)
 
 # Logistic Regression Model: DV is Any Violation
 ig_anyviol_ch4 <- glm(partisan_act ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=ig_reg_df
+    data=ig_reg_df_ch4
     )
 summary(ig_anyviol_ch4)
 
 ig_anyviol_ch4_gap <- glm(partisan_act ~ prestige_gap + sen_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=ig_reg_df
+    data=ig_reg_df_ch4
     )
 summary(ig_anyviol_ch4_gap)
 
 # Logistic Regression Model: DV is Endorsement
 ig_endorse_ch4 <- glm(vet_fam_end ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=ig_reg_df
+    data=ig_reg_df_ch4
     )
 summary(ig_endorse_ch4)
 
 
 ig_endorse_ch4_gap <- glm(vet_fam_end ~ prestige_gap + house_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=ig_reg_df
+    data=ig_reg_df_ch4
     )
 summary(ig_endorse_ch4_gap)
 
 # Logistic Regression Model: DV is attack
 ig_atk_ch4 <- glm(vet_fam_atk ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg, 
     family=binomial(link="logit"),
-    data=ig_reg_df
+    data=ig_reg_df_ch4
     )
 summary(ig_atk_ch4)
 
 ig_atk_ch4_gap <- glm(vet_fam_atk ~ prestige_gap + sen_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=ig_reg_df
+    data=ig_reg_df_ch4
     )
 summary(ig_atk_ch4_gap)
 
@@ -1172,13 +1172,13 @@ summary(ig_atk_ch4_gap)
 # Logistic Regression Model 7: DV is non-int
 ig_int_ch4 <- glm(vet_fam_out_issues ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=ig_reg_df
+    data=ig_reg_df_ch4
     )
 summary(ig_int_ch4)
 
 ig_int_ch4_sen <- glm(vet_fam_out_issues ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg,
     family=binomial(link="logit"),
-    data=ig_reg_df
+    data=ig_reg_df_ch4
     )
 summary(ig_int_ch4_sen)
 
@@ -1225,23 +1225,23 @@ In order to gauge the substantive importance of the level of trust in the milita
 
 ch4_pp_sen_anyviol <- glm(partisan_act ~ mil_prestige + sen_polar + HostCasRateLagged + can_vet + party_reg_numeric, 
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(ch4_pp_sen_anyviol)
 
 ch4_pp_house_anyviol <- glm(partisan_act ~ mil_prestige + house_polar + HostCasRateLagged + can_vet + party_reg_numeric,
     family=binomial(link="logit"),
-    data=reg_df
+    data=reg_df_ch4
     )
 summary(ch4_pp_house_anyviol)
 
 # using senate polar and party = GOP
-pp_data_ch4_sen <- tibble(mil_prestige=seq(55, 85, by=1), sen_polar = mean(reg_df$sen_polar), HostCasRateLagged=mean(reg_df$HostCasRateLagged), party_reg_numeric=0, can_vet=0) %>% crossing(partisan_act = c(0,1)) %>% view()
+pp_data_ch4_sen <- tibble(mil_prestige=seq(55, 85, by=1), sen_polar = mean(reg_df_ch4$sen_polar), HostCasRateLagged=mean(reg_df_ch4$HostCasRateLagged), party_reg_numeric=0, can_vet=0) %>% crossing(partisan_act = c(0,1)) %>% view()
 
 augment(ch4_pp_sen_anyviol, newdata = pp_data_ch4_sen, se_fit=TRUE)
 
 # using house polar and party = DEM/Other
-pp_data_ch4_house <- tibble(mil_prestige=seq(55, 85, by=1), house_polar = mean(reg_df$sen_polar), HostCasRateLagged=mean(reg_df$HostCasRateLagged), party_reg_numeric=1, can_vet=1) %>% crossing(partisan_act = c(0,1)) 
+pp_data_ch4_house <- tibble(mil_prestige=seq(55, 85, by=1), house_polar = mean(reg_df_ch4$sen_polar), HostCasRateLagged=mean(reg_df_ch4$HostCasRateLagged), party_reg_numeric=1, can_vet=1) %>% crossing(partisan_act = c(0,1)) 
 
 augment(ch4_pp_house_anyviol, newdata = pp_data_ch4_house, se_fit=TRUE)
 
@@ -1349,12 +1349,12 @@ predictions_ch4_house%>%
     x="Level of Military Prestige",
     y="Predicted Probability", caption="House Polarization Held Constant\nVeteran Candidate(s) Portrayed\nAd Supports Democratic Party") + 
   scale_y_continuous(breaks=seq(-.1, .5, .1)) + 
-  geom_vline(xintercept=85, size=.2, colour="tomato") + 
+  geom_vline(xintercept=85, size=.3, colour="tomato") + 
   geom_vline(xintercept=64, size=.2, colour="dodgerblue") + 
   geom_vline(xintercept=82, size=.2, colour="dodgerblue") +
   geom_vline(xintercept=58, size=.2, colour="tomato") +
   geom_vline(xintercept=69, size=.2, colour="dodgerblue") +
-  geom_text(aes(x=85, label="Feb 1991",y=.2), colour="tomato", angle=90, vjust=1, text=element_text(size=9)) + 
+  geom_text(aes(x=85, label="Feb 1991",y=.3), colour="tomato", angle=90, vjust=1, text=element_text(size=9)) + 
   geom_text(aes(x=64, label="1994",y=.2), colour="dodgerblue", angle=90, vjust=1, text=element_text(size=9)) + 
   geom_text(aes(x=82, label="2003",y=.2), colour="tomato", angle=90, vjust=-.2, text=element_text(size=9)) + 
   geom_text(aes(x=58, label="1975",y=.2), colour="dodgerblue", angle=90, vjust=-.2, text=element_text(size=9))  + 
