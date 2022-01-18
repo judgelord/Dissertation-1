@@ -1,0 +1,103 @@
+\newpage
+
+# Appendix to Chapter Four
+
+This chapter Appendix roughly aligns with the chronological order of the chapter.   
+
+## Endogeneity Checks
+
+In this section of the Appendix, I check for endogeneity, and in particular, the relationship between military prestige and instances of military figures appearing in civilian campaign advertisements who either endorse or attack political candidates, or address a topic that is tangential to or outside of military expertise. 
+
+First, I regress the level of military prestige on either the proportion of each election cycle's advertisements that violate principles of civil-military relations as well as the overall violation rate of each in each election cycle. I also include controls for various measurements of polarization and a measure of the lagged hostile casualty rate, as described in the main chapter. The results of this regression are displayed in Table \@ref(tab:ch4appx1). 
+
+```{r ch4endogtest, include=F, echo=F, message=F, warning=F}
+## regress the level of military prestige
+## on the proportion of ads violating civ mil principles
+## and the violations rate of each cycle's ads
+
+## do this for all ads (data=ch4_endog_ols_house)
+## for no ig's (data=drop_igs_violations_wrap_ols)
+## and only ig's (data=igs_violations_wrap_ols)
+
+# all ads
+ch4_endog_ols_house <- lm(mil_prestige ~ prop_ads_violating + house_polar + HostCasRateLagged, data=reg_df_ch4_ols)
+summary(ch4_endog_ols_house)
+
+ch4_endog_ols_house_rate <- lm(mil_prestige ~ violations_rate + house_polar + HostCasRateLagged, data=reg_df_ch4_ols)
+summary(ch4_endog_ols_house_rate)
+
+# no int groups
+no_ig_ch4_endog_ols_sen <- lm(mil_prestige ~ prop_ads_violating + sen_polar + HostCasRateLagged, data=drop_igs_violations_wrap_ols)
+summary(no_ig_ch4_endog_ols_sen)
+
+no_ig_ch4_endog_ols_sen_rate <- lm(mil_prestige ~ violations_rate + sen_polar + HostCasRateLagged, data=drop_igs_violations_wrap_ols)
+summary(no_ig_ch4_endog_ols_sen_rate)
+
+# only interest groups
+ig_ch4_endog_ols_house <- lm(mil_prestige ~ prop_ads_violating + house_polar + HostCasRateLagged, data=igs_violations_wrap_ols)
+summary(ig_ch4_endog_ols_house)
+
+ig_ch4_endog_ols_house_rate <- lm(mil_prestige ~ violations_rate + house_polar + HostCasRateLagged, data=igs_violations_wrap_ols)
+summary(ig_ch4_endog_ols_house_rate)
+
+```
+
+\singlespace
+```{r endogch4appx results1, include=T, echo=FALSE, results="asis", warning=FALSE, message=FALSE}
+stargazer(ch4_endog_ols_house, ch4_endog_ols_house_rate, no_ig_ch4_endog_ols_sen, no_ig_ch4_endog_ols_sen_rate, ig_ch4_endog_ols_house, ig_ch4_endog_ols_house_rate,
+          type="latex",
+          label="tab:ch4appx1",
+          title="Regression Results, Endogeneity Checks (Regress Military Prestige on the Proportion or Rate of Ads Violating Principles of Civil-Military Relations in Each Election Cycle)", 
+          covariate.labels = c('Proportion Violating', 'Violating Rate', 'House Polarization', 'Senate Polarization', 'Casualty Rate (lagged)'),
+          dep.var.labels = c('Level of Military Prestige'),
+          model.names=F,
+          header=FALSE,
+          column.sep.width = "-15pt",
+          align=TRUE,
+          font.size="small",
+          no.space=TRUE,
+          omit.stat=c("f", "ser")
+          )
+```
+\doublespace
+
+The results indicate that there is no statistically significant relationship between either the proportion of violating ads or the violation rate in each election cycle and the level of military prestige. Furthermore, the standard errors of the coefficients are very large, further casting suspicion on any claims of endogeneity in this particular model set up. 
+
+I then change the independent variables to denote an instance of any violation to the principles of civil-military relations that occur (rather than the proportion or violations rate of ads that air across the election cycles). I include the same controls, but also include an interaction term between polarization and any instance of a violation to the principles of civil-military relations. In some models I also include a dummy control for the 2004 Election in order to see if that particular election is responsible for capturing some of the other effects of the other included variables. 
+
+The coefficient on violation is positive and highly statistically significant in models 1-4, which could prove problematic by itself, but when we reinstate other control variables in models 5-6, the statistical significance for the coefficient on violation falls away. In addition, in models 5-6, the coefficient for the interaction term between violation*polarization (house and senate, respectively) is statistically insignificant and slightly negative. 
+
+## Note on the Campaign Media Analysis Group and its Role in the Data
+
+WiscAD and WMP gather the television advertisements with the assistance of a commercial company, the Campaign Media Analysis Group (CMAG). CMAG provides several pieces of information when releasing the data, such as the media market in which a particular advertisement aired, the estimated cost of running a particular advertisement, the time of day the advertisement was run, and other variables. A group of scholars and graduate students affiliated with WiscAD and WMP then conduct additional coding on the advertisements. This coding varies to some extent by election cycle, but otherwise remains markedly similar. The additional variables that are coded for in each election cycle include items such as the specific issues that an advertisement mentions or addresses during the advertisement, whether a candidate is featured during the advertisement, and whether a given advertisement takes on a negative tone, and more. 
+
+Cleaning the data from five separate data sets was a considerable project. I had to merge several variables and implement a common naming scheme across the data in order to enable a meaningful comparison of the data over time. The .rmd file that contains the cleaning instructions is available for review. 
+
+## Data Acknowledgement and Disclaimers 
+
+## 2000
+
+The data were obtained from a joint project of the Brennan Center for Justice at New York University School of Law and Professor Kenneth Goldstein of the University of Wisconsin-Madison, and includes media tracking data from the Campaign Media Analysis Group in Washington, D.C. The Brennan Center-Wisconsin project was sponsored by a grant from The Pew Charitable Trusts. The opinions expressed in this article are those of the author(s) and do not necessarily reflect the views of the Brennan Center, Professor Goldstein, or The Pew Charitable Trusts.
+
+## 2004
+
+The data were obtained from a project of the University of Wisconsin Advertising Project includes media tracking data from TNSMI/Campaign Media Analysis Group in Washington, D.C. The University of Wisconsin Advertising Project was sponsored by a grant from The Pew Charitable Trusts. The opinions expressed in this article are those of the author(s) and do not necessarily reflect the views of the University of Wisconsin Advertising Project or The Pew Charitable Trusts.
+
+## 2008
+
+The data were obtained from a project of the University of Wisconsin Advertising Project includes media tracking data from TNSMI/Campaign Media Analysis Group in Washington, D.C. The opinions expressed in this article are those of the author(s) and do not necessarily reflect the views of the University of Wisconsin Advertising Project.
+
+## 2012
+
+The data were obtained from the Wesleyan Media Project, a collaboration between Wesleyan University, Bowdoin College, and Washington State University, and includes media tracking data from Kantar/Campaign Media Analysis Group in Washington, D.C. The Wesleyan Media Project was sponsored in 2012 by grants from The John S. and James L. Knight Foundation and The John D. and Catherine T. MacArthur Foundation. The opinions expressed in this article are those of the author(s) and do not necessarily reflect the views of the Wesleyan Media Project, Knight Foundation, MacArthur Foundation or any of its affiliates.
+
+## 2016
+
+The data were obtained from the Wesleyan Media Project, a collaboration between Wesleyan University, Bowdoin College, and Washington State University, and includes media tracking data from Kantar/Campaign Media Analysis Group in Washington, D.C. The Wesleyan Media Project was sponsored in 2016 by a grant from The John S. and James L. Knight Foundation. The opinions expressed in this article are those of the author(s) and do not necessarily reflect the views of the Wesleyan Media Project, Knight Foundation, or any of its affiliates.
+
+## Other Acknowledgements
+
+All regression tables used in chapter three were produced with the help of the Stargazer package, designed by Marek Hlavac [@hlavac_stargazer_2018].
+
+\pagebreak
+\singlespace
