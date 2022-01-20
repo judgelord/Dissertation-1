@@ -1,108 +1,20 @@
----
-title: "Chapter 5 (Case Study, 1865-1892): Senior US Military Leaders in an Age of Declining Military Relevance "
-author: "Peter M. Erickson"
-date: |
-  `r format(Sys.time(), '%B %d, %Y')`
-abstract: |
-  
-  _This historical case study compares the patterns of political behavior engaged in by civilian and military actors involving the military institution from roughly 1865 - 1885. During this time period, the prestige of the military declined as the post-Civil War military took on constabulary duties and shrank in size. Using process tracing, I describe how the high levels of polarization and military prestige that were evident at the beginning of this historical era combined to create a toxic political environment in which both senior military and civilian leaders engaged in behaviors that violated the central principles of civil-military relations. I then argue that as the prestige of the military declined, the potential political influence of the military, leading to military and civilian actors engaging in less severe instances of political behavior that violated the central principles of civil-military relations._  
-  
-geometry: margin = 1.15in              # margin widths
-fontsize: 12pt                         # text size
-bibliography: dissertation.bib         # bibliography file
-biblio-style: authoryear               # citation style
-urlcolor: blue                         # links to external URLs
-citecolor: black                       # links to bibliography
-linkcolor: magenta                     # internal figures, footnotes, etc.
-indent: true                          # paragraph format
-                                       # true for indented paragraphs
-                                       
-header-includes:
-    - \usepackage{setspace}
-    - \usepackage{multirow}
-    - \usepackage{indentfirst}
-   
-    
-output: 
-  bookdown::pdf_document2:
-    keep_tex: true
-    latex_engine: pdflatex
-    number_sections: false
-    toc: false
-    fig_caption: true
-    citation_package: biblatex
-    includes: 
-      in_header: 
-        - latex-preamble.tex
-  bookdown::htmldocument2: default
-  bookdown::word_document2:
-      toc: false
----
-
-\doublespacing 
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  echo=FALSE,
-  include=FALSE,
-  message=FALSE,
-  error=FALSE,
-  fig.height=3,
-  fig.width=4,
-  out.width="90%")
-```
-
-```{r, include = FALSE, echo = FALSE}
-library("here")       # file paths
-library("tidyverse")  # workhorse package
-library("tidylog")
-library("kableExtra")
-library("knitr")
-library("ggdag")
-library("dagitty")
-library("gridExtra")
-library("broom")
-library("dplyr")
-library("reshape2")
-library("pacman")
-library("ggrepel")
-```
 
 \newpage
+
+# Chapter Five
+
 # Introduction
 	
 This chapter compares and contrasts the patterns of political behavior engaged in by military and civilian actors from the end of the American Civil War in 1865 to roughly 20 years later, in 1885. Using the case study method and through the use of process tracing, this chapter explores the "motives and opportunities" framework developed in chapter two of this dissertation.
 
-The goals of this chapter are four fold: first, to argue that a decline in the military's prestige actually occurred over the period from 1865-1885, and to trace this decline; second, to argue that the decline in the level of military prestige over the period examined resulted in a reduction in the "opportunity" for both civilian and military leaders to involve the military in politics; three, to show that throughout the time period examined, the relatively constant yet high level of polarization provided military leaders with a "motive" to engage in political behaviors that involved the military institution; and four, to argue that the latter portion of the case study was altogether a less corrosive environment for the conduct of civil-military relations than the immediate years after the Civil War.  
+The goals of this chapter are four fold: first, to argue that a decline in the military's prestige actually occurred over the period from 1865-1885, and to trace this decline; second, to argue that the decline in the level of military prestige over the period examined resulted in a reduction in the "opportunity" for both civilian and military leaders to involve the military in politics; third, to show that throughout the time period examined, the relatively constant yet high level of polarization provided military leaders with a "motive" to engage in political behaviors that involved the military institution; and fourth, to argue that the latter portion of the case study was altogether a less corrosive environment for the conduct of civil-military relations than the immediate years after the Civil War.  
 
 This chapter proceeds in five parts. First, I explain what case studies are, and why they augment the research agenda already undertaken in this dissertation. In this section, I also defend the logic of the two broad case studies which comprise both this chapter as well as the next. Second, I describe the general predictions regarding the patterns of political behavior that should be evident based on the "motives and opportunity" framework previously set forth in this dissertation. 
 
-The third and fourth parts of this chapter comprise the heart of the 1865 - 1885 case study. Each of these parts explores the earlier and latter parts of case itself. The fifth and final part of this chapter then evaluates and compares the differences in the patterns of political behaviors that occurred during these two eras. Using process tracing, I argue that the reduction in the military's prestige that occurred from 1865 - 1885 resulted in both civilian and military actors engaging in less public and less severe forms of political behavior involving the military. I conclude that the case study examined in this chapter fulfills most of the predictions made by the theory, but that it also differs from the theory in a couple of important ways. 
+The third and fourth parts of this chapter comprise the heart of the 1865 - 1885 case study. Each of these parts explores the earlier and latter parts of the case itself. The fifth and final part of this chapter then evaluates and compares the differences in the patterns of political behaviors that occurred during these two eras. Using process tracing, I argue that the reduction in the military's prestige that occurred from 1865 - 1885 resulted in both civilian and military actors engaging in less public and less severe forms of political behavior involving the military. I conclude that the case study examined in this chapter fulfills most of the predictions made by the theory, but that it also differs from the theory in a couple of important ways. 
 
-# Summary of Results Obtained, and How Case Studies Help
+# How Case Studies Help
 	
-Before diving into the specific case study explored in this chapter, it is important to lay the logical groundwork for what to look for when conducting case studies, and to state why case studies matter in the first place. In order to do this well, I wish to briefly summarize the empirical results already obtained in the previous two chapters, as doing so will help motivate the specific case studies explored in the remainder of this dissertation. 
-
-## A Summary of Results Already Obtained
-
-Each of the two previous large-N chapters examined one form or type of a political behavior that is primarily (though not exclusively) engaged in by one type of civil-military actor. Chapter three examined opinion commentary authored by retired military officers and published in major newspapers, and chapter four examined the use of military figures in civilian presidential campaign advertisements. 
-
-The statistical analysis undertaken in each of the previous chapters indicated that increasing levels of polarization drives retired military officers to author opinion commentary in ways that violate the principles of civil-military relations, and that increasing levels of military prestige drives civilian actors to use military figures in ways that violate the principles of civil-military relations. These initial results are important because they established a clear connection between each type of actor, military and civilian, and a particular form of political behavior that each engages in involving the military institution. 
-
-Still, there is much of the theory that is not yet addressed by these previous results. In particular, the results have not clearly indicated whether and to what degree military actors are also sensitive to changes in the level of military prestige, as the theory predicts they would be. Additionally, because the previous chapters explored only one type of political behavior in depth, conclusions could not be reached concerning other forms of political behavior that each actor type can engage in. Historical case studies will instead attempt to examine an era, rather than one particular form of behavior, in order to establish overall patterns about the multiple political behaviors that occur in a given period of time. This is important because, as the US experience proves, the levels of polarization and military prestige vary over time. In terms of the five hypotheses developed in chapter two of this dissertation (and listed below), the two case studies undertaken in this and the next chapter will help shed light on all five, but in particular, H2, H4, and H5. 
-
-H1: Military actors increasingly violate the central principles of civil-military relations when polarization is high relative to periods of low polarization. 
-
-H2: Military actors increasingly violate the central principles of civil-military relations in public and visible ways when military prestige is high relative to periods of low military prestige. 
-
-H3: Civilian actors increasingly violate the central principles of civil-military relations when military prestige is high relative to periods of low military prestige. 
-
-H4: Military and civilian actors engage in relatively more visible and public forms of political behavior that involve the military institution when military prestige is high relative to periods of low military prestige. 
-
-H5: The most extreme levels of overall political activity occur in environments that are characterized by simultaneously high levels of political polarization and military prestige.  
-
-## Methodological Advantages Afforded by Case Studies
-
 A case study, in the words of Brady and Collier (2010), "may be understood as a temporally and spatially bounded instance of a specified phenomenon" [@brady_rethinking_2010, 208]. These same authors define the concept of process-tracing as involving "the examination of 'diagnostic' pieces of evidence within a case that contribute to supporting or overturning alternative explanatory hypotheses" [@brady_rethinking_2010, 208]. Brady and Collier also argue that the use of process tracing within a case study is valuable for at least two main reasons.
 
 The first advantage of process tracing through case studies is that it can inform whether the independent variables influence the dependent variable through the pathways, mechanisms, and sequences claimed to be at work in a given theory [@brady_rethinking_2010, 208-209]. In the context of this particular dissertation, this means that the use of case studies can help clarify the nature and the extent to which, in a given historical era, the level of political polarization serves as a "motive" for military actors to violate the central principles of civil-military relations, and the level of military prestige provides an "opportunity" for both civilian and military actors to do the same.  
@@ -223,7 +135,7 @@ In the paragraphs to follow, I recount and describe the political behaviors enga
 				
 ## How Military Prestige Shaped Political Behaviors Involving the Military, 1865-1868
 
-As divisions over reconstruction became evident in 1865 between President Johnson and his opponents in Congress, both sought to bring the military into each's respective camp with respect to how best to restore the southern states to the nation. Johnson and members of his administration, as well as members of Congress, sought General Grant's approval on the specific measures that Reconstruction should entail. Indeed, in the months that followed, as the divisions between Johnson and Congress became increasingly irreconcilable, both Johnson and his opponents in Congress would increasingly wonder, as White (2016) notes, "where did Grant stand" [@white_american_2016, 429]?
+As divisions over reconstruction became evident in 1865 between President Johnson and his opponents in Congress, both sought to bring the military into each side's camp with respect to how best to restore the southern states to the nation. Johnson and members of his administration, as well as members of Congress, sought General Grant's approval on the specific measures that Reconstruction should entail. Indeed, in the months that followed, as the divisions between Johnson and Congress became increasingly irreconcilable, both Johnson and his opponents in Congress would increasingly wonder, as White (2016) notes, "where did Grant stand" [@white_american_2016, 429]?
 
 ### 1865 - Fall of 1866
 
@@ -384,30 +296,60 @@ Military officers handing out informational pamphlets in order to persuade membe
 Military actors also engaged in making a number of what can be described as public appeals regarding the legislation, but these appeals differed in a number of important ways from the leaks and appeals to the press made by Army leaders more than a decade earlier. For instance, General Sherman passed on letters written by Generals Schofield, Sheridan, and Pope, as well as Lieutenant Colonel Upton, to the _Army and Navy Journal_ to be published [@connelly_john_2006; 243]. These letters addressed the proposed reforms from a number of angles. But it is vital to keep two things in mind when considering this particular action. 
 
 The first is that Sherman's behavior did not constitute a leak per se, but rather an act that was mostly likely undertaken with the author's concurrence, and for the purposes of informing rather than influencing. To be clear, I could not find definitive proof that this was the case, but it clearly seems the most logical explanation given Sherman's  and disposition regarding the legislation. The historical record indicates that Sherman himself cautiously favored the bill, but had decided nonetheless not to take a highly visible position on the issue [@marszalek_sherman_2007, 435; see also @connelly_john_2006; 243; @clark_preparing_2017, 118].^[Sherman apparently commented, "I shall not advocate the Bill or oppose it, but shall conform my action, official and personal, to the conclusion of the Law Making Powers of Our Government" [Sherman, 1878 as cited in @marszalek_sherman_2007, 435].] Therefore, it is unlikely that Sherman intended much else beyond informing the military community of the issues at stake and under consideration. The second consideration to note is that the _Army and Navy Journal_ was a periodical primarily read and consumed by military actors, to include soldiers, sailors, and veterans. The fact that Sherman appealed to a publication geared to military actors, rather than to a major popular newspaper with a significant civilian readership, further suggests that Sherman intended to reach military rather than civilian audiences. With these two considerations in mind, Sherman's behavior, then, in this instance, did not violate the principles of civil-military relations.  
-
 Civilian leaders, too, seem not to have engaged in many significant lobbying or advocacy efforts on behalf of or against the proposed legislation, and the few instances of political activity they did engage in did not violate the principles of civil-military relations to the degree that civilian behaviors undertaken in the period from 1865 - 1868 did. For instance, Representative James Garfield, who later became the President and who had served as a Union General in the Civil War, wrote a two part series in _The North American Review_ on the topic of Army reform in early 1878 in which he advocated that Congress take seriously the topic of Army reform. In these publications, Garfield included a portion of, or in some cases, the entirety of, a number of letters written by senior Army leaders addressing the size of the peacetime Army, the role of the staff vis-a-vis the commanding general and the Secretary of War, and other pertinent items [@garfield_army_1878; @garfield_army_1878-1]. In all likelihood (I do not know for sure; this is speculative), Garfield had the permission of the officers whose letters he reprinted in the publications that he authored, but even if he did not, the tone and tenor with which Garfield writes does not lend the impression that he is politicizing the Army in a nefarious manner. Rather, his articles serve as a sort of alarm bell for the nation, and urge the American people (and Congress in particular) to treat the Army seriously in spite of the very real transition from war to peace that has occurred since the end of the Civil War. Certainly, Garfield's publications take a stake in the debate about Army reform; as a Republican, he was largely in favor of it. Still, However, there is no obvious attempt on Garfield's part to leverage the Army or the topic of Army reform for his own political advantage in the publications. Indeed, there was relatively little - if any - advantage the Army and its leaders could have offered Garfield or other civilian leaders at this particular juncture. 
 
-## Exceptions - Conventions and Candidates
+## Exceptions - Military Actor Presidential Candidates 
 
-## Summary of the 1877-1881 Period
+Other political behaviors seem not to have been tremendously impacted by the drop in the relative level of military prestige, however, and thus, these behaviors stand out as possible exceptions to the predictions made by the theory earlier in this chapter. Among the clearest of these possible examples involves the political behavior of military figures running for office, and in particular, for the Presidency. 
 
-In the decade after the Civil War, multiple factors combined to render the Army less prestigious than it had been at the close of the Civil War. The political nature of Reconstruction had been unpopular with many Americans, and particularly with southerners. As the nation reunified, the Army became a perennial target by Democrats who sought to preclude the Army's domestic involvement and trim its size. Indeed, the Army did downsize, and significantly so, as it transitioned to constabulary duties and fighting Indians. In the absence of a clear international enemy to prepare against, the Army was largely at the mercy of a divided Congress that could not be compelled to take up a number of reforms in the late 1870s. 
+To see this, consider that during the seven Presidential Elections held from 1868 to 1892, only the election between Grover Cleveland and James Blaine in 1884 featured two non-veteran candidates [@teigen_why_2018, 104-106]. All other elections featured at least one veteran as one of the party's major final candidates. These candidates running for President in elections held between 1868 and 1892 are displayed in Table \@ref(tab:ch5-candidates).
 
-The Army's reduced standing and political influence greatly impacted the character of the political behaviors Army and civilian leaders alike undertook. Even after performing rather well at quelling a serious labor dispute in 1877, military leaders avoided the public spotlight as the _posse comitatus_ act was passed. When Congress came close to adopting a number of reforms proposed by the _Burnside Commission_ the following year, many military actors engaged with fellow military actors on these topics, but they largely did so in military journals and private correspondence, rather than through national newspaper outlets or other civilian publications. Members of the staff bureaus, who stood the most to lose from a number of the legislation's proposed reforms, engaged in more obvious acts such as the construction and distribution of informational pamphlets to members of Congress, but even these acts were less visible than the leaks and interviews with the press conducted by Army leaders at the end of the Johnson Administration. 
+```{r ch5-candidates, include=T, echo=F, error=F, message=F}
+
+ch5_text_tbl2 <- tribble(~"Election Year", ~"Candidate", ~"Party", ~"Veteran Type",
+  "1868", "Ulysses S. Grant", "Republican", "Career General",
+  "1872", "Ulysses S. Grant", "Republican", "Career General",
+  "1876", "Rutherford Hayes", "Republican", "Battlefield General",
+  "1880", "Winfield Scott Hancock (and James Garfield)", "Democrat (Republican)", "Career General (Battlefield General)",
+  "1888", "Benjamin Harrison", "Republican", "Battlefield General",
+  "1892", "Benjamin Harrison", "Republican", "Battlefield General"
+  )
+ 
+ch5_text_tbl2 %>% kable(booktabs=T, caption="Presidential Candidates, Post Civil-War Era") %>%
+  kable_styling(full_width = F, font_size=8, latex_options="striped" ) %>% 
+  column_spec(1, width="10em") %>% 
+  column_spec(2, width="12em") %>% 
+  column_spec(3, width="8em") %>% 
+  column_spec(4, width="14em") %>% add_footnote(label = "Reproduced from Table 5.1 in Jeremy Teigen's (2018) book, Why Veterans Run (p. 105).")
+```
+
+To begin with, that figures affiliated with the military consistently ran for President after the Civil War (instead of there being several elections in which both candidates were not veterans) may not pose an exception to the theory after all. For this political behavior to truly stand out as an exception, the researcher would clearly have to draw a distinction between military and civilian actors, an endeavor that has proven difficult in some of the earlier chapters. However, this is especially difficult in this era and with respect to the particular behavior of running for office, because as Teigen (2018) notes, and as the far right column of Table \@ref(tab:ch5-candidates) describes, not all types of military service are the same. 
+
+Grant and Hancock were career generals, while Hayes, Garfield, and Harrison had served in the military for considerably shorter periods of time during the Civil War. Harrison in particular served less than four years in uniform, but obtained the rank of Brigadier General before resuming civilian life [@teigen_why_2018, 19]. One might also point out that Grant's successful Presidential runs, especially his first in 1868, demonstrate that high military prestige mattered significantly in 1868, and that a lower level of military prestige contributed to Hancock's unsuccessful presidential run.^[I do not wish to state this conclusively, but point to it because this fits the theory offered.]
+
+Yet even if one views the fact that military candidates consistently ran for President in the post Civil War era as an exception to the predictions made by the theory, it is my view that such an exception does not render the theory useless or necessarily incorrect. It would be more accurate to suggest that perhaps there are other variables _besides_ polarization and military prestige that shape variation in the occurrence of specific types of political behaviors, such as running for office, in certain eras. Of course, if one takes this point too far, then the trouble becomes identifying and testing what these other variables may be, and associating them with certain political behaviors at certain times to such an extent that any theory previously offered no longer has any explanatory power. 
+ 
+For these reasons, it is more likely accurate to conclude that polarization and military prestige may not, and likely do not, shape every political behavior involving the military in every era, but that on the whole, these factors shape most of the political behaviors that take place, or at least the tone and tenor of the political behaviors that characterize the overall civil-military relationship in a given era. Furthermore, it is also likely the case that when civilian and military actors can be most distinguished from each other, we should expect the theory to have greater clarity than when they cannot. Ulysses S. Grant, Phil Sheridan, William Sherman, and Winfield Scott Hancock were all career generals, and thus we should view the political behavior these men engaged in while wearing the uniform differently than those who served as generals for a short period of time.
+
+## Summary of the 1877-1878 Period
+
+In the decade after the Civil War, multiple factors combined to render the Army less prestigious than it had been at the close of the Civil War. The political nature of Reconstruction had been unpopular with many Americans, and particularly with southerners. As the nation reunified, the Army became a perennial target by Democrats who sought to preclude the Army's domestic involvement and trim its size and influence within the government. Indeed, the Army did downsize, and significantly so, as it transitioned to constabulary duties and fighting Indians after the Civil War. In the absence of a clear international enemy to prepare against, the Army was largely at the mercy of a divided Congress that could not be compelled to take up a number of reforms in the late 1870s. 
+
+The Army's reduced standing and political influence greatly impacted the character of the political behaviors Army and civilian leaders alike undertook. Even after performing rather well at quelling a serious labor dispute in 1877, military leaders avoided the public spotlight as Congress passed a bill outlining _posse comitatus_ regulations. When Congress came close to adopting a number of reforms proposed by the _Burnside Commission_ the following year, many military actors engaged with fellow military actors on these topics, but they largely did so in military journals and private correspondence rather than through national newspaper outlets or other civilian publications. Members of the Army's staff bureaus, who stood the most to lose from a number of the legislation's proposed reforms, engaged in more obvious acts such as the construction and distribution of informational pamphlets to members of Congress, but even these acts were less visible than the leaks and interviews with the press conducted by Army leaders at the end of the Johnson Administration. 
 
 A summary of the political behaviors engaged in by both sets of actors from 1877-1881 is captured in Table \@ref(tab:pol-behav-cs1-part2).
 
 ```{r pol-behav-cs1-part2, echo=FALSE, include=TRUE, error=FALSE, message=FALSE}
 
-text_tbl2 <- tribble(~"Actor", ~"Tactic Political Behavior", ~"Instance", ~"Central Principles Challenged",
+text_tbl3 <- tribble(~"Actor", ~"Tactic Political Behavior", ~"Instance", ~"Central Principles Challenged",
   "Military Staff Officers", "Shoulder Tapping; Alliance Building", "Staff officers distribute informational pamphlets to members of Congress arguing against adopting a number of provisions proposed by the Burnside Commission", "Civilian Control; Non-partisanship",
-  "General William Sherman", "Public Appeals***", "General Sherman sent letters written by fellow military commanders to be published by The Army and Navy Journal regarding various reforms under consideration by the Burnside Commission", "No principles violated; the public appeal was conducted through a specific military journal",
+  "General William Sherman", "Public Appeals*", "General Sherman sent letters written by fellow military commanders to be published by The Army and Navy Journal regarding various reforms under consideration by the Burnside Commission", "*No principles violated; the public appeal was conducted through a specific military journal",
   "Representative James Garfield (Civilian)", "Public Appeal", "Garfield publishes two articles in The North American Review on the topic of Army reform in early 1878", "No principles violated; the articles were written in general terms and did not seek to leverage the Army for personal political or partisan gain",
-  "Ulysses S. Grant; Winfield Scott Hancock; Phil Sheridan", "Running for Office", "Fill this part in", "Non-partisanship"
+  "Ulysses S. Grant; Winfield Scott Hancock", "Running for Office", "Grant prepares to run for officer in 1868; Hancock prepares to do the same in 1880", "Non-partisanship"
   )
  
 
-text_tbl2 %>% kable(booktabs=T, caption="Political Behaviors Involving the Military, 1877-1881") %>%
+text_tbl3 %>% kable(booktabs=T, caption="Political Behaviors Involving the Military, 1877-1881") %>%
   kable_styling(full_width = F, font_size=8, latex_options="striped" ) %>% 
   column_spec(1, width="10em") %>% 
   column_spec(2, width="12em") %>% 
@@ -416,8 +358,21 @@ text_tbl2 %>% kable(booktabs=T, caption="Political Behaviors Involving the Milit
 
 ```
 
-# Implications of this Case Study
+## Alternate Explanations
 
-\newpage
+Besides the relative decline in the importance of the Army to the nation in the years following the Civil War, a number of other factors might explain the changes in how military and civilian leaders engaged in political activity involving the military. One possible alternate explanation involves the individual personality differences between senior army leaders between 1865 and 1877, and indeed, there may be some merit to this explanation. Grant was no lover of politics as a General, but it is also well known among historians that Sherman and Grant approached politics rather differently. Marszalek (2007) for instance notes that, "...politics was anathema to Sherman. He viewed politicians as venal adversaries he was forced to tolerate but refused to work with" [@marszalek_sherman_2007, 425]. Thus, there seems to be at least some basis for suggesting that the relative decline in the visibility of political behaviors engaged in by military actors that violated the principles of civil-military relations, particularly as the _Burnside Commission_ considered a number of reforms in 1878, was the product of a disgruntled Sherman as the commanding general of the Army, rather than because of the broader political environment. 
 
-\singlespace
+Such an explanation is not entirely sufficient, however. I will leave the historians to be the definitive experts on the personalities of Grant, Sherman, and other Army leaders, but even if Sherman was naturally inclined against fully embracing his appropriate political role, the historical literature surveyed for this chapter clearly indicated that Sherman lamented the fact that he was presiding over the Army at a time that coincided with the loss of the Army's popularity or standing in the country. There is also little to suggest that any major professional military norms concerning behavior changed in the 13 years between 1865 and 1868. 
+
+The conflict or threat environment, however, did change between 1865 and 1868. The Civil War was a major conflict that devastated roughly half of the United States. Nonetheless, it seems rather perfunctory and in fact, mostly wrong, to simply say that 1865 ushered in an era of peace and the end of conflict. The fact is that the Reconstruction era spurred the continuation of significant wartime authorities and the undertaking of what should be considered a military occupation of the southern states [@downs_after_2015]. Thus, it seems incorrect to state that a change in the conflict environment primarily caused a change in the degree to which civilian and military actors engaged in political behaviors that violated the principles of civil-military relations.  
+
+# Conclusion
+
+A more accurate rendering, based on the evidence described in this chapter, suggests that a gradual change in the conflict environment, as well as evolving political circumstances that occurred during the Reconstruction era in general, rendered the Army both less popular as well as less central to the life of the nation. In 1865, there was little if any difference between the nation's political and military policies, as both centered on the important work of undertaking Reconstruction. As Johnson and Congress wrestled for control of the military, Grant and other Army leaders eventually could not remain neutral due to the significant moral undertones of Reconstruction itself. In perhaps what was America's gravest civil-military relations crisis in its history, civilian and military leaders engaged in a number of behaviors that challenged the principles of civil-military relations. 
+
+By the late 1870s and early 1880s, even as polarization remained high, the Army became increasingly distanced from civilian political priorities. During this period, civilian leaders in particular undertook fewer if any instances of harnessing the Army and its leaders to advance their political priorities. Military leaders, for their part, with few exceptions, engaged in relatively less overt forms of political behavior challenging the principles of civil-military relations. The available evidence suggests that this change in the patterns of political activity involving the military that occurred between 1865-1868 and 1877-1878 in particular was the result of a decline in the "opportunity" to use the military to sway public opinion. Both actors, civilian and military, seem to have responded to this decline.  
+
+This chapter ultimately finds moderate support for H4, which stated that military and civilian actors engage in relatively more visible and public forms of political behavior that involve the military institution when military prestige is high relative to periods of low military prestige. It also finds moderate support for H5, which stated that the most extreme levels of overall political activity occur in environments that are characterized by simultaneously high levels of political polarization and military prestige. 
+
+What is less clear, however, is how the second part of this case study resulted from a period of high polarization. The political activities engaged in by civilian and military actors seem to fit the predictions of the theory, but it is not clear how high polarization played a role in this during the last half of the case study (the first half seems much more clear). In other words, it is not clear that the pattern of political behavior uncovered in the second half of this case study could only have occurred in an environment marked by relatively low military prestige and high polarization. For this reason, the next case study will examine an era in which the level of polarization also changes. 
+\pagebreak
