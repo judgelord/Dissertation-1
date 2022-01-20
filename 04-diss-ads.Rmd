@@ -109,7 +109,7 @@ After gathering the data, I implement an empirical strategy that at its root, lo
 ```{r data, include=FALSE, echo=FALSE}
 
 # reading in the raw data
-df_campaign_ads_read <- read_csv(here("data", "refined_master_imagery_ch4_my_edits.csv"))
+df_campaign_ads_read <- read_csv(here("data", "ch4_ads_coded.csv"))
 summary(df_campaign_ads_read)
 
 # truncate the data after the last row (observation 3666) 
