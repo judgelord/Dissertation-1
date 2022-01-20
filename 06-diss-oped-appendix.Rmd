@@ -316,10 +316,7 @@ The author would like to thank participants from the UW-Madison International Re
 
 All regression tables used in chapter three were produced with the help of the Stargazer package, designed by Marek Hlavac [@hlavac_stargazer_2018].
 
-
 \pagebreak
-\newpage
-\singlespace
 
 
 
