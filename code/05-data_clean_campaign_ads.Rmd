@@ -29,79 +29,42 @@ library("brglm")
 library("bucky")
 library("haven")
 library("writexl")
+library("lubridate")
 ```
 
 # Notes for Data Cleaning
 
-In this document, I have essentially cleaned 5 x data sets containing information about various presidential campaign television advertisements. As each data set is unique, I have taken care to standardize the data sets and prepare them in such a way so as to facilitate future coding. In the paragraphs to follow, I first outline the procedures taken before embarking on these coding procedures and tasks.  
+In this document, I have essentially cleaned 5 x data sets containing information about various presidential campaign television advertisements contained in the 2000 - 2016 Elections. 
 
-I desired to obtain two main outputs from cleaning this data. The first was a list of observations, along with the associated relevant variables, that were "likely" to feature what I was looking for - in my case, some form of US military imagery (personnel, uniforms, veterans, scenes of combat, etc.). The second was the opposite of the first - a list of observations that were "unlikely" to feature images of the military. Together, these two lists shoud consist of all of the data, and be mutually exclusive, i.e., an observation that is on one list is not on the other.
+As each data set is unique, I have taken care to standardize the data sets and prepare them in such a way so as to facilitate future coding. In the paragraphs to follow, I first outline the procedures taken before embarking on these coding procedures and tasks.  
 
-# Procedures Used to Clean and Organize the Data
+The first cleaning of data began in March of 2021.  At this time, I was only interested in analyzing the individual advertisements; that is, I simply wanted to count the distinct number of advertisements made and aired in each election cycle, and analyze these specific advertisements at the ad level.  This analysis occurred mainly from March of 2021 - December 2021. 
+
+In February of 2022, however, I was directed by my dissertation committee to embark on an additional analysis of the airings of the advertisements. This is different from the first analysis because in analyzing the "airings" rather than the "ads," the goal instead was to examine which ads were aired on which markets, at what frequency, etc. This document is the document that I used to clean and organize the data.  It is a substantial and lengthy document, and quite detailed.  
+
+This document proceeds in three main parts.  The first part is the culmination of cleaning work to produce a consolidated data set of the individual advertisements. The second part is the cleaning of an airings level analysis which is then merged with the first data set after edits had been made on the advertisement level. In both parts, I take many notes in the hopes that I would be able to follow these procedures myself, later down the road, or if other ever wanted to build upon this work here.    
+
+## The Data 
 
 Data from the 2016 and 2012 data sets came from the Wesleyan Media Project (WMP), whereas the data from the 2008, 2004, and 2000 data sets came from the Wisconsin Advertising Project (WiscAd). Each data set is structured somewhat differently. One can detect a fairly straightforward improvement each subsequent election, i.e. the 2000 data is the "roughest," and the data improves each year.  
 
-In the most basic sense, the main procedure used to separate the "likely" from "unlikely" observations involved identifying and using existing variables which I felt would be most correlated to the military in some sense. These existing variables varied each election cycle, but generally dealt with the issue of what topic did a particular observation address? Most of the data sets coded observations for the topic(s) each advertisement addressed, and some data sets included additional controls that, by my reasoning, provided even further justification for including / excluding certain observations. 
+## Results as of 20 February 2022
 
-The obvious topical discriminators were any advertisements that were coded for discussing/addressing defense, military, or veterans-related issues, as I felt that these were the most likely to contain ads that included military imagery and symbols. Given the Iraq and Afghanistan wars that occurred in the post 9/11 era, I also included in the "likely" category any explicit variables that identified Iraq, Afghanistan, terrorism, or war on terror, or similar words (this was not possible for the 2000 election, as 9/11 had not yet occurred). 
-
-I then included any other foreign policy variables that could be reasonably associated with the US military. Admittedly, this involved some judgement on my part. I included those observations that involved explicit mentions of issues such as China, Iran, or Israel, mainly because I felt that these would, on average, be more likely to be associated with US military imagery than other electoral issues, such as elemantary education and natural resources. 
-
-Finally, but importantly, there were, on occasion, other variables that I could include that also helped me separate the likely from the unlikely observations. One data set (2004), for instance, had a variable for "actor credibility" (the variable was 'ECFCRED'), which sought to determine the source of credibility in an actor that appeared in an advertisement. Sure enough, one possible value that this variable could take was '13,' or "veteran/military" personnel.  Therefore, for the 2004 data set, I included this particular value and variable to help narrow the list. 
-
-# Results as of 9 August 2021
-
-In this paragraph, I briefly highlight some notable points about the data, particularly as it relates to the separation of likely versus unlikely ads, as well as missing data.  
-
-* Likely - 895 total Ads (12 observations are missing, however)
-* Unlikely - 3143 Ads (however, screening proceeds on 2970 ads, as the year 2000 includes 173 ads that are entirely coded as "N/A" for topics)
-* Total - 4038 Ads
+In this paragraph, I briefly highlight some notable points about the data. 
 
 ## Important Files and Filenames
 
-df_comb_init_cads_edits - the file I used consisting of the "likely" ads, which I then watched and conducted further coding on
+# Section 1: Forming an Ad-Level Data Set
 
-df_comb_init_cads_unlikely_edits_screened - the file I used to screen what consisted of the "unlikely" ads
-
-ch6_df_comb_reg_data - the file I used that contained all of the ads (need to add in the "N/A" ads from 2000) to conduct regression.  Note: I had to compile this particular data set using a series of variables from the two prior files. 
-
-(not yet used) ch6_Master_Imagery - this is a file that I have created, but not yet used, to conduct analysis on all of the ads for purposes of imagery types only. 
-
-*** note - I will code by hand on the file "reg_data" any ads that include a prominent military person; there is at least one add where this must be done (2008 PRES/MOVEON OBAMACAN), and there might be another (2006 PRES/ELSUPERPAC CARELIZ SP) ***
-
-
-## Remaining Work
-
-* there are several ads that require a spanish speaker/translator...several on the init_cads_edits list, and at least one on the unlikely_edits_screened file.  
-* need a decision from my committee about whether I should just go ahead and code ALL of the ads and be done with it. 
+In this section, I clean 5 x separate data sets, beginning with the 2016 data set and working backwards to the 2000 data set.   
 
 ```{r data2016, include=FALSE, echo=FALSE, warning=FALSE}
 
 # This section of code "cleans" the data used from the 2016 data set.  
 
-## (1) To begin with, these are the issue numbers that help to 
-# narrow down which ad themes may feature the military.
-# Issue60-Military, 
-# Issue 61 - Foreign Policy (generic)
-# Issue 62-Veterans, 
-# Issue 64 - Nuclear Proliferation
-# Issue 65 - China
-# Issue 66 - Middle East
-# Issue 67-Afghanistan, 
-# Issue 68-September 11th
-# Issue69-Terrorism, 
-# Issue70-Iraq
-# Issue71-Israel
-# Issue 72 - Iran
-# Issue 73-ISIL or ISIS 
-# Issue 74 - Syria
-# 14 total issue areas
-
-
 # first read in the data and then summarize it
-df <- read_dta(here("data", "wmp-pres-2016-v1.1.dta"))
-summary(df)
-
+df_2016 <- read_dta(here("data", "wmp-pres-2016-v1.1.dta"))
+summary(df_2016)
 
 
 #Get an initial idea for how many ads there are are, which ones to watch, split. 
@@ -206,25 +169,10 @@ df_2016_notlikely <- initial_2016_join_unprobable %>% select(-issue60, -issue61,
 
 
 ```{r data2012, include=FALSE, echo=FALSE, warning=FALSE}
-# Issue60-Military, 
-# Issue61-Foreign Policy (generic)
-# Issue 62-Veterans
-# Issue 64 - nuclear proliferation
-# Issue 65-China
-# ISsue 66 - Middle East
-# Issue 67-Afghanistan, 
-# ISsue 68-September 11
-# Issue69-Terrorism 
-# Issue70- Iraq
-# Issue 71 - Israel
-# Issue 72 - Iran
-# 12 issue areas
-
 
 # read in the data and then summarize it
-df2012 <- read_dta(here("data", "wmp-pres-2012-v1.2_compress.dta"))
-summary(df2012)
-
+df_2012 <- read_dta(here("data", "wmp-pres-2012-v1.2_compress.dta"))
+summary(df_2012)
 
 
 #Get an initial idea for how many ads there are are, which ones to watch, split. 
@@ -332,26 +280,20 @@ df_2012_notlikely <- initial_2012_join_unprobable %>% select(-issue60, -issue61,
 ```{r data2008, include=FALSE, echo=FALSE, warning=FALSE}
 # Issues in General are coded differently than WMP data from 2012 and 2016
 
-# defpolicy
-# vets
-#SEPT11
-#terror
-#iraq
-#surge
-#mideast
-#ISSUE_IRAQ
-#FOR_NIRAQ
-#china
-#nukes
-#iran
-#afghan
-# DEF_NIRQ
-# 14 total issue areas
-
 
 # read in the data and then summarize it
-df2008 <- read_dta(here("data", "WiscAds2008_Presidential.dta"))
-summary(df2008)
+df_2008 <- read_dta(here("data", "WiscAds2008_Presidential.dta"))
+summary(df_2008)
+table(list(df2008$market)) %>% view()
+
+# create an airings-based df for 2008 to be joined with others later
+df_2008_airings <- df2008 %>% select(date, creative, market, station, l)
+df_2008_airings <- df_2008_airings %>% mutate(
+  dma=0, 
+  Elec_Cycle=2008
+) %>% select(-date)
+summary(df_2008_airings)
+
 
 
 #Get an initial idea for how many ads there are are, which ones to watch, split. 
@@ -563,8 +505,12 @@ tibble(a = as.list(1:2)[c(1, 1, 2)]) %>% glimpse() %>% distinct()
 # 2 x explicit mention variables () ESEPT11, eterror  )
 
 # read in the data and then summarize it
-df2004 <- read_dta(here("data", "WiscAds_2004 Presidential.dta"))
-summary(df2004)
+df_2004 <- read_dta(here("data", "WiscAds_2004 Presidential.dta"))
+summary(df_2004)
+df_2004 %>% filter(market=="Charleston") %>% select(market, station) %>% view()
+table(list(df2004$market)) %>% view()
+
+
 
 
 #Get an initial idea for how many ads there are are, which ones to watch, split. 
@@ -821,6 +767,10 @@ df_2004_notlikely <- initial_2004_join_unprobable %>%
 ```{r data2000, include=FALSE, echo=FALSE, warning=FALSE}
 # WiscAd Data; slight difference from 2004 data
 # instead of creative, title of ad called "custitle"
+
+
+
+
 #q32-35 deal with campaign themes: 
 
 # 50 - Defense
@@ -834,8 +784,15 @@ df_2004_notlikely <- initial_2004_join_unprobable %>%
 
 
 # read in the data and then summarize it
-df2000 <- read_dta(here("data", "Political Advertising in 2000.dta"))
-summary(df2000)
+df_2000 <- read_dta(here("data", "Political Advertising in 2000.dta"))
+# filter only by presidential ads (q3==95)
+df_2000 <- df_2000 %>% filter(q3==95)
+summary(df_2000)
+
+table(list(df_2000$marketlo)) %>% view()
+
+# create an airings-based df for 2000 to be joined with others later.  
+
 
 # this data is different from the other data sets in that it
 # includes advertisements from multiple types of races (house, senate, President, etc.)
@@ -1043,3 +1000,463 @@ refined_master_imagery_ch4 <- master_imageryDF %>% group_by(year) %>% arrange(ye
 refined_master_imagery_ch4 %>% write_xlsx(here("data", "refined_master_imagery_ch4.xlsx"))
 
 ```
+
+
+# Section 2 : An airings-level Analysis
+
+
+```{airings combined file}
+#2000 Information
+# This df is unique.  I only want presidential ads, so I have to filter only where #'q3'==95, which denotes a presidential ad. 
+
+airings_2000 <- df_2000 %>% filter(q3 == 95) %>% select(spotdate, custitle, marketlo, stncalls, len) %>% rename(date=spotdate, creative=custitle, market=marketlo, station=stncalls, l=len) %>% mutate(
+  dma=0, 
+  Elec_Cycle=2000
+) 
+summary(airings_2000)
+airings_2000 %>% write_csv(here("data", "airings_2000.csv"))
+
+#2004 Ad Information
+
+airings_2004 <- df_2004 %>% select(date, creative, market, station, spotleng) %>% rename(l=spotleng) %>% mutate(
+  dma=0,
+  Elec_Cycle=2004
+) 
+summary(airings_2004)
+airings_2004 %>% write_csv(here("data", "airings_2004.csv"))
+
+#2008 Ad Information
+
+airings_2008 <- df_2008 %>% select(date, creative, market, station, l)
+airings_2008 <- airings_2008 %>% mutate(
+  dma=0, 
+  Elec_Cycle=2008
+) 
+summary(airings_2008)
+
+# there is one issue with the 2008 airings I need to fix.  
+# Several hundred ads take on a value of market of 'Springfield, M' but that could # mean Springfield, MO or Springfield, MA.  
+# Need to find all values of station that start with 'W' and assign those observations a value of market of 'Springfield, MA' and all that start with a 'K' a value of 'Springfield, MO'
+
+airings_2008 <- airings_2008 %>% mutate(
+  market = if_else(substr(station, 1, 1)=="K" & market=="Springfield, M", "Springfield, MO", market),
+  market = if_else(substr(station, 1, 1)=="W" & market=="Springfield, M", "Springfield, MA", market) 
+)
+
+airings_2008 %>% write_csv(here("data", "airings_2008.csv"))
+
+#2012 Ad Information
+airings_2012 <- df_2012 %>% select(airdate, creative, market, station, l, dma) %>% mutate(
+  Elec_Cycle=2012
+) 
+airings_2012 <- airings_2012 %>% rename(date=airdate)
+summary(airings_2012)
+airings_2012 %>% write_csv(here("data", "airings_2012.csv"))
+
+
+#2016 Ad Information
+airings_2016 <- df_2016 %>% select(airdate, creative, market, station, l, dma) %>% mutate(
+  Elec_Cycle=2016
+)
+airings_2016 <- airings_2016 %>% rename(date=airdate)
+summary(airings_2016)
+airings_2016 %>% write_csv(here("data", "airings_2016.csv"))
+
+
+
+## I need to fix the date variable for the 2008 airings file only
+airings_2008 <- airings_2008 %>% mutate(
+  conv.date=mdy(date)
+)
+
+# see what dates are the problem
+airings_2008 %>% filter(is.na(conv.date)) %>% select(date, conv.date, creative, l) %>% group_by(creative) %>% distinct() %>% view()
+
+# problem dates are 10/10/200 - 10/31/200
+# problem dates are 11/10/200 - 11/30/200  (will become 2007)
+# problem dates are 12/10/200 - 12/31/200  (will become 2007)
+
+# first replace airings between 11/10/200 - 12/31/200 with their dates followed by 2007
+airings_2008 <- airings_2008 %>% mutate(
+  date=if_else(
+    (substr(date, 1, 2) =="11" & substr(date, 7, 9) == "200" & is.na(conv.date)==TRUE), paste(substr(date, 1, 6), "2007"), date),
+  date=if_else(
+    (substr(date, 1, 2) =="12" & substr(date, 7, 9) == "200" & is.na(conv.date)==TRUE), paste(substr(date, 1, 6), "2007"), date)) 
+
+airings_2008 <- airings_2008 %>% mutate(
+  conv.date=mdy(date)
+)
+
+## now fix the date range of 10/10/200 - 10/31/200
+airings_2008 <- airings_2008 %>% mutate(
+  date=if_else(
+     (substr(date, 1, 2) =="10" & substr(date, 7, 9) == "200" & is.na(conv.date)==TRUE & grepl("MCCAIN|OBAMA", airings_2008$creative)==TRUE),
+     paste(substr(date, 1, 6), "2008"), date)) %>% mutate(
+  date=if_else(
+     (substr(date, 1, 2) =="10" & substr(date, 7, 9) == "200" & is.na(conv.date)==TRUE & grepl("MCCAIN|OBAMA", airings_2008$creative)==FALSE),
+     paste(substr(date, 1, 6), "2007"), date)) 
+
+airings_2008 <- airings_2008 %>% mutate(
+  conv.date=mdy(date)
+)
+
+
+# Create a final airings only file from which to merge DMA - specific information
+
+
+# bind rows and write a csv file of all election ad airings (ads_airings.csv)
+airings_all <- bind_rows(airings_2000, airings_2004, airings_2008, airings_2012, airings_2016) 
+
+airings_all %>% write_csv(here("data", "ads_airings.csv"))
+
+```
+
+
+```{airings merging data continued}
+
+ch4_airings_df <- read_csv(here("data", "ads_airings.csv"))
+
+# 4,706,974 total airings in the data frame
+
+# drop the station variable
+ch4_airings_df <- ch4_airings_df %>% select(-station)
+
+### count the number of unique, distinct advertisements by name, election cycle, and length. 
+ch4_airings_df %>% select(creative, Elec_Cycle, l) %>% distinct() %>% view()
+###3668 ads
+
+### count how many airings ran on cable = (34,906)
+ch4_airings_df %>% filter(market %in% c("CABLE", "NATIONAL", "NATIONAL CABLE", "NATIONAL NETWORK"))
+
+# convert to uppercase and drop ads that ran on cable
+ch4_airings_df <- ch4_airings_df %>% mutate(
+  ch4_airings_df, across(where(is.character), .fns = toupper)
+  ) %>% filter(!market %in% c("CABLE", "NATIONAL", "NATIONAL CABLE", "NATIONAL NETWORK"))
+
+# recount distinct ads by name, election cycle, length. 
+ch4_airings_df %>% select(creative, Elec_Cycle, l) %>% distinct()
+# count is now 3,516 ads.  This means that 152 unique 
+# ad/creative/length identifiers ran on cable only.
+
+
+# Now read in file that crosswalks market names with Media Market and Percent #Veteran Values
+
+ch4_airings_media_markets_edits <- read_csv(here("data", "ads_airings_distinct_markets_edits.csv"))
+summary(ch4_airings_media_markets_edits)
+
+# drop cable options as a merger because I already dropped 
+# cable from the airings df above
+
+ch4_airings_media_markets_edits <- ch4_airings_media_markets_edits %>% filter(!market %in% c("CABLE", "NATIONAL", "NATIONAL CABLE", "NATIONAL NETWORK"))
+
+# Now merge important files to create a DF that has airing,percent vetpop, and common media market name
+
+ch4_airings_DMA_vet_pop <- inner_join(ch4_airings_df, ch4_airings_media_markets_edits, by="market")
+ch4_airings_DMA_vet_pop <- ch4_airings_DMA_vet_pop %>% select(-market, -market_DMA)
+
+# Now write to another CSV that I can grab quickly. 
+ch4_airings_DMA_vet_pop %>% write_csv(here("data", "ads_airings_mkt_vet_pop.csv"))
+
+
+```
+
+# Pick up Mutating New Variables for Year-Polarization here. Also where you could read in data starting here.  
+
+```{r airings analysis}
+
+# First read in airings df.  Capitalize. Make an airing-Year variable and assign
+# values of independent variables here. 
+
+ch4_airings_master <- read_csv(here("data", "ads_airings_mkt_vet_pop.csv")) 
+ch4_airings_master <- mutate(ch4_airings_master, across(where(is.character), .fns = toupper))
+ch4_airings_master <- ch4_airings_master %>% mutate(
+  Airing_Yr = year(date),
+  house_polar = case_when(
+    Airing_Yr== 2000 ~ 77.713,
+    Airing_Yr == 2003 ~ 79.302,
+    Airing_Yr == 2004 ~ 79.302,
+    Airing_Yr == 2007 ~ 80.765,
+    Airing_Yr == 2008 ~ 80.765,
+    Airing_Yr == 2011 ~ 86.142,
+    Airing_Yr == 2012 ~ 86.142,
+    Airing_Yr == 2015 ~ 87.639,
+    Airing_Yr == 2016 ~ 87.639,
+    ),
+  sen_polar = case_when(
+    Airing_Yr== 2000 ~ 65.833,
+    Airing_Yr == 2003 ~ 64.984,
+    Airing_Yr == 2004 ~ 64.984,
+    Airing_Yr == 2007 ~ 68.736,
+    Airing_Yr == 2008 ~ 68.736,
+    Airing_Yr == 2011 ~ 74.383,
+    Airing_Yr == 2012 ~ 74.383,
+    Airing_Yr == 2015 ~ 81.293,
+    Airing_Yr == 2016 ~ 81.293,
+  ),
+  aff_polar = case_when(
+    Airing_Yr== 2000 ~ 61.692,
+    Airing_Yr == 2003  ~ 69.27,
+    Airing_Yr == 2004  ~ 69.27,
+    Airing_Yr == 2007 ~ 69.519,
+    Airing_Yr == 2008 ~ 69.519,
+    Airing_Yr == 2011 ~ 84.689,
+    Airing_Yr == 2012 ~ 84.689,
+    Airing_Yr == 2015 ~ 67.754,
+    Airing_Yr == 2016 ~ 67.754,
+  ),
+  HostCasRate = case_when(
+    Airing_Yr == 2000 ~ 1.23874924,
+    Airing_Yr == 2003 ~ 21.92014883,
+    Airing_Yr == 2004 ~ 52.0801226,
+    Airing_Yr == 2007 ~ 61.97806503,
+    Airing_Yr == 2008 ~ 25.1029256,
+    Airing_Yr == 2011 ~ 31.31,
+    Airing_Yr == 2012 ~ 21.4917871,
+    Airing_Yr == 2015 ~ 1.750,
+    Airing_Yr == 2016 ~ 1.229532,
+  ),
+  HostCasRateLagged = case_when(
+    Airing_Yr == 2000 ~ 0,
+    Airing_Yr == 2003 ~ 1.20,
+    Airing_Yr == 2004 ~ 21.92014883,
+    Airing_Yr == 2007 ~ 56.07,
+    Airing_Yr == 2008 ~ 61.97806503,
+    Airing_Yr == 2011 ~ 31.866,
+    Airing_Yr == 2012 ~ 31.31,
+    Airing_Yr == 2015 ~ 4.034,
+    Airing_Yr == 2016 ~ 1.750,
+  ),
+  mil_prestige = case_when(
+    Airing_Yr == 2000 ~ 64,
+    Airing_Yr == 2003 ~ 82,
+    Airing_Yr == 2004 ~ 75,
+    Airing_Yr == 2007 ~ 69,
+    Airing_Yr == 2008 ~ 71,
+    Airing_Yr == 2011 ~ 78,
+    Airing_Yr == 2012 ~ 75,
+    Airing_Yr == 2015 ~ 72,
+    Airing_Yr == 2016 ~ 73,
+  ), 
+  cong_prestige = case_when(
+    Airing_Yr == 2000 ~ 24,
+    Airing_Yr == 2003 ~ 29,
+    Airing_Yr == 2004 ~ 30,
+    Airing_Yr == 2007 ~ 14,
+    Airing_Yr == 2008 ~ 12,
+    Airing_Yr == 2011 ~ 12,
+    Airing_Yr == 2012 ~ 73,
+    Airing_Yr == 2015 ~ 8,
+    Airing_Yr == 2016 ~ 9
+  ),
+  prty_ofc = case_when(      ## assigns 1 if party in office at start of year was D, and 0 if R
+    Airing_Yr == 2000 ~ 1,
+    Airing_Yr == 2003 ~ 0,
+    Airing_Yr == 2004 ~ 0,
+    Airing_Yr == 2007 ~ 0,
+    Airing_Yr == 2008 ~ 0,
+    Airing_Yr == 2011 ~ 1,
+    Airing_Yr == 2012 ~ 1,
+    Airing_Yr == 2015 ~ 1,
+    Airing_Yr == 2016 ~ 1,
+  ),
+  prestige_gap = mil_prestige-cong_prestige
+)
+table(list(ch4_airings_master$Airing_Yr))
+table(list(ch4_airings_master$house_polar))
+
+
+### create intervals to separate primary vs general election ads, and then 
+### create a primary variable that equals ==1 or 0.
+### first date is Jan 1 of year before an election; second date is end of primary contest
+### as per wikipedia
+pri_00 <- interval(ymd("2000-01-01"), ymd("2000-06-06"))
+pri_04 <- interval(ymd("2003-01-01"), ymd("2004-06-08"))
+pri_08 <- interval(ymd("2007-01-01"), ymd("2008-06-03"))
+pri_12 <- interval(ymd("2011-01-01"), ymd("2012-06-05"))
+pri_16 <- interval(ymd("2015-01-01"), ymd("2016-06-07"))
+
+ch4_airings_master <- ch4_airings_master %>% mutate(
+  primary = case_when(
+    date %within% pri_00 ~ 1,
+    date %within% pri_04 ~ 1,
+    date %within% pri_08 ~ 1,
+    date %within% pri_12 ~ 1,
+    date %within% pri_16 ~ 1,
+  )) %>% mutate(
+    primary = ifelse(is.na(primary), 0, primary)
+  )
+
+
+# Now read in commercial-level df.  Capitalize.     
+ch4_ads_master <- read_csv(here("data", "ch4_ads_coded.csv"))
+ch4_ads_master <- mutate(ch4_ads_master, across(where(is.character), .fns = toupper))
+
+
+# More cleaning steps. 
+ch4_ads_master <- ch4_ads_master [1:3666,] %>% select(year:missing) %>% rename(missing_ad=missing) %>% mutate_at(
+  .vars = vars(missing_ad), 
+  .funs = ~ case_when(is.na(.) ~ 0, TRUE ~1) 
+) %>% mutate(
+  can_vet = replace(can_vet, can_vet != 1, 0),
+  partisan_act=case_when(
+    vet_fam_end ==1 | vet_fam_atk ==1 | vet_fam_out_issues ==1 ~ 1, 
+    vet_fam_end !=1 & vet_fam_atk!=1 & vet_fam_out_issues !=1 ~ 0 ),
+  dummy_04=case_when(
+    year == 2004 ~ 1, 
+    year != 2004 ~0), 
+  party_reg=case_when(
+    party=="DEMOCRAT" ~ "DEMOCRAT",
+    party=="REPUBLICAN" ~ "REPUBLICAN",
+    (party!= "REPUBLICAN") & (party!= "DEMOCRAT") ~ "OTHER"
+  ),
+  party_reg_numeric=case_when(
+    party_reg=="DEMOCRAT" ~ 1,
+    party_reg=="REPUBLICAN" ~ 0,
+    party_reg=="OTHER" ~2
+  ))
+
+
+# There are a couple of ads in the ad-specific data frame that have the same name but take on different values. I clean that up here.  
+ch4_ads_master %>% select(year, creative, l) %>% distinct() %>% nrow()
+ch4_ads_master %>% group_by(year, creative, l) %>% mutate(x=n()) %>% filter(x==2) %>% view()
+
+ch4_ads_master <- ch4_ads_master %>% group_by(year, creative, l) %>% 
+  mutate(
+  count=max(count),
+  f_picture = max(f_picture),
+  o_mention = max(o_mention),
+  prty_mn = max(prty_mn),
+  def_vet_ad_theme = max(def_vet_ad_theme),
+  img_likely = max(img_likely)
+) %>% distinct()
+
+ch4_ads_master %>% select(year, creative, l) %>% distinct()
+
+# 3,664 ad-level information available for 3,516
+
+# drop variables that I will not need and rename year to Elec_Cycle'  
+ch4_ads_master <- ch4_ads_master %>% select(-count, -f_mention, -ad_purpose, -f_picture, -f_narrate, -o_mention, -o_picture, -ad_tone, -prty_mn, -finished, -img_likely, -notes) %>% rename(Elec_Cycle=year)
+
+
+### now join data frames on year, creative, and l variables.  
+
+ch4_POTUS_all_master <- full_join(ch4_airings_master, ch4_ads_master, by = c("Elec_Cycle", "creative", "l"))
+
+ch4_POTUS_all_master %>% write_csv(here("data", "ch4_POTUS_airings_master.csv"))
+```
+
+
+```{r airings analysis for chapter 4}
+### The above chunk creates the "master" file.  Begin with the true analysis portion here. 
+
+ch4_airings_analysis <- read_csv(here("data", "ch4_POTUS_airings_master.csv")) %>% filter(missing_ad != 1) %>% select(-dma)
+
+# Make some new variables. 
+ch4_airings_analysis <- ch4_airings_analysis %>% mutate(
+    mil_img = case_when(
+    (vet_fam != 0) | (act_dty_img ==1 | vet_img ==1 | us_mil_hard_img ==1 | us_cmbt_img==1) ~ 1, 
+  (vet_fam == 0) & (act_dty_img ==0 & vet_img ==0 & us_mil_hard_img ==0 & us_cmbt_img==0) ~ 0
+),
+  no_mil_img = case_when(
+    (vet_fam != 1) & (act_dty_img !=1 & vet_img !=1 & us_mil_hard_img !=1 & us_cmbt_img!=1) ~ 1, 
+  (vet_fam != 0) | (act_dty_img ==1 | vet_img ==1 | us_mil_hard_img ==1 | us_cmbt_img==1) ~ 0
+  )
+    ) 
+
+# Drop NA values that are not matched up according to market, date, etc.
+# This drops about 35k viewings.  
+ch4_airings_analysis <- ch4_airings_analysis %>% drop_na()
+
+### we have a total of 4,531,041 viewings to analyze across 3,414 unique ads.  
+### This is pretty good. This should be viewed as a high percentage of a total of 
+### 4,544,150 viewings for which we have information on the ads that are shown and for 
+### which data is available.
+
+
+
+ch4_airings_analysis %>% filter(can_vet==1) %>% select(creative, Elec_Cycle) %>% distinct() %>% view()
+
+
+ch4_airings_analysis %>% filter(Elec_Cycle == 2016, party!= "DEMOCRAT", primary==1) %>% select(creative) %>% distinct() %>% view()
+
+ch4_airings_overall_slim %>% 
+  select_if(function(x) any(is.na(x))) %>% 
+  summarise_each(funs(sum(is.na(.)))) %>% view()
+
+# Let's start with some initial analysis.  What would be cool to find?
+# Perhaps the overall percentage of act_dty_img, vet_img, us_mil_hard_img, us_cmbt_img, mil_img, vet_fam, def_vet_ad_theme. 
+
+ch4_airings_overall_slim %>% group_by(Elec_Cycle) %>% summarize(prop_act_dty_img=mean(vet_img), prop_vet_img=mean(vet_img), prop_us_mil_hard_img=mean(us_mil_hard_img), prop_cmbt_img=mean(us_cmbt_img), prop_mil_img=mean(mil_img), prop_vet_fam=mean(vet_fam), prop_def_theme=mean(def_vet_ad_theme)) %>% arrange() %>% view()
+
+# create a character string that has the media market names of these top 50 media markets. 
+
+top_mkts_by_name <- c("LAS VEGAS, NV", "DENVER, CO", "CLEVELAND, OH", "TAMPA-SARASOTA, FL", "DES MOINES, IA-MO", "ORLANDO-DAYTONA BEACH, FL", "CEDAR RAPIDS, IA", "COLUMBUS, OH", "RENO, NV-CA", "CINCINATTI, OH", "WASHINGTON DC-MD-PA-VA-WV", "BOSTON, MA-NH", "NORFOLK, VA-NC", "TOLEDO, OH", "RICHMOND, VA", "DAVENPORT, IA-IL", "DAYTON, OH", "ROANOKE-LYNCHBURG, VA", "CHARLOTTE, NC", "COLORADO SPRINGS-PUEBLO, CO", "JACKSONVILLE, FL - BRUNSWICK, GA", "MIAMI-FORT LAUDERDALE, FL", "GRAND JUNCTION, CO", "WEST PALM BEACH, FL", "SIOUX CITY, IA-NE-SD", "FORT MEYERS-NAPLES, FL", "MILWAUKEE, WI", "RALEIGH-DURHAM, NC-VA", "YOUNGSTOWN, OH-PA", "GREEN BAY-APPLETON, WI", "GREENVILLE-SPARTANBURG, SC", "GREENSBORO-W.SALEM, NC", "HARRISBURG-LANCASTER, PA", "MADISON, WI", "PHILADELPHIA, PA-DE-NJ", "LACROSSE-EAU CLAIRE, WI", "GREENVILLE-NEW BERN-WASHINGTON, NC", "PITTSBURGH, PA-MD-WV", "GRAND RAPIDS-KALAMAZOO, MI", "ROCHESTER-MASON CITY, MN-IA", "BURLINGTON, VT", "WILKES BARRE-SCRANTON, PA", "ALBUQUERQUE-SANTA FE", "DETROIT, MI", "WAUSAU-RHINELANDER, WI", "CHARLOTTESVILLE, VA", "JOHNSTOWN-ALTOONA, PA", "PORTLAND-AUBURN, ME-NH-VT", "FLINT-SAGINAW, MI", "LANSING, MI")
+
+ch4_airings_analysis %>% filter(media_market %in% top_mkts_by_name) %>% group_by(media_market) %>% summarize(prop_act_dty_img=mean(vet_img), prop_vet_img=mean(vet_img), prop_us_mil_hard_img=mean(us_mil_hard_img), prop_cmbt_img=mean(us_cmbt_img), prop_mil_img=mean(mil_img), prop_vet_fam=mean(vet_fam), prop_def_theme=mean(def_vet_ad_theme)) %>% arrange() %>% view()
+
+
+mod1 <- glm(vet_img ~ percent_vet + house_polar + HostCasRateLagged + can_vet + party_reg + mil_prestige + can_vet_mention,
+             family=binomial(link="logit"),
+            data=ch4_airings_overall_slim
+)
+
+summary(mod1)
+
+
+
+
+
+# Let's start with the two most boring elections, 2008 and 2012 and identify the 50 most competitive media 
+# markets; that is, let's find out which media markets aired the most advertisements in each year and determine the range of ads that showed veteran, military imagery in each of these.  
+
+
+# Begin with 2008 and 2012 together.  
+
+# Identify which markets ran the most elections. 
+comp_mkts_08 <- ch4_airings_analysis %>% filter(!Elec_Cycle %in% c(2000, 2004, 2016))%>% group_by(media_market) %>% 
+  summarize(
+  count=n()
+) %>% arrange(count)
+
+
+# create a character string that has the media market names of these top 50 media markets. 
+top_mkts_by_name_08 <- c("LAS VEGAS, NV", "DENVER, CO", "CLEVELAND, OH", "TAMPA-SARASOTA, FL", "DES MOINES, IA-MO", "ORLANDO-DAYTONA BEACH, FL", "CEDAR RAPIDS, IA", "COLUMBUS, OH", "RENO, NV-CA", "CINCINATTI, OH", "WASHINGTON DC-MD-PA-VA-WV", "BOSTON, MA-NH", "NORFOLK, VA-NC", "TOLEDO, OH", "RICHMOND, VA", "DAVENPORT, IA-IL", "DAYTON, OH", "ROANOKE-LYNCHBURG, VA", "CHARLOTTE, NC", "COLORADO SPRINGS-PUEBLO, CO", "JACKSONVILLE, FL - BRUNSWICK, GA", "MIAMI-FORT LAUDERDALE, FL", "GRAND JUNCTION, CO", "WEST PALM BEACH, FL", "SIOUX CITY, IA-NE-SD", "FORT MEYERS-NAPLES, FL", "MILWAUKEE, WI", "RALEIGH-DURHAM, NC-VA", "YOUNGSTOWN, OH-PA", "GREEN BAY-APPLETON, WI", "GREENVILLE-SPARTANBURG, SC", "GREENSBORO-W.SALEM, NC", "HARRISBURG-LANCASTER, PA", "MADISON, WI", "PHILADELPHIA, PA-DE-NJ", "LACROSSE-EAU CLAIRE, WI", "GREENVILLE-NEW BERN-WASHINGTON, NC", "PITTSBURGH, PA-MD-WV", "GRAND RAPIDS-KALAMAZOO, MI", "ROCHESTER-MASON CITY, MN-IA", "BURLINGTON, VT", "WILKES BARRE-SCRANTON, PA", "ALBUQUERQUE-SANTA FE", "DETROIT, MI", "WAUSAU-RHINELANDER, WI", "CHARLOTTESVILLE, VA", "JOHNSTOWN-ALTOONA, PA", "PORTLAND-AUBURN, ME-NH-VT", "FLINT-SAGINAW, MI", "LANSING, MI")
+
+vet_img_08_top <- ch4_airings_analysis %>% filter(!Elec_Cycle %in% c(2000, 2004, 2016), media_market %in% top_mkts_by_name_08) %>% group_by(media_market) %>% summarize(prop_vet_img=mean(vet_img)) %>% arrange(prop_vet_img)
+
+# filter through these media markets and obtain the percentage of ads featuring vets in these media markets.
+
+# Now move to only 2016. 
+
+comp_mkts_16 <- ch4_airings_analysis %>% filter(Elec_Cycle %in% c(2016))%>% group_by(media_market) %>% 
+  summarize(
+  count=n()
+) %>% arrange(count)
+
+# create a character string that has the media market names of these top 50 media markets. 
+
+top_mkts_by_name_16 <- comp_mkts_16$count
+
+```
+
+### State Polarization Effort
+
+``` {r state polar}
+
+load("/Users/petererickson/Documents/Wisconsin Academics/Dissertation/dissertation/data/shor-mccarty-state-polar.rdata")
+
+summary(table)
+
+state_polar <- table %>% select(st, year, h_diffs, s_diffs) %>% filter(year %in% c("2000", "2003", "2004", "2007", "2008", "2011", "2012", "2015", "2016"))
+
+```
+
+
+``` {r county level voting data}
+
+cty_vote <- read_csv(here("data", "countypres_2000-2020.csv"))
+
+```}
+
+
+
