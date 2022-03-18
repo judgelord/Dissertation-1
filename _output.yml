@@ -11,6 +11,6 @@ bookdown::pdf_book:
       - assets/preamble-title.tex
       - assets/preamble-memoir.tex
   latex_engine: xelatex
-  citation_package: natbib
+  citation_package: biblatex
   urlcolor: black
   linkcolor: black
