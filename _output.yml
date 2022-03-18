@@ -1,0 +1,16 @@
+bookdown::pdf_book:
+  number_sections: true
+  fig_caption: true
+  dev: png
+  toc: false
+  #lot: true
+  #lof: true
+  keep_tex: true
+  includes: 
+    in_header: 
+      - assets/preamble-title.tex
+      - assets/preamble-memoir.tex
+  latex_engine: xelatex
+  citation_package: natbib
+  urlcolor: black
+  linkcolor: black

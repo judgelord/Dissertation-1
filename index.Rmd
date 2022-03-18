@@ -1,79 +1,36 @@
 ---
-title: "An Inescapable Reality: Polarization, Prestige, and the US Military in Politics"
+title: 'An Inescapable Reality: Polarization, Prestige, and the US Military in Politics'
 author: "Peter M. Erickson"
 date: |
   `r format(Sys.time(), '%B %d, %Y')`
-abstract: |
-  
-  _This dissertation examines how varying levels of polarization and military prestige impact the US military's political involvement. It first argues that the political behavior of military and civilian actors with respect to the military should be viewed through the lens of three central principles of civil-military relations: civilian control of the military, non-partisanship of the military institution, and the non-interference of the military into certain realms of the state. The dissertation then argues that the level of polarization and military prestige impact the willingness of military and civilian actors to adhere to these principles. Using a mixed methods approach involving both quantitative and historical analysis, this dissertation provides evidence that patterns of political activity involving the military change over time. Ultimately, this dissertation contributes to the scholarly understanding of how domestic factors shape the political activities involving the military in mature democracies._ 
-  
-geometry: margin = 1.15in              # margin widths
-fontsize: 12pt                         # text size
-bibliography: dissertation.bib         # bibliography file
-biblio-style: authoryear               # citation style
-# urlcolor: blue                         # links to external URLs
-# citecolor: black                       # links to bibliography
-# linkcolor: magenta                     # internal figures, footnotes, etc.
-indent: true                          # paragraph format
-                                       # true for indented paragraphs
-                                       
-header-includes:
-    - \usepackage{booktabs}
-    - \usepackage{longtable}
-    - \usepackage{setspace}
-    - \usepackage{indentfirst}
-    - \usepackage{array}
-    - \usepackage{multirow}
-    - \usepackage{wrapfig}
-    - \usepackage{float}
-    - \usepackage{colortbl}
-    - \usepackage{pdflscape}
-    - \usepackage{tabu}
-    - \usepackage{threeparttable}
-    - \usepackage{threeparttablex}
-    - \usepackage[normalem]{ulem}
-    - \usepackage{makecell}
-    - \usepackage{xcolor}
-    - \usepackage{caption}
-    - \usepackage{rotating, graphicx}
-    - \usepackage{dcolumn}
-    
-    
-always_allow_html: true
+output: bookdown::gitbook
+documentclass: memoir
+classoption: oneside
+geometry: "left = 1.25in, right = 1.25in, top = 1.25in, bottom = 1.25in"
+fontsize: 12pt
+bibliography: dissertation.bib
+biblio-style: authoryear
+indent: yes
+always_allow_html: yes
 reference-section-title: References
-   
+  
+abstract: |
+  This dissertation examines how varying levels of polarization and military
+  prestige impact the US military's political involvement. It first argues that the
+  political behavior of military and civilian actors with respect to the military
+  should be viewed through the lens of three central principles of civil-military
+  and the non-interference of the military into certain realms of the state. The dissertation
+  then argues that the level of polarization and military prestige impact the willingness
+  of military and civilian actors to adhere to these principles. Using a mixed methods
+  approach involving both quantitative and historical analysis, this dissertation
+  provides evidence that patterns of political activity involving the military change
+  over time. Ultimately, this dissertation contributes to the scholarly understanding
+  of how domestic factors shape the political activities involving the military in
+  mature democracies.
 
-bookdown::pdf_book:
-  number_sections: false
-  fig_caption: true
-  dev: png
-  toc: false
-  #lot: true
-  #lof: true
-  keep_tex: true
-  # includes: 
-  #   in_header: 
-  #     - assets/preamble-title.tex
-  #     - assets/preamble-memoir.tex
-  latex_engine: pdflatex
-  citation_package: biblatex
-  urlcolor: black
-  linkcolor: black
-            
-# #output: 
-#   bookdown::pdf_document2:
-#     keep_tex: true
-#     latex_engine: pdflatex
-#     number_sections: false
-#     toc: true
-#     fig_caption: true
-#     citation_package: biblatex
-#   bookdown::htmldocument2: default
-#   bookdown::word_document2:
-#       toc: false
+relations: civilian control of the military, non-partisanship of the military institution
 ---
 
-\doublespacing 
 
 ```{r setup, include=FALSE}
 #knitr::opts_chunk$set(
@@ -121,3 +78,25 @@ library("modelsummary")
 ```
 
 
+  \cleardoublepage
+  \setcounter{page}{1}
+  \pagenumbering{roman}
+  \tableofcontents
+  
+  \clearpage
+  \listoftables 
+  
+  \clearpage
+  \listoffigures
+  
+  \RaggedRight
+
+
+
+
+
+\mainmatter
+\pagenumbering{arabic}
+\DoubleSpacing
+\setlength{\parindent}{2ex}
+\newpage
